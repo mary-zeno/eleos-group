@@ -49,6 +49,9 @@ export default function Dashboard({ user }) {
   const [requestsToDelete, setRequestsToDelete] = useState(new Set());
   const [statusChanges, setStatusChanges] = useState({});
 
+  //for payment 
+  const [invoiceUrl, setInvoiceUrl] = useState(null);
+
   useEffect(() => {
     const fetchUserAndData = async () => {
       if (!user) {
@@ -142,6 +145,28 @@ export default function Dashboard({ user }) {
       userName: userIdToName[req.user_id] || 'Unknown',
     }));
 
+    // Fetch invoices for admin
+    if (role === 'admin') {
+      const { data: invoicesData, error: invoicesError } = await supabase
+        .from('invoices')
+        .select('user_id, service_type, invoice_url');
+
+      if (!invoicesError && invoicesData?.length) {
+        const invoiceMap = {};
+        invoicesData.forEach((inv) => {
+          const key = `${inv.user_id}-${inv.service_type}`;
+          invoiceMap[key] = inv.invoice_url;
+        });
+        allRequests = allRequests.map((req) => {
+          const key = `${req.user_id}-${req.service}`;
+          return {
+            ...req,
+            invoiceUrl: invoiceMap[key] || null,
+          };
+        });
+      }
+    }
+
     allRequests.sort((a, b) => new Date(b.inserted_at) - new Date(a.inserted_at));
     setRequests(allRequests);
     setLoading(false);
@@ -209,180 +234,215 @@ export default function Dashboard({ user }) {
   };
 
   return (
-    <div className="p-4 sm:p-6 lg:p-8 space-y-6">
-      {/* Header Card */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-2xl">Welcome to your Dashboard</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <div>
-              <p className="text-sm text-gray-600">
-                <strong>Logged in as:</strong> {name || user?.email}
-              </p>
-              <p className="text-sm text-gray-600">
-                <strong>Role:</strong> {role}
-              </p>
-            </div>
-            <div className="flex gap-2">
-              <Button variant="outline" onClick={() => navigate('/edit-profile')}>
-                Edit Profile
-              </Button>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Admin Controls */}
-      {role === 'admin' && (
+    <div className="min-h-screen bg-gray-100 py-8 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto space-y-6">
+        {/* Header Card */}
         <Card>
-          <CardContent className="pt-6">
-            <div className="flex gap-2">
-              {!isEditing ? (
-                <Button onClick={() => setIsEditing(true)} variant="outline">
-                  ✏️ Edit Mode
-                </Button>
-              ) : (
-                <>
-                  <Button onClick={handleSaveChanges} disabled={loading}>
-                    💾 Save Changes
-                  </Button>
-                  <Button onClick={cancelEditing} variant="outline">
-                    ❌ Cancel
-                  </Button>
-                </>
-              )}
+          <CardHeader>
+            <CardTitle className="text-2xl">Welcome to your Dashboard</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+              <div>
+                <p className="text-sm text-gray-600">
+                  <strong>Logged in as:</strong> {name || user?.email}
+                </p>
+                <p className="text-sm text-gray-600">
+                  <strong>Role:</strong> {role}
+                </p>
+              </div>
             </div>
-            {isEditing && (
-              <Alert className="mt-4">
-                <AlertDescription>
-                  Edit mode is active. You can update statuses and mark requests for deletion.
-                </AlertDescription>
-              </Alert>
-            )}
           </CardContent>
         </Card>
-      )}
 
-      {/* Requests Table */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Service Requests</CardTitle>
-        </CardHeader>
-        <CardContent>
-          {loading ? (
-            <div className="text-center py-8">
-              <p>Loading requests...</p>
-            </div>
-          ) : requests.length === 0 ? (
-            <div className="text-center py-8">
-              <p className="text-gray-500">No requests submitted yet.</p>
-              <Button className="mt-4" onClick={() => navigate('/property-form')}>
-                Submit Your First Request
-              </Button>
-            </div>
-          ) : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  {role === 'admin' && isEditing && <TableHead>Delete</TableHead>}
-                  <TableHead>Service</TableHead>
-                  <TableHead>User</TableHead>
-                  <TableHead>Date</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Details</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {requests.map((req, idx) => {
-                  const isDeleted = requestsToDelete.has(req.id);
-                  const currentStatus = statusChanges[req.id] || req.status;
+        {/* Admin Controls */}
+        {role === 'admin' && (
+          <Card>
+            <CardContent className="pt-6">
+              <div className="flex gap-2">
+                {!isEditing ? (
+                  <Button onClick={() => setIsEditing(true)} variant="outline">
+                    Edit Mode
+                  </Button>
+                ) : (
+                  <>
+                    <Button onClick={handleSaveChanges} disabled={loading}>
+                      💾 Save Changes
+                    </Button>
+                    <Button onClick={cancelEditing} variant="outline">
+                      ❌ Cancel
+                    </Button>
+                  </>
+                )}
+              </div>
+              {isEditing && (
+                <Alert className="mt-4">
+                  <AlertDescription>
+                    Edit mode is active. You can update statuses and mark requests for deletion.
+                  </AlertDescription>
+                </Alert>
+              )}
+            </CardContent>
+          </Card>
+        )}
 
-                  return (
-                    <React.Fragment key={req.id}>
-                      <TableRow className={isDeleted ? 'opacity-50 line-through' : ''}>
-                        {role === 'admin' && isEditing && (
+        {/* Requests Table */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Service Requests</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {loading ? (
+              <div className="text-center py-8">
+                <p>Loading requests...</p>
+              </div>
+            ) : requests.length === 0 ? (
+              <div className="text-center py-8">
+                <p className="text-gray-500">No requests submitted yet.</p>
+                <Button className="mt-4" onClick={() => navigate('/property-form')}>
+                  Submit Your First Request
+                </Button>
+              </div>
+            ) : (
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    {role === 'admin' && isEditing && <TableHead>Delete</TableHead>}
+                    <TableHead>Service</TableHead>
+                    <TableHead>User</TableHead>
+                    <TableHead>Date</TableHead>
+                    <TableHead>Status</TableHead>
+                    {role === 'admin' && <TableHead>Payments</TableHead>}
+                    <TableHead>Details</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {requests.map((req, idx) => {
+                    const isDeleted = requestsToDelete.has(req.id);
+                    const currentStatus = statusChanges[req.id] || req.status;
+
+                    return (
+                      <React.Fragment key={req.id}>
+                        <TableRow className={isDeleted ? 'opacity-50 line-through' : ''}>
+                          {role === 'admin' && isEditing && (
+                            <TableCell>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => toggleDeleteRequest(req.id)}
+                                className="text-red-600 hover:text-red-800"
+                              >
+                                ❌
+                              </Button>
+                            </TableCell>
+                          )}
+                          <TableCell>
+                            <Badge variant="outline">{req.service}</Badge>
+                          </TableCell>
+                          <TableCell>{role === 'admin' ? req.userName : 'You'}</TableCell>
+                          <TableCell>{new Date(req.inserted_at).toLocaleDateString()}</TableCell>
+                          <TableCell>
+                            {role === 'admin' && isEditing ? (
+                              <Select
+                                value={currentStatus}
+                                onValueChange={(value) => handleStatusChange(req.id, value)}
+                              >
+                                <SelectTrigger className="w-40">
+                                  <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  {STATUS_OPTIONS.map((opt) => (
+                                    <SelectItem key={opt} value={opt}>
+                                      {opt}
+                                    </SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                            ) : (
+                              <Badge className={getStatusColor(currentStatus)}>
+                                {currentStatus}
+                              </Badge>
+                            )}
+                          </TableCell>
+                          {role === 'admin' && (
+                            <TableCell className="py-2 px-4">
+                              {req.invoiceUrl ? (
+                                <Button
+                                  variant="outline"
+                                  className="text-xs"
+                                  onClick={() => setInvoiceUrl(req.invoiceUrl)}
+                                >
+                                  View Invoice
+                                </Button>
+                              ) : (
+                                isEditing && (
+                                  <Button
+                                    variant="outline"
+                                    className="text-xs"
+                                    onClick={() => navigate('/admin/payment', { state: { request: req } })}
+                                  >
+                                    Create Invoice
+                                  </Button>
+                                )
+                              )}
+                            </TableCell>
+                          )}
                           <TableCell>
                             <Button
                               variant="ghost"
                               size="sm"
-                              onClick={() => toggleDeleteRequest(req.id)}
-                              className="text-red-600 hover:text-red-800"
+                              className="text-2xl"
+                              onClick={() => toggleDetails(idx)}
                             >
-                              ❌
+                              {expandedIdx === idx ? '▴' : '▾'}
                             </Button>
                           </TableCell>
-                        )}
-                        <TableCell>
-                          <Badge variant="outline">{req.service}</Badge>
-                        </TableCell>
-                        <TableCell>{role === 'admin' ? req.userName : 'You'}</TableCell>
-                        <TableCell>{new Date(req.inserted_at).toLocaleDateString()}</TableCell>
-                        <TableCell>
-                          {role === 'admin' && isEditing ? (
-                            <Select
-                              value={currentStatus}
-                              onValueChange={(value) => handleStatusChange(req.id, value)}
-                            >
-                              <SelectTrigger className="w-40">
-                                <SelectValue />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {STATUS_OPTIONS.map((opt) => (
-                                  <SelectItem key={opt} value={opt}>
-                                    {opt}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
-                          ) : (
-                            <Badge className={getStatusColor(currentStatus)}>
-                              {currentStatus}
-                            </Badge>
-                          )}
-                        </TableCell>
-                        <TableCell>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => toggleDetails(idx)}
-                          >
-                            {expandedIdx === idx ? 'Hide' : 'View'}
-                          </Button>
-                        </TableCell>
-                      </TableRow>
-                      {expandedIdx === idx && (
-                        <TableRow className="bg-gray-50">
-                          <TableCell colSpan={role === 'admin' && isEditing ? 6 : 5}>
-                            <div className="p-4 space-y-2">
-                              <h4 className="font-medium mb-2">Request Details:</h4>
-                              <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
-                                {Object.entries(req).map(([key, value]) =>
-                                  !['id', 'user_id', 'inserted_at', 'service', 'status', 'tableName', 'userName'].includes(key) && (
-                                    <div key={key} className="flex">
-                                      <span className="font-medium mr-2 min-w-0 flex-shrink-0">
-                                        {key.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}:
-                                      </span>
-                                      <span className="text-gray-600 break-words">
-                                        {String(value) || 'N/A'}
-                                      </span>
-                                    </div>
-                                  )
-                                )}
-                              </div>
-                            </div>
-                          </TableCell>
                         </TableRow>
-                      )}
-                    </React.Fragment>
-                  );
-                })}
-              </TableBody>
-            </Table>
-          )}
-        </CardContent>
-      </Card>
+                        {expandedIdx === idx && (
+                          <TableRow className="bg-gray-50">
+                            <TableCell colSpan={role === 'admin' && isEditing ? 6 : 5}>
+                              <div className="p-4 space-y-2">
+                                <h4 className="font-medium mb-2">Request Details:</h4>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
+                                  {Object.entries(req).map(([key, value]) =>
+                                    !['id', 'user_id', 'inserted_at', 'service', 'status', 'tableName', 'userName'].includes(key) && (
+                                      <div key={key} className="flex">
+                                        <span className="font-medium mr-2 min-w-0 flex-shrink-0">
+                                          {key.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}:
+                                        </span>
+                                        <span className="text-gray-600 break-words">
+                                          {String(value) || 'N/A'}
+                                        </span>
+                                      </div>
+                                    )
+                                  )}
+                                </div>
+                              </div>
+                            </TableCell>
+                          </TableRow>
+                        )}
+                      </React.Fragment>
+                    );
+                  })}
+                </TableBody>
+              </Table>
+            )}
+            {invoiceUrl && (
+              <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+                <div className="bg-white p-4 rounded-lg max-w-3xl w-full relative">
+                  <button
+                    className="absolute top-2 right-2 text-white bg-red-600 px-2 py-1 rounded"
+                    onClick={() => setInvoiceUrl(null)}
+                  >
+                    Close
+                  </button>
+                  <iframe src={invoiceUrl} width="100%" height="600px" title="Invoice PDF" />
+                </div>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }

@@ -70,7 +70,7 @@ export default function PropertyForm({ user }) {
   };
 
   return (
-    <div className="p-4 sm:p-6 lg:p-8">
+    <div className="min-h-screen bg-gray-100 p-4 sm:p-6 lg:p-8 space-y-6">
       <Card className="max-w-2xl mx-auto">
         <CardHeader>
           <CardTitle>Property Interest Form</CardTitle>

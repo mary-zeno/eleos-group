@@ -27,7 +27,7 @@ export default function Home({ user }) {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="bg-platinum py-20 lg:py-32">
+      <section className="bg-timberwolf py-20 lg:py-32">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             

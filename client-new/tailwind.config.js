@@ -25,18 +25,14 @@ export default {
       colors: {
         // Your custom palette
         charcoal: '#2E4057',
-        khaki: '#ABA194',
-        timberwolf: '#CFCBCA',
+        timberwolf: '#C4C9CA',
         platinum: '#D8DDDE',
-        cyan: 'rgb(234, 236, 238)', // lightest cyan
         
         // Override default grays with your palette
         gray: {
-          50: '#FFFFFF',   // cyan - lightest
+          50: '#FFFFFF',   // white
           100: '#D8DDDE',  // platinum
-          200: '#CFCBCA',  // timberwolf  
-          300: '#ABA194',  // khaki
-          400: '#8B8680',  // darker khaki
+          200: '#C4C9CA',  // timberwolf  
           500: '#6B6560',  // medium
           600: '#4B453F',  // darker
           700: '#3A3530',  // darker
@@ -44,17 +40,17 @@ export default {
           900: '#2E4057',  // charcoal - darkest
           950: '#1F2A38',  // extra dark charcoal
         },
-        
+         
         // shadcn/ui colors using your palette
-        border: '#CFCBCA',           // timberwolf
+        border: '#C4C9CA',           // timberwolf
         input: '#D8DDDE',            // platinum
         ring: '#2E4057',             // charcoal
-        background: '#FFFFFF',       // cyan (very light background)
+        background: '#FFFFFF',       // white
         foreground: '#2E4057',       // charcoal (dark text)
         
         primary: {
           DEFAULT: '#2E4057',        // charcoal
-          foreground: '#FFFFFF',     // cyan
+          foreground: '#FFFFFF',     // white
         },
         secondary: {
           DEFAULT: '#ABA194',        // khaki
@@ -62,10 +58,10 @@ export default {
         },
         destructive: {
           DEFAULT: '#8B4B47',        // reddish tone
-          foreground: '#FFFFFF',     // cyan
+          foreground: '#FFFFFF',     // white
         },
         muted: {
-          DEFAULT: '#CFCBCA',        // timberwolf
+          DEFAULT: '#C4C9CA',        // timberwolf
           foreground: '#2E4057',     // charcoal
         },
         accent: {
@@ -73,11 +69,11 @@ export default {
           foreground: '#2E4057',     // charcoal
         },
         popover: {
-          DEFAULT: '#FFFFFF',        // cyan
+          DEFAULT: '#FFFFFF',        // white
           foreground: '#2E4057',     // charcoal
         },
         card: {
-          DEFAULT: '#FFFFFF',        // cyan
+          DEFAULT: '#FFFFFF',        //white
           foreground: '#2E4057',     // charcoal
         },
       },

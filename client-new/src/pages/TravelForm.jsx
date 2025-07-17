@@ -114,8 +114,8 @@ export default function TravelForm({ user }) {
     setLoadingEstimate(false);
   };
 
-  return (
-    <div className="p-4 sm:p-6 lg:p-8 space-y-6">
+  return (  
+    <div className="min-h-screen bg-gray-100 p-4 sm:p-6 lg:p-8 space-y-6">
       <div className="max-w-4xl mx-auto">
         <div className="grid lg:grid-cols-3 gap-6">
           

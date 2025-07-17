@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { supabase } from "./supabaseClient";
 import Auth from "./pages/Auth";
@@ -9,6 +9,7 @@ import Home from "./pages/Home";
 import EditProfile from "./pages/EditProfile";
 import TravelForm from "./pages/TravelForm";
 import BusinessForm from "./pages/BusinessForm";
+import AdminPayment from './pages/AdminPayment';
 
 function App() {
   const [user, setUser] = useState(null);
@@ -90,6 +91,10 @@ function App() {
                   <BusinessForm user={user} />
                 </Layout>
               }
+            />
+            <Route 
+              path="/admin/payment" 
+              element={<AdminPayment user={user} />} 
             />
             <Route
               path="/edit-profile"

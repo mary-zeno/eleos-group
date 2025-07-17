@@ -54,6 +54,6 @@
     @apply border-border font-light;
   }
   body {
-    @apply bg-background text-foreground font-light;
+    @apply bg-gray-100 text-foreground font-light;
   }
 }
