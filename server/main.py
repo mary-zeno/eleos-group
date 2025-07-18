@@ -1,9 +1,10 @@
-from fastapi import FastAPI, Request
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import requests
 import os
 from dotenv import load_dotenv
+import re
 
 load_dotenv()
 
@@ -27,59 +28,33 @@ class EstimateRequest(BaseModel):
 @app.post("/api/estimate")
 def get_estimate(data: EstimateRequest):
     prompt = f"""
-You are a travel cost estimator. Estimate the total travel cost in USD for:
-- Location: {data.location}
-- Accommodation type: {data.accommodation}
-- Number of people: {data.people}
-- Time of year: {data.season}
-Provide a low and high range in USD.
-"""
+    You are a travel cost estimator for Ethiopia. Provide an estimated range of total travel cost in USD based on the following inputs:
+
+    - City/Region: {data.location}
+    - Type of accommodation: {data.accommodation}
+    - Number of travelers: {data.people}
+    - Travel month: {data.season}
+
+   Return the result in the following format:
+
+    Low Estimate Range: $XXXX - $YYYY
+    High Estimate Range: $AAAA - $BBBB  
+    Cost Breakdown: Cost breakdown for both ranges.
+    """
 
     api_key = os.getenv("OPENROUTER_API_KEY")
-    print("Loaded API Key:", api_key)
-
-    # 🧪 DEBUG: Print available models
-    model_list_response = requests.get(
-        "https://openrouter.ai/api/v1/models",
-        headers={"Authorization": f"Bearer {api_key}"}
-    )
-    # 🧪 DEBUG: Print only the first 5 available models
-    try:
-        models = model_list_response.json()
-        free_models = []
-
-        for model in models.get("data", []):
-            pricing = model.get("pricing", {})
-
-            try:
-                input_cost = float(pricing.get("prompt", "1"))
-                output_cost = float(pricing.get("completion", "1"))
-            except ValueError:
-                continue  # skip if pricing is malformed
-
-            if input_cost == 0.0 and output_cost == 0.0:
-                free_models.append(model)
-
-        print("🆓 Free Models Available:")
-        for m in free_models[:5]:  # Limit to first 5 for readability
-            print(f"- {m.get('id')} ({m.get('name')})")
-
-        if not free_models:
-            print("⚠️  No free models available. You may need to add credits.")
-
-    except Exception as e:
-        print("❌ Failed to load or parse model list:", str(e))
-
-
+    if not api_key:
+        return {"error": "Missing OpenRouter API key."}
 
     headers = {
         "Authorization": f"Bearer {api_key}",
-        "HTTP-Referer": "http://localhost:3000",  # or your frontend URL
+        "HTTP-Referer": "http://localhost:3000",  # or your actual frontend URL
         "Content-Type": "application/json"
     }
 
+    # 🔁 Reliable, fast, low-cost model
     payload = {
-        "model": "baidu/ernie-4.5-300b-a47b",
+        "model": "mistralai/mistral-7b-instruct",
         "messages": [{"role": "user", "content": prompt}]
     }
 
@@ -93,5 +68,22 @@ Provide a low and high range in USD.
     if "choices" not in result:
         return {"error": "No 'choices' key in OpenRouter response", "full_response": result}
 
-    return {"estimate": result["choices"][0]["message"]["content"]}
+    content = result["choices"][0]["message"]["content"]
 
+    # Regex to extract ranges
+    low_match = re.search(r"Low Estimate Range:?\s*\$?(\d+(?:,\d+)?)\s*-\s*\$?(\d+(?:,\d+)?)", content, re.IGNORECASE)
+    high_match = re.search(r"High Estimate Range:?\s*\$?(\d+(?:,\d+)?)\s*-\s*\$?(\d+(?:,\d+)?)", content, re.IGNORECASE)
+
+    if low_match and high_match:
+        return {
+            "low_estimate_start": int(low_match.group(1).replace(",", "")),
+            "low_estimate_end": int(low_match.group(2).replace(",", "")),
+            "high_estimate_start": int(high_match.group(1).replace(",", "")),
+            "high_estimate_end": int(high_match.group(2).replace(",", "")),
+            "notes": content
+        }
+    else:
+        return {
+            "error": "Could not parse estimate ranges from model output",
+            "raw": content
+        }

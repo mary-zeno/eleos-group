@@ -13,6 +13,7 @@ import { Calculator, Plane, MapPin, AlertTriangle } from 'lucide-react';
 export default function TravelForm({ user }) {
   const [formData, setFormData] = useState({
     purpose: '',
+    city: '',
     dates: '',
     num_travelers: '',
     airport_pickup: false,
@@ -28,6 +29,8 @@ export default function TravelForm({ user }) {
   const [loading, setLoading] = useState(false);
   const [estimate, setEstimate] = useState('');
   const [loadingEstimate, setLoadingEstimate] = useState(false);
+  const [detailsVisible, setDetailsVisible] = useState(false);
+
 
   const handleChange = (name, value) => {
     setFormData({ ...formData, [name]: value });
@@ -59,6 +62,7 @@ export default function TravelForm({ user }) {
       // Reset form
       setFormData({
         purpose: '',
+        city: '',
         dates: '',
         num_travelers: '',
         airport_pickup: false,
@@ -74,45 +78,50 @@ export default function TravelForm({ user }) {
     setLoading(false);
   };
 
-  const fetchEstimate = async () => {
-    if (!formData.accommodation || !formData.num_travelers || !formData.dates) {
-      setEstimate("Please fill in accommodation, number of travelers, and dates to get an estimate.");
-      return;
-    }
+ const fetchEstimate = async () => {
+  if (!formData.accommodation || !formData.num_travelers || !formData.dates) {
+    setEstimate({ error: "Please fill in accommodation, number of travelers, and dates to get an estimate." });
+    return;
+  }
 
-    const season = formData.dates.toLowerCase().includes("july") || 
-                   formData.dates.toLowerCase().includes("august") ? "summer" : "other";
+  const season = formData.dates.toLowerCase(); // pass full month or string
 
-    setLoadingEstimate(true);
-    setEstimate('');
+  setLoadingEstimate(true);
+  setEstimate(null);
 
-    try {
-      const res = await fetch("http://localhost:8000/api/estimate", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          location: "Ethiopia",
-          accommodation: formData.accommodation,
-          people: formData.num_travelers,
-          season: season
-        })
+  try {
+    const res = await fetch("http://127.0.0.1:8000/api/estimate", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        location: formData.location || "Ethiopia", // Add location field to formData if not there
+        accommodation: formData.accommodation,
+        people: Number(formData.num_travelers),
+        season: season
+      }),
+    });
+
+    const data = await res.json();
+
+    if (data.low_estimate_start && data.low_estimate_end && data.high_estimate_start && data.high_estimate_end) {
+      setEstimate({
+        lowStart: data.low_estimate_start,
+        lowEnd: data.low_estimate_end,
+        highStart: data.high_estimate_start,
+        highEnd: data.high_estimate_end,
+        notes: data.notes || "",
       });
-
-      const data = await res.json();
-      if (data.estimate) {
-        setEstimate(data.estimate);
-      } else {
-        setEstimate("Failed to fetch estimate.");
-      }
-    } catch (err) {
-      setEstimate("Error contacting the travel estimator. Please ensure the travel estimation service is running on localhost:8000.");
-      console.error("Estimate fetch error:", err);
+    } else {
+      setEstimate({ error: "Could not parse estimate." });
     }
+  } catch (err) {
+    setEstimate({ error: "Error contacting the travel estimator." });
+    console.error("Estimate fetch error:", err);
+  }
 
-    setLoadingEstimate(false);
-  };
+  setLoadingEstimate(false);
+};
+
 
   return (  
     <div className="min-h-screen bg-gray-100 p-4 sm:p-6 lg:p-8 space-y-6">
@@ -145,6 +154,16 @@ export default function TravelForm({ user }) {
                         <SelectItem value="Work">Work</SelectItem>
                       </SelectContent>
                     </Select>
+                  </div>
+                  {/* City */}
+                  <div className="space-y-2">
+                    <Label>Specific City or Region in Ethiopia</Label>
+                    <Input
+                      value={formData.city}
+                      onChange={(e) => handleChange('city', e.target.value)}
+                      placeholder="e.g. Addis Ababa, Lalibela"
+                      required
+                    />
                   </div>
 
                   {/* Dates */}
@@ -293,7 +312,7 @@ export default function TravelForm({ user }) {
                 <Alert className="border-amber-200 bg-amber-50">
                   <AlertTriangle className="h-4 w-4 text-amber-600" />
                   <AlertDescription className="text-amber-800 text-xs">
-                    Requires travel estimation service running on localhost:8000
+                    Requires travel estimation service running on 127.0.0.1.8000
                   </AlertDescription>
                 </Alert>
                 
@@ -307,14 +326,38 @@ export default function TravelForm({ user }) {
                   {loadingEstimate ? 'Getting Estimate...' : 'Get Travel Estimate'}
                 </Button>
 
-                {estimate && (
+                {estimate && !estimate.error && (
                   <div className="mt-4 p-4 bg-blue-50 rounded-lg">
                     <h4 className="font-medium mb-2">Travel Cost Estimate</h4>
-                    <div className="text-sm text-gray-700 whitespace-pre-wrap">
-                      {estimate}
-                    </div>
+                    <p className="text-sm text-gray-700">
+                      <strong>Low Estimate Range:</strong> ${estimate.lowStart} - ${estimate.lowEnd} <br />
+                      <strong>High Estimate Range:</strong> ${estimate.highStart} - ${estimate.highEnd}
+                    </p>
+
+                    {estimate.notes && (
+                      <>
+                        <button
+                          className="text-blue-600 mt-2 text-sm underline"
+                          onClick={() => setDetailsVisible(!detailsVisible)}
+                        >
+                          {detailsVisible ? "Hide Breakdown" : "Show Cost Breakdown"}
+                        </button>
+                        {detailsVisible && (
+                          <div className="mt-2 text-xs text-gray-600 whitespace-pre-wrap">
+                            {estimate.notes}
+                          </div>
+                        )}
+                      </>
+                    )}
                   </div>
                 )}
+
+                {estimate && estimate.error && (
+                  <div className="mt-4 p-4 bg-red-50 text-red-700 rounded-lg">
+                    {estimate.error}
+                  </div>
+                )}
+
 
                 {!formData.accommodation || !formData.num_travelers || !formData.dates ? (
                   <Alert>
