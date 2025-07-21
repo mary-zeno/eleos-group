@@ -10,7 +10,7 @@ import {
   DropdownMenuTrigger,
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
-import { Menu, User, LogOut } from "lucide-react";
+import { Menu, User, LogOut, Settings as SettingsIcon } from "lucide-react"; // ✅ Add Settings icon
 import logo from "@/assets/images/Logo.svg";
 
 export default function Navigation({ user }) {
@@ -23,7 +23,6 @@ export default function Navigation({ user }) {
     navigate("/");
   };
 
-  // Only show nav items when logged in
   const navItems = user
     ? [
         { href: "/dashboard", label: "Dashboard" },
@@ -49,8 +48,7 @@ export default function Navigation({ user }) {
             </Button>
           </div>
 
-
-          {/* Desktop Navigation - Only show if logged in */}
+          {/* Desktop Navigation */}
           {user && (
             <nav className="hidden md:flex items-center space-x-8">
               {navItems.map((item) => (
@@ -69,10 +67,10 @@ export default function Navigation({ user }) {
             </nav>
           )}
 
-          {/* Right side - Auth/User section */}
+          {/* Right side */}
           <div className="flex items-center gap-4">
             {user ? (
-              /* Logged in - Desktop User Dropdown */
+              /* Desktop User Dropdown */
               <div className="hidden md:block">
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
@@ -86,6 +84,11 @@ export default function Navigation({ user }) {
                       <User className="mr-2 h-4 w-4" />
                       Edit Profile
                     </DropdownMenuItem>
+                    {/* ✅ Add Settings item */}
+                    <DropdownMenuItem onClick={() => navigate("/settings")}>
+                      <SettingsIcon className="mr-2 h-4 w-4" />
+                      Settings
+                    </DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem
                       onClick={handleLogout}
@@ -98,7 +101,6 @@ export default function Navigation({ user }) {
                 </DropdownMenu>
               </div>
             ) : (
-              /* Not logged in - Show login buttons */
               <div className="hidden md:flex space-x-4">
                 <Button variant="ghost" onClick={() => navigate("/auth")}>
                   Log In
@@ -116,7 +118,6 @@ export default function Navigation({ user }) {
                 </SheetTrigger>
                 <SheetContent side="right" className="w-80 p-0">
                   <div className="flex flex-col h-full">
-                    {/* Mobile Header */}
                     <div className="p-6 border-b">
                       <h2 className="text-lg font-semibold">ELOS Services</h2>
                       {user && (
@@ -125,9 +126,7 @@ export default function Navigation({ user }) {
                     </div>
 
                     {user ? (
-                      /* Logged in mobile menu */
                       <>
-                        {/* Mobile Navigation */}
                         <nav className="flex-1 p-4">
                           <div className="space-y-2">
                             {navItems.map((item) => (
@@ -147,7 +146,6 @@ export default function Navigation({ user }) {
                           </div>
                         </nav>
 
-                        {/* Mobile Footer */}
                         <div className="p-4 border-t space-y-2">
                           <Button
                             variant="outline"
@@ -160,6 +158,18 @@ export default function Navigation({ user }) {
                             <User className="mr-2 h-4 w-4" />
                             Edit Profile
                           </Button>
+                          {/* ✅ Add Settings to mobile footer */}
+                          <Button
+                            variant="outline"
+                            className="w-full justify-start"
+                            onClick={() => {
+                              navigate("/settings");
+                              setIsOpen(false);
+                            }}
+                          >
+                            <SettingsIcon className="mr-2 h-4 w-4" />
+                            Settings
+                          </Button>
                           <Button
                             variant="outline"
                             className="w-full justify-start text-red-600 hover:text-red-700"
@@ -171,7 +181,6 @@ export default function Navigation({ user }) {
                         </div>
                       </>
                     ) : (
-                      /* Not logged in mobile menu */
                       <div className="flex-1 p-4 flex flex-col justify-center space-y-4">
                         <Button
                           onClick={() => {

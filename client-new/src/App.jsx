@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { supabase } from "./supabaseClient";
 import Auth from "./pages/Auth";
@@ -10,6 +10,7 @@ import EditProfile from "./pages/EditProfile";
 import TravelForm from "./pages/TravelForm";
 import BusinessForm from "./pages/BusinessForm";
 import AdminPayment from './pages/AdminPayment';
+import SettingsPage from './pages/SettingsPage'; // ✅ Add this import
 
 function App() {
   const [user, setUser] = useState(null);
@@ -57,7 +58,6 @@ function App() {
         />
         <Route path="/auth" element={<Auth />} />
         
-        {/* Protected routes with layout */}
         {user && (
           <>
             <Route
@@ -100,15 +100,21 @@ function App() {
               path="/edit-profile"
               element={<EditProfile user={user} />}
             />
+            <Route
+              path="/settings" // ✅ New Settings route
+              element={
+                <Layout user={user}>
+                  <SettingsPage user={user} />
+                </Layout>
+              }
+            />
           </>
         )}
 
-        {/* Redirect authenticated users from auth page */}
         {user && (
           <Route path="/auth" element={<Navigate to="/dashboard" replace />} />
         )}
 
-        {/* Redirect unauthenticated users */}
         {!user && (
           <>
             <Route path="/dashboard" element={<Navigate to="/auth" replace />} />
