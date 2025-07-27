@@ -51,6 +51,7 @@ export default function Dashboard({ user }) {
 
   //for payment 
   const [invoiceUrl, setInvoiceUrl] = useState(null);
+  const [currentInvoiceRequest, setCurrentInvoiceRequest] = useState(null);
 
   useEffect(() => {
     const fetchUserAndData = async () => {
@@ -145,26 +146,33 @@ export default function Dashboard({ user }) {
       userName: userIdToName[req.user_id] || 'Unknown',
     }));
 
-    // Fetch invoices for admin
-    if (role === 'admin') {
-      const { data: invoicesData, error: invoicesError } = await supabase
-        .from('invoices')
-        .select('user_id, service_type, invoice_url');
+    // Fetch invoices for both admin and user views
+    const { data: invoicesData, error: invoicesError } = await supabase
+      .from('invoices')
+      .select('user_id, service_type, invoice_url, amount_owed, paypal_link');
 
-      if (!invoicesError && invoicesData?.length) {
-        const invoiceMap = {};
-        invoicesData.forEach((inv) => {
-          const key = `${inv.user_id}-${inv.service_type}`;
-          invoiceMap[key] = inv.invoice_url;
-        });
-        allRequests = allRequests.map((req) => {
-          const key = `${req.user_id}-${req.service}`;
-          return {
-            ...req,
-            invoiceUrl: invoiceMap[key] || null,
-          };
-        });
-      }
+    if (!invoicesError && invoicesData?.length) {
+      const invoiceMap = {};
+      invoicesData.forEach((inv) => {
+        const key = `${inv.user_id}-${inv.service_type}`;
+        invoiceMap[key] = {
+          url: inv.invoice_url,
+          amount: inv.amount_owed,
+          paypal: inv.paypal_link,
+
+        };
+      });
+      allRequests = allRequests.map((req) => {
+        const key = `${req.user_id}-${req.service}`;
+        const invoiceData = invoiceMap[key];
+        return {
+          ...req,
+          invoiceUrl: invoiceData?.url || null,
+          invoiceAmount: invoiceData?.amount || null,
+          paypalLink: invoiceData?.paypal || null,
+
+        };
+      });
     }
 
     allRequests.sort((a, b) => new Date(b.inserted_at) - new Date(a.inserted_at));
@@ -312,7 +320,7 @@ export default function Dashboard({ user }) {
                     <TableHead>User</TableHead>
                     <TableHead>Date</TableHead>
                     <TableHead>Status</TableHead>
-                    {role === 'admin' && <TableHead>Payments</TableHead>}
+                    <TableHead>Payments</TableHead>
                     <TableHead>Details</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -364,18 +372,21 @@ export default function Dashboard({ user }) {
                               </Badge>
                             )}
                           </TableCell>
-                          {role === 'admin' && (
-                            <TableCell className="py-2 px-4">
-                              {req.invoiceUrl ? (
-                                <Button
-                                  variant="outline"
-                                  className="text-xs"
-                                  onClick={() => setInvoiceUrl(req.invoiceUrl)}
-                                >
-                                  View Invoice
-                                </Button>
-                              ) : (
-                                isEditing && (
+                          <TableCell className="py-2 px-4">
+                            {req.invoiceUrl ? (
+                              <Button
+                                variant="outline"
+                                className="text-xs"
+                                onClick={() => {
+                                  setInvoiceUrl(req.invoiceUrl);
+                                  setCurrentInvoiceRequest(req);
+                                }}
+                              >
+                                View Invoice
+                              </Button>
+                            ) : (
+                              <>
+                                {role === 'admin' && isEditing && (
                                   <Button
                                     variant="outline"
                                     className="text-xs"
@@ -383,10 +394,13 @@ export default function Dashboard({ user }) {
                                   >
                                     Create Invoice
                                   </Button>
-                                )
-                              )}
-                            </TableCell>
-                          )}
+                                )}
+                                {role === 'user' && (
+                                  <span className="text-xs text-gray-500">No invoice available</span>
+                                )}
+                              </>
+                            )}
+                          </TableCell>
                           <TableCell>
                             <Button
                               variant="ghost"
@@ -430,12 +444,30 @@ export default function Dashboard({ user }) {
             {invoiceUrl && (
               <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
                 <div className="bg-white p-4 rounded-lg max-w-3xl w-full relative">
+                  {role === 'user' && currentInvoiceRequest && (
+                    <Button
+                      className="bg-blue-600 hover:bg-blue-700 text-white"
+                      onClick={() => {
+                        const link = currentInvoiceRequest.paypalLink;
+                        if (link) window.open(link, '_blank');
+                      }}
+                    >
+                      Make Payment
+                    </Button>
+                  )}
+
                   <button
                     className="absolute top-2 right-2 text-white bg-red-600 px-2 py-1 rounded"
-                    onClick={() => setInvoiceUrl(null)}
+                    onClick={() => {
+                      setInvoiceUrl(null);
+                      setCurrentInvoiceRequest(null);
+                    }}
                   >
                     Close
                   </button>
+                  <div className="mb-4 flex justify-between items-center">
+                    <h3 className="text-lg font-semibold">Invoice Details</h3>
+                  </div>
                   <iframe src={invoiceUrl} width="100%" height="600px" title="Invoice PDF" />
                 </div>
               </div>
