@@ -12,6 +12,7 @@ export default function AdminPayment() {
   const [selectedUserId, setSelectedUserId] = useState(passedRequest?.user_id || '');
   const [selectedService, setSelectedService] = useState(passedRequest?.service || '');
   const [billAmount, setBillAmount] = useState('');
+  const [paypalLink, setPaypalLink] = useState('');
   const [status, setStatus] = useState('');
   const [invoiceFile, setInvoiceFile] = useState(null);
 
@@ -73,7 +74,7 @@ export default function AdminPayment() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!selectedUserId || !selectedService || !billAmount) {
-      setStatus('Please fill in all fields.');
+      setStatus('Please fill in all required fields.');
       return;
     }
 
@@ -104,6 +105,7 @@ export default function AdminPayment() {
         service_type: selectedService,
         amount_owed: billAmount,
         invoice_url: invoiceUrl,
+        paypal_link: paypalLink,
       },
     ]);
 
@@ -114,6 +116,7 @@ export default function AdminPayment() {
 
     setStatus('Invoice created successfully!');
     setBillAmount('');
+    setPaypalLink('');
     setSelectedService('');
     setSelectedUserId('');
     setInvoiceFile(null);
@@ -172,6 +175,17 @@ export default function AdminPayment() {
             value={billAmount}
             onChange={(e) => setBillAmount(e.target.value)}
             required
+          />
+        </div>
+
+        {/* PayPal Link */}
+        <div>
+          <label className="block mb-1 text-sm font-medium text-gray-700">PayPal Payment Link</label>
+          <Input
+            type="url"
+            placeholder=""
+            value={paypalLink}
+            onChange={(e) => setPaypalLink(e.target.value)}
           />
         </div>
 
