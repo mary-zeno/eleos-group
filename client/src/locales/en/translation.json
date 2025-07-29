@@ -1,0 +1,404 @@
+{
+    "nav": {
+        "appName": "ELOS Services",
+        "dashboard": "Dashboard",
+        "propertyForm": "Property Form",
+        "travelForm": "Travel Form",
+        "businessForm": "Business Form",
+        "editProfile": "Edit Profile",
+        "settings": "Settings",
+        "logout": "Log Out",
+        "login": "Log In"
+    },
+    "common": {
+        "yes": "Yes",
+        "no": "No",
+        "na": "N/A"
+    },
+    "status": {
+        "submitted": "Submitted",
+        "inReview": "In Review",
+        "pendingInfo": "Pending Info",
+        "inProgress": "In Progress",
+        "awaitingPayment": "Awaiting Payment",
+        "completed": "Completed",
+        "onHold": "On Hold",
+        "cancelled": "Cancelled",
+        "archived": "Archived"
+    },
+    "fallback": {
+        "noName": "No Name",
+        "unknown": "Unknown"
+    },
+    "adminPayment": {
+        "title": "Create Invoice",
+        "selectUser": "Select User",
+        "chooseUser": "-- Choose User --",
+        "selectService": "Select Service Request",
+        "chooseRequest": "-- Choose Request --",
+        "amountOwed": "Amount Owed (USD)",
+        "uploadInvoice": "Upload Invoice (PDF)",
+        "submit": "Submit Invoice",
+        "status": {
+            "uploading": "Uploading...",
+            "success": "Invoice created successfully!",
+            "missing": "Please fill in all fields.",
+            "failUpload": "Failed to upload invoice: ",
+            "failInsert": "Failed to insert invoice: "
+        }
+    },
+    "auth": {
+        "welcome": "Welcome",
+        "description": "Login or create a new account",
+        "namePlaceholder": "Full Name",
+        "emailPlaceholder": "Email",
+        "passwordPlaceholder": "Password",
+        "login": "Log In",
+        "signup": "Sign Up",
+        "status": {
+            "loginSuccess": "Login successful! Redirecting...",
+            "signupSuccess": "Signup successful! Please check your email to verify your account.",
+            "loginError": "Login Error: ",
+            "signupError": "Signup Error: ",
+            "profileError": "Profile creation error: "
+        }
+    },
+    "businessForm": {
+        "title": "Business Setup Form",
+        "typeLabel": "Type of Business",
+        "typePlaceholder": "Select business type",
+        "sectorLabel": "Sector/Industry",
+        "sectorPlaceholder": "e.g. Technology, Manufacturing, Trading",
+        "legalStatusLabel": "Legal Status",
+        "legalStatusPlaceholder": "Select legal status",
+        "investmentLabel": "Estimated Investment (USD/ETB)",
+        "investmentPlaceholder": "e.g. $50,000 or 2,500,000 ETB",
+        "locationLabel": "Preferred Location",
+        "locationPlaceholder": "e.g. Addis Ababa, Bole area",
+        "timelineLabel": "Timeline for Setup",
+        "timelinePlaceholder": "Select timeline",
+        "additionalRequirementsLabel": "Additional Requirements",
+        "officeSetup": "Need Office Setup",
+        "localStaff": "Need Local Staff Recruitment",
+        "supportLabel": "Support Services Needed",
+        "notesLabel": "Additional Notes",
+        "notesPlaceholder": "Any specific requirements, questions, or additional information...",
+        "submit": "Submit Business Setup Request",
+        "submitting": "Submitting...",
+        "status": {
+            "success": "Submitted successfully!",
+            "fail": "Submission failed: ",
+            "auth": "You must be logged in to submit this form."
+        },
+        "options": {
+            "businessType": {
+                "sole": "Sole Proprietorship",
+                "plc": "PLC (Private Limited Company)",
+                "branch": "Branch Office",
+                "partner": "Partnership"
+            },
+            "legalStatus": {
+                "new": "New Business",
+                "expand": "Expanding Existing Business"
+            },
+            "timeline": {
+                "short": "1–3 months",
+                "medium": "3–6 months"
+            },
+            "support": {
+                "legal": "Legal registration",
+                "tax": "Tax ID",
+                "license": "Licensing",
+                "recruit": "Recruitment"
+            }
+        },
+        "sidebar": {
+            "typesTitle": "Business Types in Ethiopia",
+            "sole": {
+                "title": "Sole Proprietorship",
+                "desc": "Simplest form, single owner, unlimited liability"
+            },
+            "plc": {
+                "title": "PLC",
+                "desc": "Private Limited Company, limited liability, min 2 shareholders"
+            },
+            "branch": {
+                "title": "Branch Office",
+                "desc": "Extension of foreign company, same legal entity"
+            },
+            "partner": {
+                "title": "Partnership",
+                "desc": "2+ partners, shared ownership and liability"
+            },
+            "investmentTitle": "Investment Requirements",
+            "invest": {
+                "manufacturing": "Manufacturing: Min $200,000",
+                "service": "Service: Min $150,000",
+                "trading": "Trading: Min $50,000",
+                "joint": "Joint ventures: Lower minimums may apply",
+                "note": "*Requirements may vary based on sector and current regulations"
+            },
+            "timelineTitle": "Typical Setup Timeline",
+            "timeline": {
+                "name": "Name reservation: 1–2 weeks",
+                "legal": "Legal registration: 2–4 weeks",
+                "license": "Licensing: 2–6 weeks",
+                "tax": "Tax registration: 1–2 weeks",
+                "bank": "Bank account: 1–2 weeks"
+            }
+        }
+    },
+    "dashboard": {
+        "title": "Welcome to your Dashboard",
+        "loggedInAs": "Logged in as:",
+        "role": "Role:",
+        "editMode": "Edit Mode",
+        "saveChanges": "💾 Save Changes",
+        "cancel": "❌ Cancel",
+        "editActive": "Edit mode is active. You can update statuses and mark requests for deletion.",
+        "loading": "Loading requests...",
+        "noRequests": "No requests submitted yet.",
+        "submitFirst": "Submit Your First Request",
+        "requestsTitle": "Service Requests",
+        "delete": "Delete",
+        "service": "Service",
+        "user": "User",
+        "date": "Date",
+        "status": "Status",
+        "payments": "Payments",
+        "details": "Details",
+        "viewInvoice": "View Invoice",
+        "createInvoice": "Create Invoice",
+        "requestDetails": "Request Details:",
+        "close": "Close",
+        "tables": {
+            "travel": "Travel",
+            "business": "Business",
+            "property": "Property"
+        }
+    },
+    "editProfile": {
+        "back": "Back to Dashboard",
+        "title": "Edit Profile",
+        "emailLabel": "Email Address",
+        "emailPlaceholder": "Enter your email",
+        "emailNote": "Changing your email will require verification",
+        "nameLabel": "Display Name",
+        "namePlaceholder": "Enter your full name",
+        "passwordLabel": "New Password",
+        "passwordPlaceholder": "Leave blank to keep current password",
+        "passwordNote": "Only enter a password if you want to change it",
+        "save": "💾 Save Changes",
+        "saving": "Saving...",
+        "cancel": "❌ Cancel",
+        "userId": "User ID",
+        "created": "Account Created",
+        "emailVerified": "Email Verified",
+        "currentInfo": "Current Information",
+        "status": {
+            "userNotFound": "User not found. Please log in again.",
+            "authUpdateError": "Error updating auth: ",
+            "profileUpdateError": "Error updating profile: ",
+            "profileUpdateSuccess": "Profile updated successfully!",
+            "unexpectedError": "Unexpected error: "
+        }
+    },
+    "home": {
+        "hero": {
+            "title1": "Strategic Insights,",
+            "title2": "Customized",
+            "title3": "Solutions",
+            "description": "Easily adapt to changes and scale your operations with our flexible infrastructure, designed to support your business growth.",
+            "cta": {
+                "auth": "Get Started",
+                "user": "Go to Dashboard"
+            }
+        },
+        "services": {
+            "title": "Our Services",
+            "desc": {
+                "auth": "Comprehensive support for all your Ethiopian connection needs",
+                "user": "Access all your services from your dashboard or get started with a new request below"
+            },
+            "travel": {
+                "title": "Travel Services",
+                "desc": "Comprehensive travel planning and relocation support for Ethiopia visits."
+            },
+            "business": {
+                "title": "Business Setup",
+                "desc": "Professional assistance with business registration and legal requirements."
+            },
+            "property": {
+                "title": "Property Services",
+                "desc": "Find, buy, rent, or manage properties in Ethiopia with expert guidance."
+            },
+            "card": {
+                "auth": "Get Started",
+                "user": "Access Form"
+            }
+        },
+        "footer": {
+            "title": "ELOS Services",
+            "tagline": "Connecting Ethiopian diaspora with trusted home country services",
+            "copyright": "© 2024 ELOS Services. All rights reserved."
+        }
+    },
+    "propertyform": {
+        "title": "Property Interest Form",
+        "fields": {
+            "propertyType": "Type of Property",
+            "propertyTypePlaceholder": "Select property type",
+            "purpose": "Purpose",
+            "purposePlaceholder": "Select purpose",
+            "location": "Location Preferences",
+            "locationPlaceholder": "e.g. Addis Ababa, Bole area",
+            "budget": "Budget (USD)",
+            "budgetPlaceholder": "Enter your budget",
+            "financing": "Do you need financing?",
+            "financingDetails": "Bank or Support Request",
+            "financingDetailsPlaceholder": "Describe your financing needs",
+            "timeline": "Timeline",
+            "timelinePlaceholder": "Select timeline",
+            "existingProperty": "Do you have an existing property to manage?",
+            "existingPropertyLocation": "Existing Property Location",
+            "existingPropertyLocationPlaceholder": "Location of existing property",
+            "additionalRequests": "Additional Requests / Comments",
+            "additionalRequestsPlaceholder": "Any additional information or special requests"
+        },
+        "options": {
+            "propertyTypes": {
+                "land": "Land",
+                "house": "House",
+                "apartment": "Apartment",
+                "commercial": "Commercial"
+            },
+            "purposes": {
+                "buy": "Buy",
+                "rent": "Rent",
+                "manage": "Manage Existing"
+            },
+            "timelines": {
+                "immediate": "Immediate",
+                "short": "1–3 months",
+                "long": "6+ months"
+            }
+        },
+        "buttons": {
+            "submit": "Submit Property Interest",
+            "submitting": "Submitting..."
+        },
+        "status": {
+            "success": "Submitted successfully!",
+            "error": "Submission failed",
+            "notLoggedIn": "You must be logged in to submit this form."
+        },
+        "yourProperties": "Your Properties",
+        "noProperties": "No properties found.",
+        "propertyCard": {
+            "price": "Price",
+            "bedrooms": "Bedrooms",
+            "bathrooms": "Bathrooms"
+        }
+    },
+    "settings": {
+        "title": "Your Properties",
+        "add": "Add New Property",
+        "status": {
+            "deleting": "Deleting property...",
+            "deleteFail": "Failed to delete property: ",
+            "error": "Error deleting property: ",
+            "uploadFail": "Failed to upload image:",
+            "saveFail": "Failed to save property:"
+        },
+        "empty": "No properties found. Add one!",
+        "form": {
+            "title": "Add New Property",
+            "labels": {
+                "name": "Name",
+                "address": "Address",
+                "price": "Price (USD)",
+                "bedrooms": "Bedrooms",
+                "bathrooms": "Bathrooms",
+                "image": "Upload Image (optional)"
+            },
+            "buttons": {
+                "cancel": "Cancel",
+                "submit": "Add Property"
+            },
+            "status": {
+                "missing": "Please fill in all required fields.",
+                "uploadFail": "Failed to upload image:",
+                "saveFail": "Failed to save property:"
+            },
+            "details": "Bedrooms: {{bedrooms}} | Bathrooms: {{bathrooms}}",
+            "price": "Price: ${{price}}",
+            "delete": "Delete"
+        }
+    },
+    "travelForm": {
+        "title": "Travel & Relocation Form",
+        "purposeLabel": "Purpose of Travel",
+        "purposePlaceholder": "Select purpose",
+        "purposeOptions": {
+            "visit": "Visit",
+            "move": "Move",
+            "vacation": "Vacation",
+            "work": "Work"
+        },
+        "cityLabel": "Specific City or Region in Ethiopia",
+        "cityPlaceholder": "e.g. Addis Ababa, Lalibela",
+        "datesLabel": "Dates of Travel",
+        "datesPlaceholder": "e.g. July 10 - July 20, 2024",
+        "numTravelersLabel": "Number of Travelers",
+        "numTravelersPlaceholder": "1",
+        "accommodationLabel": "Accommodation Needed",
+        "accommodationPlaceholder": "Select accommodation type",
+        "accommodationOptions": {
+            "hotel": "Hotel",
+            "guesthouse": "Guesthouse",
+            "longTerm": "Long-Term"
+        },
+        "additionalServicesLabel": "Additional Services",
+        "services": {
+            "airportPickup": "Airport Pickup",
+            "carRental": "Car Rental",
+            "documentSupport": "Document Support (Visa, ID, etc.)",
+            "phoneBanking": "Phone & Banking Setup",
+            "cityOrientation": "City Orientation Needed"
+        },
+        "additionalNotesLabel": "Additional Services or Notes",
+        "additionalNotesPlaceholder": "Any special requirements or additional information...",
+        "submitButton": "Submit Travel Request",
+        "submitting": "Submitting...",
+        "status": {
+            "success": "Submitted successfully!",
+            "loginRequired": "You must be logged in to submit this form.",
+            "failurePrefix": "Submission failed: "
+        }
+    },
+    "travelEstimator": {
+        "title": "Travel Cost Estimator",
+        "subtitle": "Get an AI-powered cost estimate for your travel needs.",
+        "warning": "Requires travel estimation service running on 127.0.0.1.8000",
+        "button": "Get Travel Estimate",
+        "loading": "Getting Estimate...",
+        "estimate": {
+            "title": "Travel Cost Estimate",
+            "lowRange": "Low Estimate Range",
+            "highRange": "High Estimate Range",
+            "showBreakdown": "Show Cost Breakdown",
+            "hideBreakdown": "Hide Breakdown",
+            "error": "Could not parse estimate.",
+            "errorFetch": "Error contacting the travel estimator.",
+            "missingFields": "Please fill in accommodation type, number of travelers, and dates to get an estimate."
+        }
+    },
+    "travelInfo": {
+        "title": "Ethiopia Travel Info",
+        "visa": "Visa required for most travelers",
+        "season": "Best time to visit: October to March",
+        "currency": "Local currency: Ethiopian Birr (ETB)",
+        "timezone": "Time zone: EAT (UTC+3)",
+        "airport": "Major airports: ADD (Addis Ababa)"
+    }
+}

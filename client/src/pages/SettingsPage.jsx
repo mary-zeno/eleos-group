@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { supabase } from "../supabaseClient";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -7,6 +8,7 @@ export default function SettingsPage({ user }) {
   const [properties, setProperties] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [status, setStatus] = useState("");
+  const { t } = useTranslation();
 
   const fetchProperties = async () => {
     if (!user) return;
@@ -28,7 +30,7 @@ export default function SettingsPage({ user }) {
 
   const handleDeleteProperty = async (property) => {
     if (!window.confirm(`Are you sure you want to delete "${property.name}"?`)) return;
-    setStatus("Deleting property...");
+    setStatus(t("settings.status.deleting"));
 
     try {
       if (property.image_url) {
@@ -45,13 +47,13 @@ export default function SettingsPage({ user }) {
 
       const { error } = await supabase.from("properties").delete().eq("id", property.id);
       if (error) {
-        setStatus("Failed to delete property: " + error.message);
+        setStatus(t("settings.status.deleteFail") + error.message);
         return;
       }
 
       setProperties((prev) => prev.filter((p) => p.id !== property.id));
     } catch (err) {
-      setStatus("Error deleting property: " + err.message);
+      setStatus(t("settings.status.error") + err.message);
     }
   };
 
@@ -64,11 +66,11 @@ export default function SettingsPage({ user }) {
       <div className="max-w-7xl mx-auto space-y-6">
         <Card>
           <CardHeader>
-            <CardTitle className="text-2xl">Your Properties</CardTitle>
+            <CardTitle className="text-2xl">{t("settings.title")}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="flex items-center justify-between mb-4">
-              <Button onClick={() => setShowForm(true)}>Add New Property</Button>
+              <Button onClick={() => setShowForm(true)}>{t("settings.title")}</Button>
               {status && <span className="text-sm text-gray-600">{status}</span>}
             </div>
 
@@ -86,22 +88,29 @@ export default function SettingsPage({ user }) {
                     <CardContent className="flex flex-col gap-2 flex-grow">
                       <h4 className="text-lg font-semibold">{prop.name}</h4>
                       <p className="text-sm text-gray-600">{prop.address}</p>
-                      <p className="text-sm">Price: ${prop.price}</p>
                       <p className="text-sm">
-                        Bedrooms: {prop.bedrooms} | Bathrooms: {prop.bathrooms}
+                        {t("settings.form.price", {
+                          price: prop.price,
+                        })}
+                      </p>
+                      <p className="text-sm">
+                        {t("settings.form.details", {
+                          bedrooms: prop.bedrooms,
+                          bathrooms: prop.bathrooms,
+                        })}
                       </p>
                       <Button
                         onClick={() => handleDeleteProperty(prop)}
                         className="mt-auto"
                       >
-                        Delete
+                        {t("settings.form.delete")}
                       </Button>
                     </CardContent>
                   </Card>
                 ))}
               </div>
             ) : (
-              <p className="text-gray-600">No properties found. Add one!</p>
+              <p className="text-gray-600">{t("settings.empty")}</p>
             )}
           </CardContent>
         </Card>
@@ -187,9 +196,9 @@ function PropertyForm({ onClose, user, onPropertyAdded, setStatus }) {
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-      <h2 className="text-xl font-bold mb-2">Add New Property</h2>
+      <h2 className="text-xl font-bold mb-2">{t("settings.form.title")}</h2>
 
-      <label className="text-sm font-medium">Name</label>
+      <label className="text-sm font-medium">{t("settings.form.labels.name")}</label>
       <input
         className="border rounded p-2"
         type="text"
@@ -198,7 +207,7 @@ function PropertyForm({ onClose, user, onPropertyAdded, setStatus }) {
         required
       />
 
-      <label className="text-sm font-medium">Address</label>
+      <label className="text-sm font-medium">{t("settings.form.labels.address")}</label>
       <input
         className="border rounded p-2"
         type="text"
@@ -207,7 +216,7 @@ function PropertyForm({ onClose, user, onPropertyAdded, setStatus }) {
         required
       />
 
-      <label className="text-sm font-medium">Price (USD)</label>
+      <label className="text-sm font-medium">{t("settings.form.labels.price")}</label>
       <input
         className="border rounded p-2"
         type="number"
@@ -217,7 +226,7 @@ function PropertyForm({ onClose, user, onPropertyAdded, setStatus }) {
         required
       />
 
-      <label className="text-sm font-medium">Bedrooms</label>
+      <label className="text-sm font-medium">{t("settings.form.labels.bedrooms")}</label>
       <input
         className="border rounded p-2"
         type="number"
@@ -227,7 +236,7 @@ function PropertyForm({ onClose, user, onPropertyAdded, setStatus }) {
         required
       />
 
-      <label className="text-sm font-medium">Bathrooms</label>
+      <label className="text-sm font-medium">{t("settings.form.labels.bathrooms")}</label>
       <input
         className="border rounded p-2"
         type="number"
@@ -237,7 +246,7 @@ function PropertyForm({ onClose, user, onPropertyAdded, setStatus }) {
         required
       />
 
-      <label className="text-sm font-medium">Upload Image (optional)</label>
+      <label className="text-sm font-medium">{t("settings.form.labels.image")}</label>
       <input
         className="border rounded p-2"
         type="file"
@@ -249,7 +258,7 @@ function PropertyForm({ onClose, user, onPropertyAdded, setStatus }) {
         <Button type="button" variant="outline" onClick={onClose}>
           Cancel
         </Button>
-        <Button type="submit">Add Property</Button>
+        <Button type="submit">{t("settings.buttons.submit")}</Button>
       </div>
 
       {localStatus && <p className="text-sm text-gray-600">{localStatus}</p>}

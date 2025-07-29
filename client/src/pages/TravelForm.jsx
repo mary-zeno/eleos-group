@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from "react-i18next";
 import { supabase } from '../supabaseClient';
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -30,6 +31,7 @@ export default function TravelForm({ user }) {
   const [estimate, setEstimate] = useState('');
   const [loadingEstimate, setLoadingEstimate] = useState(false);
   const [detailsVisible, setDetailsVisible] = useState(false);
+  const { t } = useTranslation();
 
 
   const handleChange = (name, value) => {
@@ -42,7 +44,7 @@ export default function TravelForm({ user }) {
     setStatus('');
 
     if (!user) {
-      setStatus('You must be logged in to submit this form.');
+      setStatus(t("travelForm.status.loginRequired"));
       setLoading(false);
       return;
     }
@@ -56,9 +58,9 @@ export default function TravelForm({ user }) {
     const { error } = await supabase.from('travel_forms').insert([insertData]);
 
     if (error) {
-      setStatus('Submission failed: ' + error.message);
+      setStatus(t("travelForm.status.failurePrefix") + error.message);
     } else {
-      setStatus('Submitted successfully!');
+      setStatus(t("travelForm.status.success"));
       // Reset form
       setFormData({
         purpose: '',
@@ -78,113 +80,114 @@ export default function TravelForm({ user }) {
     setLoading(false);
   };
 
- const fetchEstimate = async () => {
-  if (!formData.accommodation || !formData.num_travelers || !formData.dates) {
-    setEstimate({ error: "Please fill in accommodation, number of travelers, and dates to get an estimate." });
-    return;
-  }
-
-  const season = formData.dates.toLowerCase(); // pass full month or string
-
-  setLoadingEstimate(true);
-  setEstimate(null);
-
-  try {
-    const res = await fetch("http://127.0.0.1:8000/api/estimate", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        location: formData.location || "Ethiopia", // Add location field to formData if not there
-        accommodation: formData.accommodation,
-        people: Number(formData.num_travelers),
-        season: season
-      }),
-    });
-
-    const data = await res.json();
-
-    if (data.low_estimate_start && data.low_estimate_end && data.high_estimate_start && data.high_estimate_end) {
-      setEstimate({
-        lowStart: data.low_estimate_start,
-        lowEnd: data.low_estimate_end,
-        highStart: data.high_estimate_start,
-        highEnd: data.high_estimate_end,
-        notes: data.notes || "",
-      });
-    } else {
-      setEstimate({ error: "Could not parse estimate." });
+  const fetchEstimate = async () => {
+    if (!formData.accommodation || !formData.num_travelers || !formData.dates) {
+      setEstimate({ error: t("travelEstimator.estimate.missingFields") });
+      return;
     }
-  } catch (err) {
-    setEstimate({ error: "Error contacting the travel estimator." });
-    console.error("Estimate fetch error:", err);
-  }
 
-  setLoadingEstimate(false);
-};
+    const season = formData.dates.toLowerCase(); // pass full month or string
+
+    setLoadingEstimate(true);
+    setEstimate(null);
+
+    try {
+      const res = await fetch("http://127.0.0.1:8000/api/estimate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          location: formData.location || "Ethiopia", // Add location field to formData if not there
+          accommodation: formData.accommodation,
+          people: Number(formData.num_travelers),
+          season: season
+        }),
+      });
+
+      const data = await res.json();
+
+      if (data.low_estimate_start && data.low_estimate_end && data.high_estimate_start && data.high_estimate_end) {
+        setEstimate({
+          lowStart: data.low_estimate_start,
+          lowEnd: data.low_estimate_end,
+          highStart: data.high_estimate_start,
+          highEnd: data.high_estimate_end,
+          notes: data.notes || "",
+        });
+      } else {
+        setEstimate({ error: t("travelEstimator.estimate.error") });
+      }
+    } catch (err) {
+      setEstimate({ error: t("travelEstimator.estimate.errorFetch") });
+      console.error("Estimate fetch error:", err);
+    }
+
+    setLoadingEstimate(false);
+  };
 
 
-  return (  
+  return (
     <div className="min-h-screen bg-gray-100 p-4 sm:p-6 lg:p-8 space-y-6">
       <div className="max-w-4xl mx-auto">
         <div className="grid lg:grid-cols-3 gap-6">
-          
+
           {/* Main Form */}
           <div className="lg:col-span-2">
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Plane className="h-5 w-5" />
-                  Travel & Relocation Form
+                  {t("travelForm.title")}
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <form onSubmit={handleSubmit} className="space-y-6">
-                  
+
                   {/* Purpose */}
                   <div className="space-y-2">
-                    <Label>Purpose of Travel</Label>
+                    <Label>{t("travelForm.purposeLabel")}</Label>
                     <Select value={formData.purpose} onValueChange={(value) => handleChange('purpose', value)}>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select purpose" />
+                        <SelectValue placeholder={t("travelForm.purposePlaceholder")}/>
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="Visit">Visit</SelectItem>
-                        <SelectItem value="Move">Move</SelectItem>
-                        <SelectItem value="Vacation">Vacation</SelectItem>
-                        <SelectItem value="Work">Work</SelectItem>
+                        <SelectItem value="Visit">{t("travelForm.purposeOptions.visit")}</SelectItem>
+                        <SelectItem value="Move">{t("travelForm.purposeOptions.move")}</SelectItem>
+                        <SelectItem value="Vacation">{t("travelForm.purposeOptions.vacation")}</SelectItem>
+                        <SelectItem value="Work">{t("travelForm.purposeOptions.work")}</SelectItem>
+
                       </SelectContent>
                     </Select>
                   </div>
                   {/* City */}
                   <div className="space-y-2">
-                    <Label>Specific City or Region in Ethiopia</Label>
+                    <Label>{t("travelForm.cityLabel")}</Label>
                     <Input
                       value={formData.city}
                       onChange={(e) => handleChange('city', e.target.value)}
-                      placeholder="e.g. Addis Ababa, Lalibela"
+                      placeholder={t("travelForm.cityPlaceholder")}
                       required
                     />
                   </div>
 
                   {/* Dates */}
                   <div className="space-y-2">
-                    <Label>Dates of Travel</Label>
+                    <Label>{t("travelForm.datesLabel")}</Label>
                     <Input
                       value={formData.dates}
                       onChange={(e) => handleChange('dates', e.target.value)}
-                      placeholder="e.g. July 10 - July 20, 2024"
+                      placeholder={t("travelForm.datesPlaceholder")}
                       required
                     />
                   </div>
 
                   {/* Number of Travelers */}
                   <div className="space-y-2">
-                    <Label>Number of Travelers</Label>
+                    <Label>{t("travelForm.numTravelersLabel")}</Label>
                     <Input
                       type="number"
                       value={formData.num_travelers}
                       onChange={(e) => handleChange('num_travelers', e.target.value)}
-                      placeholder="1"
+                      placeholder={t("travelForm.numTravelersPlaceholder")}
                       required
                       min="1"
                       max="20"
@@ -193,23 +196,23 @@ export default function TravelForm({ user }) {
 
                   {/* Accommodation */}
                   <div className="space-y-2">
-                    <Label>Accommodation Needed</Label>
+                    <Label>{t("travelForm.accommodationLabel")}</Label>
                     <Select value={formData.accommodation} onValueChange={(value) => handleChange('accommodation', value)}>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select accommodation type" />
+                        <SelectValue placeholder={t("travelForm.accommodationPlaceholder")} />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="Hotel">Hotel</SelectItem>
-                        <SelectItem value="Guesthouse">Guesthouse</SelectItem>
-                        <SelectItem value="Long-Term">Long-Term</SelectItem>
+                        <SelectItem value="Hotel">{t("travelForm.accommodationOptions.hotel")}</SelectItem>
+                        <SelectItem value="Guesthouse">{t("travelForm.accommodationOptions.guesthouse")}</SelectItem>
+                        <SelectItem value="Long-Term">{t("travelForm.accommodationOptions.longTerm")}</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
 
                   {/* Services Checkboxes */}
                   <div className="space-y-4">
-                    <Label className="text-base font-medium">Additional Services</Label>
-                    
+                    <Label className="text-base font-medium">{t("travelForm.additionalServicesLabel")}</Label>
+
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div className="flex items-center space-x-2">
                         <Checkbox
@@ -217,7 +220,7 @@ export default function TravelForm({ user }) {
                           checked={formData.airport_pickup}
                           onCheckedChange={(checked) => handleChange('airport_pickup', checked)}
                         />
-                        <Label htmlFor="airport_pickup" className="text-sm">Airport Pickup</Label>
+                        <Label htmlFor="airport_pickup" className="text-sm">{t("travelForm.services.airportPickup")}</Label>
                       </div>
 
                       <div className="flex items-center space-x-2">
@@ -226,7 +229,7 @@ export default function TravelForm({ user }) {
                           checked={formData.car_rental}
                           onCheckedChange={(checked) => handleChange('car_rental', checked)}
                         />
-                        <Label htmlFor="car_rental" className="text-sm">Car Rental</Label>
+                        <Label htmlFor="car_rental" className="text-sm">{t("travelForm.services.carRental")}</Label>
                       </div>
 
                       <div className="flex items-center space-x-2">
@@ -235,7 +238,7 @@ export default function TravelForm({ user }) {
                           checked={formData.document_support}
                           onCheckedChange={(checked) => handleChange('document_support', checked)}
                         />
-                        <Label htmlFor="document_support" className="text-sm">Document Support (Visa, ID, etc.)</Label>
+                        <Label htmlFor="document_support" className="text-sm">{t("travelForm.services.documentSupport")}</Label>
                       </div>
 
                       <div className="flex items-center space-x-2">
@@ -244,7 +247,7 @@ export default function TravelForm({ user }) {
                           checked={formData.phone_banking_setup}
                           onCheckedChange={(checked) => handleChange('phone_banking_setup', checked)}
                         />
-                        <Label htmlFor="phone_banking_setup" className="text-sm">Phone & Banking Setup</Label>
+                        <Label htmlFor="phone_banking_setup" className="text-sm">{t("travelForm.services.phoneBanking")}</Label>
                       </div>
 
                       <div className="flex items-center space-x-2">
@@ -253,37 +256,37 @@ export default function TravelForm({ user }) {
                           checked={formData.city_orientation}
                           onCheckedChange={(checked) => handleChange('city_orientation', checked)}
                         />
-                        <Label htmlFor="city_orientation" className="text-sm">City Orientation Needed</Label>
+                        <Label htmlFor="city_orientation" className="text-sm">{t("travelForm.services.cityOrientation")}</Label>
                       </div>
                     </div>
                   </div>
 
                   {/* Additional Notes */}
                   <div className="space-y-2">
-                    <Label>Additional Services or Notes</Label>
+                    <Label>{t("travelForm.additionalNotesLabel")}</Label>
                     <Textarea
                       value={formData.additional_notes}
                       onChange={(e) => handleChange('additional_notes', e.target.value)}
-                      placeholder="Any special requirements or additional information..."
+                      placeholder={t("travelForm.additionalNotesPlaceholder")}
                       rows={4}
                     />
                   </div>
 
                   {/* Submit Button */}
                   <Button type="submit" disabled={loading} className="w-full">
-                    {loading ? 'Submitting...' : 'Submit Travel Request'}
+                    {loading ? t("travelForm.submitting") : t("travelForm.submitButton")}
                   </Button>
 
                   {/* Status Message */}
                   {status && (
                     <Alert className={
-                      status.includes('successfully') 
-                        ? 'border-green-200 bg-green-50' 
+                      status.includes('successfully')
+                        ? 'border-green-200 bg-green-50'
                         : 'border-red-200 bg-red-50'
                     }>
                       <AlertDescription className={
-                        status.includes('successfully') 
-                          ? 'text-green-800' 
+                        status.includes('successfully')
+                          ? 'text-green-800'
                           : 'text-red-800'
                       }>
                         {status}
@@ -301,37 +304,37 @@ export default function TravelForm({ user }) {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Calculator className="h-5 w-5" />
-                  Travel Cost Estimator
+                  {t("travelEstimator.title")}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <p className="text-sm text-gray-600">
-                  Get an AI-powered cost estimate for your travel needs.
+                {t("travelEstimator.subtitle")}
                 </p>
-                
+
                 <Alert className="border-amber-200 bg-amber-50">
                   <AlertTriangle className="h-4 w-4 text-amber-600" />
                   <AlertDescription className="text-amber-800 text-xs">
-                    Requires travel estimation service running on 127.0.0.1.8000
+                  {t("travelEstimator.warning")}
                   </AlertDescription>
                 </Alert>
-                
-                <Button 
-                  type="button" 
+
+                <Button
+                  type="button"
                   onClick={fetchEstimate}
                   disabled={loadingEstimate || !formData.accommodation || !formData.num_travelers || !formData.dates}
                   variant="outline"
                   className="w-full"
                 >
-                  {loadingEstimate ? 'Getting Estimate...' : 'Get Travel Estimate'}
+                  {loadingEstimate ? t("travelEstimator.loading") : t("travelEstimator.button")}
                 </Button>
 
                 {estimate && !estimate.error && (
                   <div className="mt-4 p-4 bg-blue-50 rounded-lg">
-                    <h4 className="font-medium mb-2">Travel Cost Estimate</h4>
+                    <h4 className="font-medium mb-2">{t("travelEstimator.estimate.title")}</h4>
                     <p className="text-sm text-gray-700">
-                      <strong>Low Estimate Range:</strong> ${estimate.lowStart} - ${estimate.lowEnd} <br />
-                      <strong>High Estimate Range:</strong> ${estimate.highStart} - ${estimate.highEnd}
+                      <strong>{t("travelEstimator.estimate.lowRange")}</strong> ${estimate.lowStart} - ${estimate.lowEnd} <br />
+                      <strong>{t("travelEstimator.estimate.highRange")}</strong> ${estimate.highStart} - ${estimate.highEnd}
                     </p>
 
                     {estimate.notes && (
@@ -340,7 +343,7 @@ export default function TravelForm({ user }) {
                           className="text-blue-600 mt-2 text-sm underline"
                           onClick={() => setDetailsVisible(!detailsVisible)}
                         >
-                          {detailsVisible ? "Hide Breakdown" : "Show Cost Breakdown"}
+                          {detailsVisible ? t("travelEstimator.estimate.hideBreakdown") : t("travelEstimator.estimate.showBreakdown")}
                         </button>
                         {detailsVisible && (
                           <div className="mt-2 text-xs text-gray-600 whitespace-pre-wrap">
@@ -362,7 +365,7 @@ export default function TravelForm({ user }) {
                 {!formData.accommodation || !formData.num_travelers || !formData.dates ? (
                   <Alert>
                     <AlertDescription className="text-sm">
-                      Please fill in accommodation type, number of travelers, and dates to get an estimate.
+                    {t("travelEstimator.estimate.missingFields")}
                     </AlertDescription>
                   </Alert>
                 ) : null}
@@ -374,15 +377,15 @@ export default function TravelForm({ user }) {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <MapPin className="h-5 w-5" />
-                  Ethiopia Travel Info
+                  {t("travelInfo.title")}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-2 text-sm text-gray-600">
-                <p>• Visa required for most travelers</p>
-                <p>• Best time to visit: October to March</p>
-                <p>• Local currency: Ethiopian Birr (ETB)</p>
-                <p>• Time zone: EAT (UTC+3)</p>
-                <p>• Major airports: ADD (Addis Ababa)</p>
+                <p>• {t("travelInfo.visa")}</p>
+                <p>• {t("travelInfo.season")}</p>
+                <p>• {t("travelInfo.currency")}</p>
+                <p>• {t("travelInfo.timezone")}</p>
+                <p>•{t("travelInfo.airport")}</p>
               </CardContent>
             </Card>
           </div>

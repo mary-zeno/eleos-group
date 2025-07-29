@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { supabase } from "../supabaseClient";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -10,13 +11,15 @@ import {
   DropdownMenuTrigger,
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
-import { Menu, User, LogOut, Settings as SettingsIcon } from "lucide-react"; // ✅ Add Settings icon
+import LanguageToggle from './LanguageToggle';
+import { Menu, User, LogOut, Settings as SettingsIcon } from "lucide-react";
 import logo from "@/assets/images/Logo.svg";
 
 export default function Navigation({ user }) {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -25,11 +28,11 @@ export default function Navigation({ user }) {
 
   const navItems = user
     ? [
-        { href: "/dashboard", label: "Dashboard" },
-        { href: "/property-form", label: "Property Form" },
-        { href: "/travel-form", label: "Travel Form" },
-        { href: "/business-form", label: "Business Form" },
-      ]
+      { href: "/dashboard", label: t("nav.dashboard") },
+      { href: "/property-form", label: t("nav.propertyForm") },
+      { href: "/travel-form", label: t("nav.travelForm") },
+      { href: "/business-form", label: t("nav.businessForm") },
+    ]
     : [];
 
   return (
@@ -44,10 +47,9 @@ export default function Navigation({ user }) {
               className="flex items-center gap-3 text-xl font-thin text-charcoal hover:text-charcoal p-0 h-auto"
             >
               <img src={logo} alt="ELOS Services" className="h-8 w-8" />
-              <span>ELOS Services</span>
+              <span>{t("nav.appName")}</span>
             </Button>
           </div>
-
           {/* Desktop Navigation */}
           {user && (
             <nav className="hidden md:flex items-center space-x-8">
@@ -55,20 +57,21 @@ export default function Navigation({ user }) {
                 <Link
                   key={item.href}
                   to={item.href}
-                  className={`flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                    location.pathname === item.href
-                      ? "bg-blue-100 text-blue-700"
-                      : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
-                  }`}
+                  className={`flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-colors ${location.pathname === item.href
+                    ? "bg-blue-100 text-blue-700"
+                    : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+                    }`}
                 >
                   <span>{item.label}</span>
                 </Link>
               ))}
             </nav>
           )}
-
           {/* Right side */}
           <div className="flex items-center gap-4">
+            <div className="hidden md:block">
+              <LanguageToggle />
+            </div>
             {user ? (
               /* Desktop User Dropdown */
               <div className="hidden md:block">
@@ -82,12 +85,12 @@ export default function Navigation({ user }) {
                   <DropdownMenuContent align="end" className="w-56">
                     <DropdownMenuItem onClick={() => navigate("/edit-profile")}>
                       <User className="mr-2 h-4 w-4" />
-                      Edit Profile
+                      {t("nav.editProfile")}
                     </DropdownMenuItem>
-                    {/* ✅ Add Settings item */}
+                    {/* Add Settings item */}
                     <DropdownMenuItem onClick={() => navigate("/settings")}>
                       <SettingsIcon className="mr-2 h-4 w-4" />
-                      Settings
+                      {t("nav.settings")}
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem
@@ -95,7 +98,7 @@ export default function Navigation({ user }) {
                       className="text-red-600"
                     >
                       <LogOut className="mr-2 h-4 w-4" />
-                      Log Out
+                      {t("nav.logout")}
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
@@ -103,7 +106,7 @@ export default function Navigation({ user }) {
             ) : (
               <div className="hidden md:flex space-x-4">
                 <Button variant="ghost" onClick={() => navigate("/auth")}>
-                  Log In
+                  {t("nav.login")}
                 </Button>
               </div>
             )}
@@ -119,7 +122,7 @@ export default function Navigation({ user }) {
                 <SheetContent side="right" className="w-80 p-0">
                   <div className="flex flex-col h-full">
                     <div className="p-6 border-b">
-                      <h2 className="text-lg font-semibold">ELOS Services</h2>
+                      <h2 className="text-lg font-semibold">{t("nav.appName")}</h2>
                       {user && (
                         <p className="text-sm text-gray-600">{user?.email}</p>
                       )}
@@ -134,11 +137,10 @@ export default function Navigation({ user }) {
                                 key={item.href}
                                 to={item.href}
                                 onClick={() => setIsOpen(false)}
-                                className={`flex items-center gap-3 px-3 py-3 rounded-lg transition-colors ${
-                                  location.pathname === item.href
-                                    ? "bg-blue-100 text-blue-700"
-                                    : "hover:bg-gray-100"
-                                }`}
+                                className={`flex items-center gap-3 px-3 py-3 rounded-lg transition-colors ${location.pathname === item.href
+                                  ? "bg-blue-100 text-blue-700"
+                                  : "hover:bg-gray-100"
+                                  }`}
                               >
                                 <span>{item.label}</span>
                               </Link>
@@ -156,9 +158,8 @@ export default function Navigation({ user }) {
                             }}
                           >
                             <User className="mr-2 h-4 w-4" />
-                            Edit Profile
+                            {t("nav.editProfile")}
                           </Button>
-                          {/* ✅ Add Settings to mobile footer */}
                           <Button
                             variant="outline"
                             className="w-full justify-start"
@@ -168,7 +169,7 @@ export default function Navigation({ user }) {
                             }}
                           >
                             <SettingsIcon className="mr-2 h-4 w-4" />
-                            Settings
+                            {t("nav.settings")}
                           </Button>
                           <Button
                             variant="outline"
@@ -176,7 +177,7 @@ export default function Navigation({ user }) {
                             onClick={handleLogout}
                           >
                             <LogOut className="mr-2 h-4 w-4" />
-                            Log Out
+                            {t("nav.logout")}
                           </Button>
                         </div>
                       </>
@@ -189,7 +190,7 @@ export default function Navigation({ user }) {
                           }}
                           className="w-full"
                         >
-                          Log In
+                          {t("nav.login")}
                         </Button>
                       </div>
                     )}

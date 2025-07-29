@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { supabase } from '../supabaseClient';
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -26,12 +27,14 @@ export default function BusinessSetupForm({ user }) {
 
   const [status, setStatus] = useState('');
   const [loading, setLoading] = useState(false);
+  const { t } = useTranslation();
+
 
   const supportOptions = [
-    'Legal registration',
-    'Tax ID',
-    'Licensing',
-    'Recruitment'
+    'businessForm.options.support.legal',
+    'businessForm.options.support.tax',
+    'businessForm.options.support.license',
+    'businessForm.options.support.recruit'
   ];
 
   const handleChange = (name, value) => {
@@ -51,7 +54,7 @@ export default function BusinessSetupForm({ user }) {
     setStatus('');
 
     if (!user) {
-      setStatus('You must be logged in to submit this form.');
+      setStatus(t('businessForm.status.auth'));
       setLoading(false);
       return;
     }
@@ -66,9 +69,9 @@ export default function BusinessSetupForm({ user }) {
     const { error } = await supabase.from('business_setup_forms').insert([insertData]);
 
     if (error) {
-      setStatus('Submission failed: ' + error.message);
+      setStatus(t('businessForm.status.fail') + error.message);
     } else {
-      setStatus('Submitted successfully!');
+      setStatus(t('businessForm.status.success'));
       // Reset form
       setFormData({
         business_type: '',
@@ -90,56 +93,56 @@ export default function BusinessSetupForm({ user }) {
     <div className="min-h-screen bg-gray-100 p-4 sm:p-6 lg:p-8 space-y-6">
       <div className="max-w-4xl mx-auto">
         <div className="grid lg:grid-cols-3 gap-6">
-          
+
           {/* Main Form */}
           <div className="lg:col-span-2">
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Building2 className="h-5 w-5" />
-                  Business Setup Form
+                  {t('businessForm.title')}
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <form onSubmit={handleSubmit} className="space-y-6">
-                  
+
                   {/* Business Type */}
                   <div className="space-y-2">
-                    <Label>Type of Business</Label>
+                    <Label>{t('businessForm.typeLabel')}</Label>
                     <Select value={formData.business_type} onValueChange={(value) => handleChange('business_type', value)}>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select business type" />
+                        <SelectValue placeholder={t('businessForm.typePlaceholder')} />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="Sole Proprietorship">Sole Proprietorship</SelectItem>
-                        <SelectItem value="PLC">PLC (Private Limited Company)</SelectItem>
-                        <SelectItem value="Branch">Branch Office</SelectItem>
-                        <SelectItem value="Partnership">Partnership</SelectItem>
+                        <SelectItem value="Sole Proprietorship">{t('businessForm.options.businessType.sole')}</SelectItem>
+                        <SelectItem value="PLC">{t('businessForm.options.businessType.plc')}</SelectItem>
+                        <SelectItem value="Branch">{t('businessForm.options.businessType.branch')}</SelectItem>
+                        <SelectItem value="Partnership">{t('businessForm.options.businessType.partner')}</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
 
                   {/* Sector */}
                   <div className="space-y-2">
-                    <Label>Sector/Industry</Label>
+                    <Label>{t('businessForm.sectorLabel')}</Label>
                     <Input
                       value={formData.sector}
                       onChange={(e) => handleChange('sector', e.target.value)}
-                      placeholder="e.g. Technology, Manufacturing, Trading"
+                      placeholder={t('businessForm.sectorPlaceholder')}
                       required
                     />
                   </div>
 
                   {/* Legal Status */}
                   <div className="space-y-2">
-                    <Label>Legal Status</Label>
+                    <Label>{t('businessForm.legalStatusLabel')}</Label>
                     <Select value={formData.legal_status} onValueChange={(value) => handleChange('legal_status', value)}>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select legal status" />
+                        <SelectValue placeholder={t('businessForm.legalStatusPlaceholder')} />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="New">New Business</SelectItem>
-                        <SelectItem value="Expanding existing">Expanding Existing Business</SelectItem>
+                        <SelectItem value="New">{t('businessForm.options.legalStatus.new')}</SelectItem>
+                        <SelectItem value="Expanding existing">{t('businessForm.options.legalStatus.expand')}</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -148,12 +151,12 @@ export default function BusinessSetupForm({ user }) {
                   <div className="space-y-2">
                     <Label className="flex items-center gap-2">
                       <DollarSign className="h-4 w-4" />
-                      Estimated Investment (USD/ETB)
+                      {t('businessForm.investmentLabel')}
                     </Label>
                     <Input
                       value={formData.investment}
                       onChange={(e) => handleChange('investment', e.target.value)}
-                      placeholder="e.g. $50,000 or 2,500,000 ETB"
+                      placeholder={t('businessForm.investmentPlaceholder')}
                       required
                     />
                   </div>
@@ -162,34 +165,34 @@ export default function BusinessSetupForm({ user }) {
                   <div className="space-y-2">
                     <Label className="flex items-center gap-2">
                       <MapPin className="h-4 w-4" />
-                      Preferred Location
+                      {t('businessForm.locationLabel')}
                     </Label>
                     <Input
                       value={formData.location}
                       onChange={(e) => handleChange('location', e.target.value)}
-                      placeholder="e.g. Addis Ababa, Bole area"
+                      placeholder={t('businessForm.locationPlaceholder')}
                       required
                     />
                   </div>
 
                   {/* Timeline */}
                   <div className="space-y-2">
-                    <Label>Timeline for Setup</Label>
+                    <Label>{t('businessForm.timelineLabel')}</Label>
                     <Select value={formData.timeline} onValueChange={(value) => handleChange('timeline', value)}>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select timeline" />
+                        <SelectValue placeholder={t('businessForm.timelinePlaceholder')} />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="1–3 months">1–3 months</SelectItem>
-                        <SelectItem value="3–6 months">3–6 months</SelectItem>
+                        <SelectItem value="1–3 months">{t('businessForm.options.timeline.short')}</SelectItem>
+                        <SelectItem value="3–6 months">{t('businessForm.options.timeline.medium')}</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
 
                   {/* Checkboxes */}
                   <div className="space-y-4">
-                    <Label className="text-base font-medium">Additional Requirements</Label>
-                    
+                    <Label className="text-base font-medium">{t('businessForm.additionalRequirementsLabel')}</Label>
+
                     <div className="space-y-3">
                       <div className="flex items-center space-x-2">
                         <Checkbox
@@ -197,7 +200,7 @@ export default function BusinessSetupForm({ user }) {
                           checked={formData.office_setup}
                           onCheckedChange={(checked) => handleChange('office_setup', checked)}
                         />
-                        <Label htmlFor="office_setup" className="text-sm">Need Office Setup</Label>
+                        <Label htmlFor="office_setup" className="text-sm">{t('businessForm.officeSetup')}</Label>
                       </div>
 
                       <div className="flex items-center space-x-2">
@@ -208,7 +211,7 @@ export default function BusinessSetupForm({ user }) {
                         />
                         <Label htmlFor="need_local_staff" className="text-sm flex items-center gap-2">
                           <Users className="h-4 w-4" />
-                          Need Local Staff Recruitment
+                          {t('businessForm.localStaff')}
                         </Label>
                       </div>
                     </div>
@@ -216,18 +219,16 @@ export default function BusinessSetupForm({ user }) {
 
                   {/* Support Needed */}
                   <div className="space-y-4">
-                    <Label className="text-base font-medium">Support Services Needed</Label>
+                    <Label className="text-base font-medium">{t('businessForm.supportLabel')}</Label>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                      {supportOptions.map((option) => (
-                        <div key={option} className="flex items-center space-x-2">
+                      {supportOptions.map((key) => (
+                        <div key={key} className="flex items-center space-x-2">
                           <Checkbox
-                            id={option}
-                            checked={formData.support_needed.includes(option)}
-                            onCheckedChange={(checked) => handleSupportChange(option, checked)}
+                            id={key}
+                            checked={formData.support_needed.includes(t(key))}
+                            onCheckedChange={(checked) => handleSupportChange(t(key), checked)}
                           />
-                          <Label htmlFor={option} className="text-sm">
-                            {option}
-                          </Label>
+                          <Label htmlFor={key} className="text-sm">{t(key)}</Label>
                         </div>
                       ))}
                     </div>
@@ -237,31 +238,31 @@ export default function BusinessSetupForm({ user }) {
                   <div className="space-y-2">
                     <Label className="flex items-center gap-2">
                       <FileText className="h-4 w-4" />
-                      Additional Notes
+                      {t('businessForm.notesLabel')}
                     </Label>
                     <Textarea
                       value={formData.notes}
                       onChange={(e) => handleChange('notes', e.target.value)}
-                      placeholder="Any specific requirements, questions, or additional information..."
+                      placeholder={t('businessForm.notesPlaceholder')}
                       rows={4}
                     />
                   </div>
 
                   {/* Submit Button */}
                   <Button type="submit" disabled={loading} className="w-full">
-                    {loading ? 'Submitting...' : 'Submit Business Setup Request'}
+                    {loading ? t('businessForm.submitting') : t('businessForm.submit')}
                   </Button>
 
                   {/* Status Message */}
                   {status && (
                     <Alert className={
-                      status.includes('successfully') 
-                        ? 'border-green-200 bg-green-50' 
+                      status.includes('successfully')
+                        ? 'border-green-200 bg-green-50'
                         : 'border-red-200 bg-red-50'
                     }>
                       <AlertDescription className={
-                        status.includes('successfully') 
-                          ? 'text-green-800' 
+                        status.includes('successfully')
+                          ? 'text-green-800'
                           : 'text-red-800'
                       }>
                         {status}
@@ -275,31 +276,31 @@ export default function BusinessSetupForm({ user }) {
 
           {/* Information Sidebar */}
           <div className="space-y-6">
-            
+
             {/* Business Types Info */}
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Building2 className="h-5 w-5" />
-                  Business Types in Ethiopia
+                  {t('businessForm.sidebar.typesTitle')}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-3 text-sm text-gray-600">
                 <div>
-                  <p className="font-medium text-gray-900">Sole Proprietorship</p>
-                  <p>Simplest form, single owner, unlimited liability</p>
+                  <p className="font-medium text-gray-900">{t('businessForm.sidebar.sole.title')}</p>
+                  <p>{t('businessForm.sidebar.sole.desc')}</p>
                 </div>
                 <div>
-                  <p className="font-medium text-gray-900">PLC</p>
-                  <p>Private Limited Company, limited liability, min 2 shareholders</p>
+                  <p className="font-medium text-gray-900">{t('businessForm.sidebar.plc.title')}</p>
+                  <p>{t('businessForm.sidebar.plc.desc')}</p>
                 </div>
                 <div>
-                  <p className="font-medium text-gray-900">Branch Office</p>
-                  <p>Extension of foreign company, same legal entity</p>
+                  <p className="font-medium text-gray-900">{t('businessForm.sidebar.branch.title')}</p>
+                  <p>{t('businessForm.sidebar.branch.desc')}</p>
                 </div>
                 <div>
-                  <p className="font-medium text-gray-900">Partnership</p>
-                  <p>2+ partners, shared ownership and liability</p>
+                  <p className="font-medium text-gray-900">{t('businessForm.sidebar.partner.title')}</p>
+                  <p>{t('businessForm.sidebar.partner.desc')}</p>
                 </div>
               </CardContent>
             </Card>
@@ -309,31 +310,29 @@ export default function BusinessSetupForm({ user }) {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <DollarSign className="h-5 w-5" />
-                  Investment Requirements
+                  {t('businessForm.sidebar.investmentTitle')}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-2 text-sm text-gray-600">
-                <p>• <strong>Manufacturing:</strong> Min $200,000</p>
-                <p>• <strong>Service:</strong> Min $150,000</p>
-                <p>• <strong>Trading:</strong> Min $50,000</p>
-                <p>• <strong>Joint ventures:</strong> Lower minimums may apply</p>
-                <p className="text-xs text-gray-500 mt-2">
-                  *Requirements may vary based on sector and current regulations
-                </p>
+                <p>• <strong>{t('businessForm.sidebar.invest.manufacturing')}</strong></p>
+                <p>• <strong>{t('businessForm.sidebar.invest.service')}</strong></p>
+                <p>• <strong>{t('businessForm.sidebar.invest.trading')}</strong></p>
+                <p>• <strong>{t('businessForm.sidebar.invest.joint')}</strong></p>
+                <p className="text-xs text-gray-500 mt-2">{t('businessForm.sidebar.invest.note')}</p>
               </CardContent>
             </Card>
 
             {/* Process Timeline */}
             <Card>
               <CardHeader>
-                <CardTitle>Typical Setup Timeline</CardTitle>
+                <CardTitle>{t('businessForm.sidebar.timelineTitle')}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-2 text-sm text-gray-600">
-                <p>• <strong>Name reservation:</strong> 1-2 weeks</p>
-                <p>• <strong>Legal registration:</strong> 2-4 weeks</p>
-                <p>• <strong>Licensing:</strong> 2-6 weeks</p>
-                <p>• <strong>Tax registration:</strong> 1-2 weeks</p>
-                <p>• <strong>Bank account:</strong> 1-2 weeks</p>
+                <p>• <strong>{t('businessForm.sidebar.timeline.name')}</strong></p>
+                <p>• <strong>{t('businessForm.sidebar.timeline.legal')}</strong></p>
+                <p>• <strong>{t('businessForm.sidebar.timeline.license')}</strong></p>
+                <p>• <strong>{t('businessForm.sidebar.timeline.tax')}</strong></p>
+                <p>• <strong>{t('businessForm.sidebar.timeline.bank')}</strong></p>
               </CardContent>
             </Card>
           </div>
