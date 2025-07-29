@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { supabase } from '../supabaseClient';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -13,6 +14,7 @@ export default function Auth() {
   const [loading, setLoading] = useState(false);
   const [showNameField, setShowNameField] = useState(false);
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const handleLogin = async () => {
     setStatus('');
@@ -24,9 +26,9 @@ export default function Auth() {
     });
 
     if (error) {
-      setStatus(`Login Error: ${error.message}`);
+      setStatus(t('auth.status.loginError') + error.message);
     } else {
-      setStatus('Login successful! Redirecting...');
+      setStatus(t('auth.status.loginSuccess'));
       navigate('/dashboard');
     }
     setLoading(false);
@@ -42,16 +44,16 @@ export default function Auth() {
     });
 
     if (error) {
-      setStatus(`Signup Error: ${error.message}`);
+      setStatus(t('auth.status.signupError') + error.message);
     } else if (data?.user) {
       const { error: insertError } = await supabase
         .from('profiles')
         .insert([{ id: data.user.id, email: data.user.email, name: name.trim() }]);
 
       if (insertError) {
-        setStatus(`Profile creation error: ${insertError.message}`);
+        setStatus(t('auth.status.profileError') + insertError.message);
       } else {
-        setStatus('Signup successful! Please check your email to verify your account.');
+        setStatus(t('auth.status.signupSuccess'));
       }
     }
     setLoading(false);
@@ -69,14 +71,14 @@ export default function Auth() {
     <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
       <Card className="w-full max-w-md">
         <CardHeader>
-          <CardTitle>Welcome</CardTitle>
-          <CardDescription>Login or create a new account</CardDescription>
+          <CardTitle>{t('auth.welcome')}</CardTitle>
+          <CardDescription>{t('auth.description')}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           {showNameField && (
             <Input
               type="text"
-              placeholder="Full Name"
+              placeholder={t('auth.namePlaceholder')}
               value={name}
               onChange={(e) => setName(e.target.value)}
               disabled={loading}
@@ -85,7 +87,7 @@ export default function Auth() {
 
           <Input
             type="email"
-            placeholder="Email"
+            placeholder={t('auth.emailPlaceholder')}
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             disabled={loading}
@@ -93,37 +95,37 @@ export default function Auth() {
 
           <Input
             type="password"
-            placeholder="Password"
+            placeholder={t('auth.passwordPlaceholder')}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             disabled={loading}
           />
 
           <div className="flex gap-2">
-            <Button 
-              onClick={handleLogin} 
+            <Button
+              onClick={handleLogin}
               disabled={loading}
               variant="default"
               className="flex-1"
             >
-              Log In
+              {t('auth.login')}
             </Button>
-            <Button 
-              onClick={handleSignupClick} 
+
+            <Button
+              onClick={handleSignupClick}
               disabled={loading}
               variant="outline"
               className="flex-1"
             >
-              Sign Up
+              {t('auth.signup')}
             </Button>
           </div>
 
           {status && (
-            <div className={`text-sm font-medium ${
-              status.toLowerCase().includes('error') 
-                ? 'text-red-600' 
-                : 'text-green-600'
-            }`}>
+            <div className={`text-sm font-medium ${status.toLowerCase().includes('error')
+              ? 'text-red-600'
+              : 'text-green-600'
+              }`}>
               {status}
             </div>
           )}

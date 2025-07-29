@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { supabase } from '../supabaseClient';
 import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button"
@@ -15,11 +16,12 @@ export default function EditProfile({ user }) {
   const [password, setPassword] = useState('');
   const [status, setStatus] = useState('');
   const [loading, setLoading] = useState(false);
+  const { t } = useTranslation();
 
   useEffect(() => {
     const fetchName = async () => {
       if (!user?.id) return;
-      
+
       const { data, error } = await supabase
         .from('profiles')
         .select('name')
@@ -35,7 +37,7 @@ export default function EditProfile({ user }) {
 
   const handleUpdate = async () => {
     if (!user?.id) {
-      setStatus('User not found. Please log in again.');
+      setStatus(t('editProfile.status.userNotFound'));
       return;
     }
 
@@ -51,7 +53,7 @@ export default function EditProfile({ user }) {
       if (Object.keys(updates).length > 0) {
         const { error: authError } = await supabase.auth.updateUser(updates);
         if (authError) {
-          setStatus(`Error updating auth: ${authError.message}`);
+          setStatus(t('editProfile.status.authUpdateError') + authError.message)
           setLoading(false);
           return;
         }
@@ -64,15 +66,15 @@ export default function EditProfile({ user }) {
         .eq('id', user.id);
 
       if (profileError) {
-        setStatus(`Error updating profile: ${profileError.message}`);
+        setStatus(t('editProfile.status.profileUpdateError') + profileError.message)
         setLoading(false);
         return;
       }
 
-      setStatus('Profile updated successfully!');
+      setStatus(t('editProfile.status.profileUpdateSuccess'));
       setPassword(''); // Clear password field after successful update
     } catch (error) {
-      setStatus(`Unexpected error: ${error.message}`);
+      setStatus(t('editProfile.status.unexpectedError') + error.message)
     }
 
     setLoading(false);
@@ -85,14 +87,14 @@ export default function EditProfile({ user }) {
       <div className="max-w-2xl mx-auto space-y-6">
         {/* Header */}
         <div className="flex items-center gap-4">
-          <Button 
-            variant="ghost" 
+          <Button
+            variant="ghost"
             size="sm"
             onClick={() => navigate('/dashboard')}
             className="flex items-center gap-2"
           >
             <ArrowLeft className="h-4 w-4" />
-            Back to Dashboard
+            {t('editProfile.back')}
           </Button>
         </div>
 
@@ -101,27 +103,27 @@ export default function EditProfile({ user }) {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <User className="h-5 w-5" />
-              Edit Profile
+              {t('editProfile.title')}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
-            
+
             {/* Email Field */}
             <div className="space-y-2">
               <Label htmlFor="email" className="flex items-center gap-2">
                 <Mail className="h-4 w-4" />
-                Email Address
+                {t('editProfile.emailLabel')}
               </Label>
               <Input
                 id="email"
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="Enter your email"
+                placeholder={t('editProfile.emailPlaceholder')}
                 disabled={loading}
               />
               <p className="text-sm text-gray-500">
-                Changing your email will require verification
+                {t('editProfile.emailNote')}
               </p>
             </div>
 
@@ -129,14 +131,14 @@ export default function EditProfile({ user }) {
             <div className="space-y-2">
               <Label htmlFor="name" className="flex items-center gap-2">
                 <User className="h-4 w-4" />
-                Display Name
+                {t('editProfile.nameLabel')}
               </Label>
               <Input
                 id="name"
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder="Enter your full name"
+                placeholder={t('editProfile.namePlaceholder')}
                 disabled={loading}
               />
             </div>
@@ -145,26 +147,26 @@ export default function EditProfile({ user }) {
             <div className="space-y-2">
               <Label htmlFor="password" className="flex items-center gap-2">
                 <Lock className="h-4 w-4" />
-                New Password
+                {t('editProfile.passwordLabel')}
               </Label>
               <Input
                 id="password"
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="Leave blank to keep current password"
+                placeholder={t('editProfile.emailPlaceholder')}
                 disabled={loading}
               />
               <p className="text-sm text-gray-500">
-                Only enter a password if you want to change it
+                {t('editProfile.passwordNote')}
               </p>
             </div>
 
             {/* Status Message */}
             {status && (
               <Alert className={
-                status.includes('successfully') 
-                  ? 'border-green-200 bg-green-50' 
+                status.includes('successfully')
+                  ? 'border-green-200 bg-green-50'
                   : 'border-red-200 bg-red-50'
               }>
                 {status.includes('successfully') ? (
@@ -173,8 +175,8 @@ export default function EditProfile({ user }) {
                   <AlertCircle className="h-4 w-4 text-red-600" />
                 )}
                 <AlertDescription className={
-                  status.includes('successfully') 
-                    ? 'text-green-800' 
+                  status.includes('successfully')
+                    ? 'text-green-800'
                     : 'text-red-800'
                 }>
                   {status}
@@ -184,29 +186,29 @@ export default function EditProfile({ user }) {
 
             {/* Action Buttons */}
             <div className="flex gap-3 pt-4">
-              <Button 
-                onClick={handleUpdate} 
+              <Button
+                onClick={handleUpdate}
                 disabled={loading || !isFormValid}
                 className="flex-1"
               >
-                {loading ? 'Saving...' : 'Save Changes'}
+                {loading ? t('editProfile.saving') : t('editProfile.save')}
               </Button>
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 onClick={() => navigate('/dashboard')}
                 disabled={loading}
               >
-                Cancel
+                {t('editProfile.cancel')}
               </Button>
             </div>
 
             {/* User Info Display */}
             <div className="pt-4 border-t">
-              <h3 className="text-sm font-medium text-gray-900 mb-2">Current Information</h3>
+              <h3 className="text-sm font-medium text-gray-900 mb-2">{t('editProfile.currentInfo')}</h3>
               <div className="text-sm text-gray-600 space-y-1">
-                <p><strong>User ID:</strong> {user?.id}</p>
-                <p><strong>Account Created:</strong> {user?.created_at ? new Date(user.created_at).toLocaleDateString() : 'N/A'}</p>
-                <p><strong>Email Verified:</strong> {user?.email_confirmed_at ? 'Yes' : 'No'}</p>
+                <p><strong>{t('editProfile.userId')}</strong> {user?.id}</p>
+                <p><strong>{t('editProfile.created')}</strong> {user?.created_at ? new Date(user.created_at).toLocaleDateString() : t('common.na')}</p>
+                <p><strong>{t('editProfile.emailVerified')}</strong> {user?.email_confirmed_at ? t('common.yes') : t('common.no')}</p>
               </div>
             </div>
           </CardContent>
