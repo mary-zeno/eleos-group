@@ -188,7 +188,7 @@ export default function AdminPayment() {
 
         {/* Submit */}
         <Button type="submit" className="w-full">
-          {t('adminPayment.submit')}ßß
+          {t('adminPayment.submit')}
         </Button>
 
         {status && <p className="text-sm text-center text-gray-600">{status}</p>}
