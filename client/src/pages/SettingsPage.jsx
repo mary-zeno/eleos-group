@@ -9,7 +9,7 @@ export default function SettingsPage({ user }) {
   const [showForm, setShowForm] = useState(false);
   const [status, setStatus] = useState("");
   const { t } = useTranslation();
-
+  
   const fetchProperties = async () => {
     if (!user) return;
     const { data, error } = await supabase
