@@ -116,7 +116,7 @@ export default function Dashboard({ user }) {
           ...entry,
           service: table.service,
           tableName: table.name,
-          status: 'status.submitted'
+          status: entry.status || 'status.submitted'
         }));
         allRequests = allRequests.concat(enriched);
       }
@@ -384,11 +384,13 @@ export default function Dashboard({ user }) {
                                 onValueChange={(value) => handleStatusChange(req.id, value)}
                               >
                                 <SelectTrigger className="w-40">
-                                  <SelectValue />
+                                  {/* <SelectValue /> */}
+                                  <SelectValue>{t(currentStatus)}</SelectValue>
                                 </SelectTrigger>
                                 <SelectContent>
                                   {STATUS_KEYS.map((key) => (
-                                    <SelectItem key={key} value={t(key)}>
+                                    //changed from <SelectItem key={key} value={t(key)}>
+                                    <SelectItem key={key} value={key}> 
                                       {t(key)}
                                     </SelectItem>
                                   ))}
