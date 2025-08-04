@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { supabase } from "../supabaseClient";
@@ -17,6 +17,7 @@ import logo from "@/assets/images/Logo.svg";
 
 export default function Navigation({ user }) {
   const [isOpen, setIsOpen] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
   const { t } = useTranslation();
@@ -25,6 +26,26 @@ export default function Navigation({ user }) {
     await supabase.auth.signOut();
     navigate("/");
   };
+
+  useEffect(() => {
+    const checkAdmin = async () => {
+      if (!user) return;
+
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("role")
+        .eq("id", user.id)
+        .single();
+
+      if (!error && data?.role === "admin") {
+        setIsAdmin(true);
+      } else {
+        setIsAdmin(false);
+      }
+    };
+
+    checkAdmin();
+  }, [user]);
 
   const navItems = user
     ? [
@@ -87,11 +108,12 @@ export default function Navigation({ user }) {
                       <User className="mr-2 h-4 w-4" />
                       {t("nav.editProfile")}
                     </DropdownMenuItem>
-                    {/* Add Settings item */}
-                    <DropdownMenuItem onClick={() => navigate("/settings")}>
-                      <SettingsIcon className="mr-2 h-4 w-4" />
-                      {t("nav.settings")}
-                    </DropdownMenuItem>
+                    {isAdmin && (
+                      <DropdownMenuItem onClick={() => navigate("/settings")}>
+                        <SettingsIcon className="mr-2 h-4 w-4" />
+                        {t("nav.settings")}
+                      </DropdownMenuItem>
+                    )}
                     <DropdownMenuSeparator />
                     <DropdownMenuItem
                       onClick={handleLogout}
@@ -160,17 +182,19 @@ export default function Navigation({ user }) {
                             <User className="mr-2 h-4 w-4" />
                             {t("nav.editProfile")}
                           </Button>
-                          <Button
-                            variant="outline"
-                            className="w-full justify-start"
-                            onClick={() => {
-                              navigate("/settings");
-                              setIsOpen(false);
-                            }}
-                          >
-                            <SettingsIcon className="mr-2 h-4 w-4" />
-                            {t("nav.settings")}
-                          </Button>
+                          {isAdmin && (
+                            <Button
+                              variant="outline"
+                              className="w-full justify-start"
+                              onClick={() => {
+                                navigate("/settings");
+                                setIsOpen(false);
+                              }}
+                            >
+                              <SettingsIcon className="mr-2 h-4 w-4" />
+                              {t("nav.settings")}
+                            </Button>
+                          )}
                           <Button
                             variant="outline"
                             className="w-full justify-start text-red-600 hover:text-red-700"
