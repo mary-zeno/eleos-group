@@ -9,7 +9,7 @@ export default function SettingsPage({ user }) {
   const [showForm, setShowForm] = useState(false);
   const [status, setStatus] = useState("");
   const { t } = useTranslation();
-  
+
   const fetchProperties = async () => {
     if (!user) return;
     const { data, error } = await supabase
@@ -70,10 +70,9 @@ export default function SettingsPage({ user }) {
           </CardHeader>
           <CardContent>
             <div className="flex items-center justify-between mb-4">
-              <Button onClick={() => setShowForm(true)}>{t("settings.title")}</Button>
+              <Button onClick={() => setShowForm(true)}>{t("settings.add")}</Button>
               {status && <span className="text-sm text-gray-600">{status}</span>}
             </div>
-
             {properties.length > 0 ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
                 {properties.map((prop) => (
@@ -143,6 +142,7 @@ function PropertyForm({ onClose, user, onPropertyAdded, setStatus }) {
   const [bathrooms, setBathrooms] = useState("");
   const [imageFile, setImageFile] = useState(null);
   const [localStatus, setLocalStatus] = useState("");
+  const { t } = useTranslation();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -258,7 +258,7 @@ function PropertyForm({ onClose, user, onPropertyAdded, setStatus }) {
         <Button type="button" variant="outline" onClick={onClose}>
           Cancel
         </Button>
-        <Button type="submit">{t("settings.buttons.submit")}</Button>
+        <Button type="submit">{"Submit"}</Button>
       </div>
 
       {localStatus && <p className="text-sm text-gray-600">{localStatus}</p>}
