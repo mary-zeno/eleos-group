@@ -47,6 +47,7 @@ export default {
         },
         
         // Orange accent color from the images
+        
         accent: {
           DEFAULT: '#ff8c00', // Orange accent
           50: '#fff7ed',
