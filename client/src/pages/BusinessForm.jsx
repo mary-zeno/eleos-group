@@ -90,15 +90,15 @@ export default function BusinessSetupForm({ user }) {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 p-4 sm:p-6 lg:p-8 space-y-6">
+    <div className="min-h-screen bg-charcoal-950 p-4 sm:p-6 lg:p-8 space-y-6">
       <div className="max-w-4xl mx-auto">
         <div className="grid lg:grid-cols-3 gap-6">
 
           {/* Main Form */}
           <div className="lg:col-span-2">
-            <Card>
+            <Card className="bg-charcoal-900 border-charcoal-800">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
+                <CardTitle className="flex items-center gap-2 text-white">
                   <Building2 className="h-5 w-5" />
                   {t('businessForm.title')}
                 </CardTitle>
@@ -108,48 +108,49 @@ export default function BusinessSetupForm({ user }) {
 
                   {/* Business Type */}
                   <div className="space-y-2">
-                    <Label>{t('businessForm.typeLabel')}</Label>
+                    <Label className="text-gray-300">{t('businessForm.typeLabel')}</Label>
                     <Select value={formData.business_type} onValueChange={(value) => handleChange('business_type', value)}>
-                      <SelectTrigger>
+                      <SelectTrigger className="bg-charcoal-800 border-charcoal-700 text-white">
                         <SelectValue placeholder={t('businessForm.typePlaceholder')} />
                       </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="Sole Proprietorship">{t('businessForm.options.businessType.sole')}</SelectItem>
-                        <SelectItem value="PLC">{t('businessForm.options.businessType.plc')}</SelectItem>
-                        <SelectItem value="Branch">{t('businessForm.options.businessType.branch')}</SelectItem>
-                        <SelectItem value="Partnership">{t('businessForm.options.businessType.partner')}</SelectItem>
+                      <SelectContent className="bg-charcoal-800 border-charcoal-700">
+                        <SelectItem value="Sole Proprietorship" className="text-white hover:bg-charcoal-700">{t('businessForm.options.businessType.sole')}</SelectItem>
+                        <SelectItem value="PLC" className="text-white hover:bg-charcoal-700">{t('businessForm.options.businessType.plc')}</SelectItem>
+                        <SelectItem value="Branch" className="text-white hover:bg-charcoal-700">{t('businessForm.options.businessType.branch')}</SelectItem>
+                        <SelectItem value="Partnership" className="text-white hover:bg-charcoal-700">{t('businessForm.options.businessType.partner')}</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
 
                   {/* Sector */}
                   <div className="space-y-2">
-                    <Label>{t('businessForm.sectorLabel')}</Label>
+                    <Label className="text-gray-300">{t('businessForm.sectorLabel')}</Label>
                     <Input
                       value={formData.sector}
                       onChange={(e) => handleChange('sector', e.target.value)}
                       placeholder={t('businessForm.sectorPlaceholder')}
                       required
+                      className="bg-charcoal-800 border-charcoal-700 text-white placeholder:text-gray-400"
                     />
                   </div>
 
                   {/* Legal Status */}
                   <div className="space-y-2">
-                    <Label>{t('businessForm.legalStatusLabel')}</Label>
+                    <Label className="text-gray-300">{t('businessForm.legalStatusLabel')}</Label>
                     <Select value={formData.legal_status} onValueChange={(value) => handleChange('legal_status', value)}>
-                      <SelectTrigger>
+                      <SelectTrigger className="bg-charcoal-800 border-charcoal-700 text-white">
                         <SelectValue placeholder={t('businessForm.legalStatusPlaceholder')} />
                       </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="New">{t('businessForm.options.legalStatus.new')}</SelectItem>
-                        <SelectItem value="Expanding existing">{t('businessForm.options.legalStatus.expand')}</SelectItem>
+                      <SelectContent className="bg-charcoal-800 border-charcoal-700">
+                        <SelectItem value="New" className="text-white hover:bg-charcoal-700">{t('businessForm.options.legalStatus.new')}</SelectItem>
+                        <SelectItem value="Expanding existing" className="text-white hover:bg-charcoal-700">{t('businessForm.options.legalStatus.expand')}</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
 
                   {/* Investment Amount */}
                   <div className="space-y-2">
-                    <Label className="flex items-center gap-2">
+                    <Label className="flex items-center gap-2 text-gray-300">
                       <DollarSign className="h-4 w-4" />
                       {t('businessForm.investmentLabel')}
                     </Label>
@@ -158,12 +159,13 @@ export default function BusinessSetupForm({ user }) {
                       onChange={(e) => handleChange('investment', e.target.value)}
                       placeholder={t('businessForm.investmentPlaceholder')}
                       required
+                      className="bg-charcoal-800 border-charcoal-700 text-white placeholder:text-gray-400"
                     />
                   </div>
 
                   {/* Location */}
                   <div className="space-y-2">
-                    <Label className="flex items-center gap-2">
+                    <Label className="flex items-center gap-2 text-gray-300">
                       <MapPin className="h-4 w-4" />
                       {t('businessForm.locationLabel')}
                     </Label>
@@ -172,26 +174,27 @@ export default function BusinessSetupForm({ user }) {
                       onChange={(e) => handleChange('location', e.target.value)}
                       placeholder={t('businessForm.locationPlaceholder')}
                       required
+                      className="bg-charcoal-800 border-charcoal-700 text-white placeholder:text-gray-400"
                     />
                   </div>
 
                   {/* Timeline */}
                   <div className="space-y-2">
-                    <Label>{t('businessForm.timelineLabel')}</Label>
+                    <Label className="text-gray-300">{t('businessForm.timelineLabel')}</Label>
                     <Select value={formData.timeline} onValueChange={(value) => handleChange('timeline', value)}>
-                      <SelectTrigger>
+                      <SelectTrigger className="bg-charcoal-800 border-charcoal-700 text-white">
                         <SelectValue placeholder={t('businessForm.timelinePlaceholder')} />
                       </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="1–3 months">{t('businessForm.options.timeline.short')}</SelectItem>
-                        <SelectItem value="3–6 months">{t('businessForm.options.timeline.medium')}</SelectItem>
+                      <SelectContent className="bg-charcoal-800 border-charcoal-700">
+                        <SelectItem value="1–3 months" className="text-white hover:bg-charcoal-700">{t('businessForm.options.timeline.short')}</SelectItem>
+                        <SelectItem value="3–6 months" className="text-white hover:bg-charcoal-700">{t('businessForm.options.timeline.medium')}</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
 
                   {/* Checkboxes */}
                   <div className="space-y-4">
-                    <Label className="text-base font-medium">{t('businessForm.additionalRequirementsLabel')}</Label>
+                    <Label className="text-base font-medium text-gray-300">{t('businessForm.additionalRequirementsLabel')}</Label>
 
                     <div className="space-y-3">
                       <div className="flex items-center space-x-2">
@@ -199,8 +202,9 @@ export default function BusinessSetupForm({ user }) {
                           id="office_setup"
                           checked={formData.office_setup}
                           onCheckedChange={(checked) => handleChange('office_setup', checked)}
+                          className="border-charcoal-600 data-[state=checked]:bg-accent data-[state=checked]:border-accent"
                         />
-                        <Label htmlFor="office_setup" className="text-sm">{t('businessForm.officeSetup')}</Label>
+                        <Label htmlFor="office_setup" className="text-sm text-gray-300">{t('businessForm.officeSetup')}</Label>
                       </div>
 
                       <div className="flex items-center space-x-2">
@@ -208,8 +212,9 @@ export default function BusinessSetupForm({ user }) {
                           id="need_local_staff"
                           checked={formData.need_local_staff}
                           onCheckedChange={(checked) => handleChange('need_local_staff', checked)}
+                          className="border-charcoal-600 data-[state=checked]:bg-accent data-[state=checked]:border-accent"
                         />
-                        <Label htmlFor="need_local_staff" className="text-sm flex items-center gap-2">
+                        <Label htmlFor="need_local_staff" className="text-sm flex items-center gap-2 text-gray-300">
                           <Users className="h-4 w-4" />
                           {t('businessForm.localStaff')}
                         </Label>
@@ -219,7 +224,7 @@ export default function BusinessSetupForm({ user }) {
 
                   {/* Support Needed */}
                   <div className="space-y-4">
-                    <Label className="text-base font-medium">{t('businessForm.supportLabel')}</Label>
+                    <Label className="text-base font-medium text-gray-300">{t('businessForm.supportLabel')}</Label>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                       {supportOptions.map((key) => (
                         <div key={key} className="flex items-center space-x-2">
@@ -227,8 +232,9 @@ export default function BusinessSetupForm({ user }) {
                             id={key}
                             checked={formData.support_needed.includes(t(key))}
                             onCheckedChange={(checked) => handleSupportChange(t(key), checked)}
+                            className="border-charcoal-600 data-[state=checked]:bg-accent data-[state=checked]:border-accent"
                           />
-                          <Label htmlFor={key} className="text-sm">{t(key)}</Label>
+                          <Label htmlFor={key} className="text-sm text-gray-300">{t(key)}</Label>
                         </div>
                       ))}
                     </div>
@@ -236,7 +242,7 @@ export default function BusinessSetupForm({ user }) {
 
                   {/* Additional Notes */}
                   <div className="space-y-2">
-                    <Label className="flex items-center gap-2">
+                    <Label className="flex items-center gap-2 text-gray-300">
                       <FileText className="h-4 w-4" />
                       {t('businessForm.notesLabel')}
                     </Label>
@@ -245,11 +251,12 @@ export default function BusinessSetupForm({ user }) {
                       onChange={(e) => handleChange('notes', e.target.value)}
                       placeholder={t('businessForm.notesPlaceholder')}
                       rows={4}
+                      className="bg-charcoal-800 border-charcoal-700 text-white placeholder:text-gray-400"
                     />
                   </div>
 
                   {/* Submit Button */}
-                  <Button type="submit" disabled={loading} className="w-full">
+                  <Button type="submit" disabled={loading} className="w-full bg-accent hover:bg-accent/90 text-black font-medium">
                     {loading ? t('businessForm.submitting') : t('businessForm.submit')}
                   </Button>
 
@@ -257,13 +264,13 @@ export default function BusinessSetupForm({ user }) {
                   {status && (
                     <Alert className={
                       status.includes('successfully')
-                        ? 'border-green-200 bg-green-50'
-                        : 'border-red-200 bg-red-50'
+                        ? 'border-green-700 bg-green-900/20'
+                        : 'border-red-700 bg-red-900/20'
                     }>
                       <AlertDescription className={
                         status.includes('successfully')
-                          ? 'text-green-800'
-                          : 'text-red-800'
+                          ? 'text-green-400'
+                          : 'text-red-400'
                       }>
                         {status}
                       </AlertDescription>
@@ -278,61 +285,61 @@ export default function BusinessSetupForm({ user }) {
           <div className="space-y-6">
 
             {/* Business Types Info */}
-            <Card>
+            <Card className="bg-charcoal-900 border-charcoal-800">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
+                <CardTitle className="flex items-center gap-2 text-white">
                   <Building2 className="h-5 w-5" />
                   {t('businessForm.sidebar.typesTitle')}
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-3 text-sm text-gray-600">
+              <CardContent className="space-y-3 text-sm text-gray-400">
                 <div>
-                  <p className="font-medium text-gray-900">{t('businessForm.sidebar.sole.title')}</p>
+                  <p className="font-medium text-white">{t('businessForm.sidebar.sole.title')}</p>
                   <p>{t('businessForm.sidebar.sole.desc')}</p>
                 </div>
                 <div>
-                  <p className="font-medium text-gray-900">{t('businessForm.sidebar.plc.title')}</p>
+                  <p className="font-medium text-white">{t('businessForm.sidebar.plc.title')}</p>
                   <p>{t('businessForm.sidebar.plc.desc')}</p>
                 </div>
                 <div>
-                  <p className="font-medium text-gray-900">{t('businessForm.sidebar.branch.title')}</p>
+                  <p className="font-medium text-white">{t('businessForm.sidebar.branch.title')}</p>
                   <p>{t('businessForm.sidebar.branch.desc')}</p>
                 </div>
                 <div>
-                  <p className="font-medium text-gray-900">{t('businessForm.sidebar.partner.title')}</p>
+                  <p className="font-medium text-white">{t('businessForm.sidebar.partner.title')}</p>
                   <p>{t('businessForm.sidebar.partner.desc')}</p>
                 </div>
               </CardContent>
             </Card>
 
             {/* Investment Requirements */}
-            <Card>
+            <Card className="bg-charcoal-900 border-charcoal-800">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
+                <CardTitle className="flex items-center gap-2 text-white">
                   <DollarSign className="h-5 w-5" />
                   {t('businessForm.sidebar.investmentTitle')}
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-2 text-sm text-gray-600">
-                <p>• <strong>{t('businessForm.sidebar.invest.manufacturing')}</strong></p>
-                <p>• <strong>{t('businessForm.sidebar.invest.service')}</strong></p>
-                <p>• <strong>{t('businessForm.sidebar.invest.trading')}</strong></p>
-                <p>• <strong>{t('businessForm.sidebar.invest.joint')}</strong></p>
+              <CardContent className="space-y-2 text-sm text-gray-400">
+                <p>• <strong className="text-gray-300">{t('businessForm.sidebar.invest.manufacturing')}</strong></p>
+                <p>• <strong className="text-gray-300">{t('businessForm.sidebar.invest.service')}</strong></p>
+                <p>• <strong className="text-gray-300">{t('businessForm.sidebar.invest.trading')}</strong></p>
+                <p>• <strong className="text-gray-300">{t('businessForm.sidebar.invest.joint')}</strong></p>
                 <p className="text-xs text-gray-500 mt-2">{t('businessForm.sidebar.invest.note')}</p>
               </CardContent>
             </Card>
 
             {/* Process Timeline */}
-            <Card>
+            <Card className="bg-charcoal-900 border-charcoal-800">
               <CardHeader>
-                <CardTitle>{t('businessForm.sidebar.timelineTitle')}</CardTitle>
+                <CardTitle className="text-white">{t('businessForm.sidebar.timelineTitle')}</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-2 text-sm text-gray-600">
-                <p>• <strong>{t('businessForm.sidebar.timeline.name')}</strong></p>
-                <p>• <strong>{t('businessForm.sidebar.timeline.legal')}</strong></p>
-                <p>• <strong>{t('businessForm.sidebar.timeline.license')}</strong></p>
-                <p>• <strong>{t('businessForm.sidebar.timeline.tax')}</strong></p>
-                <p>• <strong>{t('businessForm.sidebar.timeline.bank')}</strong></p>
+              <CardContent className="space-y-2 text-sm text-gray-400">
+                <p>• <strong className="text-gray-300">{t('businessForm.sidebar.timeline.name')}</strong></p>
+                <p>• <strong className="text-gray-300">{t('businessForm.sidebar.timeline.legal')}</strong></p>
+                <p>• <strong className="text-gray-300">{t('businessForm.sidebar.timeline.license')}</strong></p>
+                <p>• <strong className="text-gray-300">{t('businessForm.sidebar.timeline.tax')}</strong></p>
+                <p>• <strong className="text-gray-300">{t('businessForm.sidebar.timeline.bank')}</strong></p>
               </CardContent>
             </Card>
           </div>

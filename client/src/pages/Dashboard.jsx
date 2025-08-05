@@ -23,17 +23,17 @@ const STATUS_KEYS = [
 
 const getStatusColor = (statusKey) => {
   const colors = {
-    'status.submitted': 'bg-blue-100 text-blue-800',
-    'status.inReview': 'bg-yellow-100 text-yellow-800',
-    'status.pendingInfo': 'bg-orange-100 text-orange-800',
-    'status.inProgress': 'bg-purple-100 text-purple-800',
-    'status.awaitingPayment': 'bg-red-100 text-red-800',
-    'status.completed': 'bg-green-100 text-green-800',
-    'status.onHold': 'bg-gray-100 text-gray-800',
-    'status.cancelled': 'bg-red-100 text-red-800',
-    'status.archived': 'bg-gray-100 text-gray-800',
+    'status.submitted': 'bg-blue-900 text-blue-200 border-blue-700',
+    'status.inReview': 'bg-yellow-900 text-yellow-200 border-yellow-700',
+    'status.pendingInfo': 'bg-orange-900 text-orange-200 border-orange-700',
+    'status.inProgress': 'bg-purple-900 text-purple-200 border-purple-700',
+    'status.awaitingPayment': 'bg-red-900 text-red-200 border-red-700',
+    'status.completed': 'bg-green-900 text-green-200 border-green-700',
+    'status.onHold': 'bg-gray-700 text-gray-200 border-gray-600',
+    'status.cancelled': 'bg-red-900 text-red-200 border-red-700',
+    'status.archived': 'bg-gray-700 text-gray-200 border-gray-600',
   };
-  return colors[statusKey] || 'bg-gray-100 text-gray-800';
+  return colors[statusKey] || 'bg-gray-700 text-gray-200 border-gray-600';
 };
 
 export default function Dashboard({ user }) {
@@ -236,20 +236,20 @@ export default function Dashboard({ user }) {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 py-8 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-charcoal-950 py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Header Card */}
-        <Card>
+        <Card className="bg-charcoal-900 border-charcoal-800">
           <CardHeader>
-            <CardTitle className="text-2xl">{t('dashboard.title')}</CardTitle>
+            <CardTitle className="text-2xl text-white">{t('dashboard.title')}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
               <div>
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-gray-300">
                   <strong>{t('dashboard.loggedInAs')}</strong> {name || user?.email}
                 </p>
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-gray-300">
                   <strong>{t('dashboard.role')}</strong> {role}
                 </p>
               </div>
@@ -259,27 +259,39 @@ export default function Dashboard({ user }) {
 
         {/* Admin Controls */}
         {role === 'admin' && (
-          <Card>
+          <Card className="bg-charcoal-900 border-charcoal-800">
             <CardContent className="pt-6">
               <div className="flex gap-2">
                 {!isEditing ? (
-                  <Button onClick={() => setIsEditing(true)} variant="outline">
+                  <Button 
+                    onClick={() => setIsEditing(true)} 
+                    variant="outline"
+                    className="border-accent text-accent hover:bg-accent hover:text-black"
+                  >
                     {t('dashboard.editMode')}
                   </Button>
                 ) : (
                   <>
-                    <Button onClick={handleSaveChanges} disabled={loading}>
+                    <Button 
+                      onClick={handleSaveChanges} 
+                      disabled={loading}
+                      className="bg-accent hover:bg-accent/90 text-black"
+                    >
                       {t('dashboard.saveChanges')}
                     </Button>
-                    <Button onClick={cancelEditing} variant="outline">
+                    <Button 
+                      onClick={cancelEditing} 
+                      variant="outline"
+                      className="border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white"
+                    >
                       {t('dashboard.cancel')}
                     </Button>
                   </>
                 )}
               </div>
               {isEditing && (
-                <Alert className="mt-4">
-                  <AlertDescription>
+                <Alert className="mt-4 bg-accent/10 border-accent/30">
+                  <AlertDescription className="text-accent">
                     {t('dashboard.editActive')}
                   </AlertDescription>
                 </Alert>
@@ -289,156 +301,171 @@ export default function Dashboard({ user }) {
         )}
 
         {/* Requests Table */}
-        <Card>
+        <Card className="bg-charcoal-900 border-charcoal-800">
           <CardHeader>
-            <CardTitle>{t('dashboard.requestsTitle')}</CardTitle>
+            <CardTitle className="text-white">{t('dashboard.requestsTitle')}</CardTitle>
           </CardHeader>
           <CardContent>
             {loading ? (
               <div className="text-center py-8">
-                <p>{t('dashboard.loading')}</p>
+                <p className="text-gray-300">{t('dashboard.loading')}</p>
               </div>
             ) : requests.length === 0 ? (
               <div className="text-center py-8">
-                <p className="text-gray-500">{t('dashboard.noRequests')}</p>
-                <Button className="mt-4" onClick={() => navigate('/property-form')}>
+                <p className="text-gray-400">{t('dashboard.noRequests')}</p>
+                <Button 
+                  className="mt-4 bg-accent hover:bg-accent/90 text-black" 
+                  onClick={() => navigate('/property-form')}
+                >
                   {t('dashboard.submitFirst')}
                 </Button>
               </div>
             ) : (
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    {role === 'admin' && isEditing && <TableHead>{t('dashboard.delete')}</TableHead>}
-                    <TableHead>{t('dashboard.service')}</TableHead>
-                    <TableHead>{t('dashboard.user')}</TableHead>
-                    <TableHead>{t('dashboard.date')}</TableHead>
-                    <TableHead>{t('dashboard.status')}</TableHead>
-                    {role === 'admin' && <TableHead>{t('dashboard.payments')}</TableHead>}
-                    <TableHead>{t('dashboard.details')}</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {requests.map((req, idx) => {
-                    const isDeleted = requestsToDelete.has(req.id);
-                    const currentStatus = statusChanges[req.id] || req.status;
+              <div className="overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow className="border-charcoal-700 hover:bg-charcoal-800/50">
+                      {role === 'admin' && isEditing && <TableHead className="text-gray-300">{t('dashboard.delete')}</TableHead>}
+                      <TableHead className="text-gray-300">{t('dashboard.service')}</TableHead>
+                      <TableHead className="text-gray-300">{t('dashboard.user')}</TableHead>
+                      <TableHead className="text-gray-300">{t('dashboard.date')}</TableHead>
+                      <TableHead className="text-gray-300">{t('dashboard.status')}</TableHead>
+                      {role === 'admin' && <TableHead className="text-gray-300">{t('dashboard.payments')}</TableHead>}
+                      <TableHead className="text-gray-300">{t('dashboard.details')}</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {requests.map((req, idx) => {
+                      const isDeleted = requestsToDelete.has(req.id);
+                      const currentStatus = statusChanges[req.id] || req.status;
 
-                    return (
-                      <React.Fragment key={req.id}>
-                        <TableRow className={isDeleted ? 'opacity-50 line-through' : ''}>
-                          {role === 'admin' && isEditing && (
+                      return (
+                        <React.Fragment key={req.id}>
+                          <TableRow className={`border-charcoal-700 hover:bg-charcoal-800/50 ${isDeleted ? 'opacity-50 line-through' : ''}`}>
+                            {role === 'admin' && isEditing && (
+                              <TableCell>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => toggleDeleteRequest(req.id)}
+                                  className="text-red-400 hover:text-red-300 hover:bg-red-900/20"
+                                >
+                                  ❌
+                                </Button>
+                              </TableCell>
+                            )}
+                            <TableCell>
+                              <Badge variant="outline" className="border-accent/50 text-accent">
+                                {req.service}
+                              </Badge>
+                            </TableCell>
+                            <TableCell className="text-gray-300">
+                              {role === 'admin' ? req.userName : 'You'}
+                            </TableCell>
+                            <TableCell className="text-gray-300">
+                              {new Date(req.inserted_at).toLocaleDateString()}
+                            </TableCell>
+                            <TableCell>
+                              {role === 'admin' && isEditing ? (
+                                <Select
+                                  value={currentStatus}
+                                  onValueChange={(value) => handleStatusChange(req.id, value)}
+                                >
+                                  <SelectTrigger className="w-40 bg-charcoal-800 border-charcoal-700 text-white">
+                                    <SelectValue />
+                                  </SelectTrigger>
+                                  <SelectContent className="bg-charcoal-800 border-charcoal-700">
+                                    {STATUS_KEYS.map((key) => (
+                                      <SelectItem 
+                                        key={key} 
+                                        value={t(key)}
+                                        className="text-white hover:bg-charcoal-700"
+                                      >
+                                        {t(key)}
+                                      </SelectItem>
+                                    ))}
+                                  </SelectContent>
+                                </Select>
+                              ) : (
+                                <Badge className={getStatusColor(currentStatus)}>
+                                  {t(currentStatus)}
+                                </Badge>
+                              )}
+                            </TableCell>
+                            {role === 'admin' && (
+                              <TableCell className="py-2 px-4">
+                                {req.invoiceUrl ? (
+                                  <Button
+                                    variant="outline"
+                                    className="text-xs border-accent/50 text-accent hover:bg-accent hover:text-black"
+                                    onClick={() => setInvoiceUrl(req.invoiceUrl)}
+                                  >
+                                    {t('dashboard.viewInvoice')}
+                                  </Button>
+                                ) : (
+                                  isEditing && (
+                                    <Button
+                                      variant="outline"
+                                      className="text-xs border-accent/50 text-accent hover:bg-accent hover:text-black"
+                                      onClick={() => navigate('/admin/payment', { state: { request: req } })}
+                                    >
+                                      {t('dashboard.createInvoice')}
+                                    </Button>
+                                  )
+                                )}
+                              </TableCell>
+                            )}
                             <TableCell>
                               <Button
                                 variant="ghost"
                                 size="sm"
-                                onClick={() => toggleDeleteRequest(req.id)}
-                                className="text-red-600 hover:text-red-800"
+                                className="text-2xl text-gray-400 hover:text-white hover:bg-charcoal-800"
+                                onClick={() => toggleDetails(idx)}
                               >
-                                ❌
+                                {expandedIdx === idx ? '▴' : '▾'}
                               </Button>
                             </TableCell>
-                          )}
-                          <TableCell>
-                            <Badge variant="outline">{req.service}</Badge>
-                          </TableCell>
-                          <TableCell>{role === 'admin' ? req.userName : 'You'}</TableCell>
-                          <TableCell>{new Date(req.inserted_at).toLocaleDateString()}</TableCell>
-                          <TableCell>
-                            {role === 'admin' && isEditing ? (
-                              <Select
-                                value={currentStatus}
-                                onValueChange={(value) => handleStatusChange(req.id, value)}
-                              >
-                                <SelectTrigger className="w-40">
-                                  <SelectValue />
-                                </SelectTrigger>
-                                <SelectContent>
-                                  {STATUS_KEYS.map((key) => (
-                                    <SelectItem key={key} value={t(key)}>
-                                      {t(key)}
-                                    </SelectItem>
-                                  ))}
-                                </SelectContent>
-                              </Select>
-                            ) : (
-                              <Badge className={getStatusColor(currentStatus)}>
-                                {t(currentStatus)}
-                              </Badge>
-                            )}
-                          </TableCell>
-                          {role === 'admin' && (
-                            <TableCell className="py-2 px-4">
-                              {req.invoiceUrl ? (
-                                <Button
-                                  variant="outline"
-                                  className="text-xs"
-                                  onClick={() => setInvoiceUrl(req.invoiceUrl)}
-                                >
-                                  {t('dashboard.viewInvoice')}
-                                </Button>
-                              ) : (
-                                isEditing && (
-                                  <Button
-                                    variant="outline"
-                                    className="text-xs"
-                                    onClick={() => navigate('/admin/payment', { state: { request: req } })}
-                                  >
-                                    {t('dashboard.createInvoice')}
-                                  </Button>
-                                )
-                              )}
-                            </TableCell>
-                          )}
-                          <TableCell>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              className="text-2xl"
-                              onClick={() => toggleDetails(idx)}
-                            >
-                              {expandedIdx === idx ? '▴' : '▾'}
-                            </Button>
-                          </TableCell>
-                        </TableRow>
-                        {expandedIdx === idx && (
-                          <TableRow className="bg-gray-50">
-                            <TableCell colSpan={role === 'admin' && isEditing ? 6 : 5}>
-                              <div className="p-4 space-y-2">
-                                <h4 className="font-medium mb-2">{t('dashboard.requestDetails')}</h4>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
-                                  {Object.entries(req).map(([key, value]) =>
-                                    !['id', 'user_id', 'inserted_at', 'service', 'status', 'tableName', 'userName'].includes(key) && (
-                                      <div key={key} className="flex">
-                                        <span className="font-medium mr-2 min-w-0 flex-shrink-0">
-                                          {key.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}:
-                                        </span>
-                                        <span className="text-gray-600 break-words">
-                                          {String(value) || 'N/A'}
-                                        </span>
-                                      </div>
-                                    )
-                                  )}
-                                </div>
-                              </div>
-                            </TableCell>
                           </TableRow>
-                        )}
-                      </React.Fragment>
-                    );
-                  })}
-                </TableBody>
-              </Table>
+                          {expandedIdx === idx && (
+                            <TableRow className="bg-charcoal-800/50 border-charcoal-700">
+                              <TableCell colSpan={role === 'admin' && isEditing ? 7 : 6}>
+                                <div className="p-4 space-y-2">
+                                  <h4 className="font-medium mb-2 text-white">{t('dashboard.requestDetails')}</h4>
+                                  <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
+                                    {Object.entries(req).map(([key, value]) =>
+                                      !['id', 'user_id', 'inserted_at', 'service', 'status', 'tableName', 'userName'].includes(key) && (
+                                        <div key={key} className="flex">
+                                          <span className="font-medium mr-2 min-w-0 flex-shrink-0 text-gray-300">
+                                            {key.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}:
+                                          </span>
+                                          <span className="text-gray-400 break-words">
+                                            {String(value) || 'N/A'}
+                                          </span>
+                                        </div>
+                                      )
+                                    )}
+                                  </div>
+                                </div>
+                              </TableCell>
+                            </TableRow>
+                          )}
+                        </React.Fragment>
+                      );
+                    })}
+                  </TableBody>
+                </Table>
+              </div>
             )}
             {invoiceUrl && (
-              <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-                <div className="bg-white p-4 rounded-lg max-w-3xl w-full relative">
+              <div className="fixed inset-0 bg-black bg-opacity-75 flex justify-center items-center z-50">
+                <div className="bg-charcoal-900 border border-charcoal-700 p-4 rounded-lg max-w-3xl w-full relative">
                   <button
-                    className="absolute top-2 right-2 text-white bg-red-600 px-2 py-1 rounded"
+                    className="absolute top-2 right-2 text-white bg-red-600 hover:bg-red-700 px-2 py-1 rounded"
                     onClick={() => setInvoiceUrl(null)}
                   >
                     {t('dashboard.close')}
                   </button>
-                  <iframe src={invoiceUrl} width="100%" height="600px" title="Invoice PDF" />
+                  <iframe src={invoiceUrl} width="100%" height="600px" title="Invoice PDF" className="rounded" />
                 </div>
               </div>
             )}

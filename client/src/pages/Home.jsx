@@ -95,7 +95,7 @@ export default function Home({ user }) {
               <span className="text-accent font-medium drop-shadow-[0_0_15px_rgba(255,140,0,0.5)] animate-[pulse_4s_ease-in-out_infinite]">
                 {t('home.hero.title1')}
               </span>
-              <span className="block drop-shadow-[0_0_10px_rgba(255,255,255,0.3)]">{t('home.hero.title2')}</span>
+              <span className="block drop-shadow-[0_0_10px_rgba(255,255,255,0.3)] italic">{t('home.hero.title2')}</span>
               <span className="block drop-shadow-[0_0_10px_rgba(255,255,255,0.3)]">{t('home.hero.title3')}</span>
             </h1>
             <p className="text-xl lg:text-2xl text-gray-300 leading-relaxed max-w-3xl mx-auto font-light">
