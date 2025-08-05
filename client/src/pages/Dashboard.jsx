@@ -116,7 +116,7 @@ export default function Dashboard({ user }) {
           ...entry,
           service: table.service,
           tableName: table.name,
-          status: 'status.submitted'
+          status: entry.status || 'status.submitted'
         }));
         allRequests = allRequests.concat(enriched);
       }
@@ -212,7 +212,41 @@ export default function Dashboard({ user }) {
         .update({ status: newStatus })
         .eq('id', id);
 
-      if (error) console.error('Update status error for id:', id, error.message);
+      if (error) {
+        console.error('Update status error for id:', id, error.message);
+        continue;
+      } 
+
+      // Send email for "Awaiting Payment"
+      if (newStatus === 'status.awaitingPayment') {
+        const { data: profile, error: profileError } = await supabase
+          .from('profiles')
+          .select('email, name')
+          .eq('id', req.user_id)
+          .single();
+
+        const email = profile?.email;
+        const name = profile?.name;
+
+        if (email && name) {
+          await fetch('https://tykawjmgbuuywiddcrxw.supabase.co/functions/v1/send-payment-email', { //url for supabase edge function
+            method: 'POST',
+            headers: { 
+              'Content-Type': 'application/json',
+              // supabase anon (public) key
+              'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR5a2F3am1nYnV1eXdpZGRjcnh3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTA5NjY0NDIsImV4cCI6MjA2NjU0MjQ0Mn0.rlE6H5-Vf4CkIt5BNJuSVFDzREw77z-sac63OKx50FI' 
+            },
+            body: JSON.stringify({
+              to: email,
+              userName: name,
+              serviceType: req.service
+            })
+          });
+          if (!response.ok) {
+          console.error('Failed to send email:', await response.text());
+          }
+        }
+      }
     }
 
     // Refresh the requests from DB
@@ -372,13 +406,13 @@ export default function Dashboard({ user }) {
                                   onValueChange={(value) => handleStatusChange(req.id, value)}
                                 >
                                   <SelectTrigger className="w-40 bg-charcoal-800 border-charcoal-700 text-white">
-                                    <SelectValue />
+                                    <SelectValue>{t(currentStatus)}</SelectValue>
                                   </SelectTrigger>
                                   <SelectContent className="bg-charcoal-800 border-charcoal-700">
                                     {STATUS_KEYS.map((key) => (
                                       <SelectItem 
                                         key={key} 
-                                        value={t(key)}
+                                        value={key}
                                         className="text-white hover:bg-charcoal-700"
                                       >
                                         {t(key)}

@@ -16,7 +16,7 @@ export default function AdminPayment() {
   const [status, setStatus] = useState('');
   const [invoiceFile, setInvoiceFile] = useState(null);
   const { t } = useTranslation();
-
+  
   // Fetch non-admin users
   useEffect(() => {
     const fetchUsers = async () => {
@@ -188,7 +188,7 @@ export default function AdminPayment() {
 
         {/* Submit */}
         <Button type="submit" className="w-full">
-          {t('adminPayment.submit')}ßß
+          {t('adminPayment.submit')}
         </Button>
 
         {status && <p className="text-sm text-center text-gray-600">{status}</p>}

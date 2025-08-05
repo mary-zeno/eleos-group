@@ -74,11 +74,10 @@ export default function SettingsPage({ user }) {
                 onClick={() => setShowForm(true)}
                 className="bg-accent hover:bg-accent/90 text-black font-medium"
               >
-                {t("settings.title")}
+                {t("settings.add")}
               </Button>
-              {status && <span className="text-sm text-gray-400">{status}</span>}
+              {status && <span className="text-sm text-gray-600">{status}</span>}
             </div>
-
             {properties.length > 0 ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
                 {properties.map((prop) => (
@@ -273,7 +272,7 @@ function PropertyForm({ onClose, user, onPropertyAdded, setStatus }) {
           type="submit"
           className="bg-accent hover:bg-accent/90 text-black font-medium"
         >
-          {t("settings.buttons.submit")}
+          {"Submit"}
         </Button>
       </div>
 
