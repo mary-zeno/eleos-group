@@ -43,7 +43,6 @@ export default function AdminPayment() {
   useEffect(() => {
     if (!selectedUserId) return;
 
-
     const fetchRequests = async () => {
       const tables = [
         { name: 'travel_forms', service: 'Travel' },
@@ -233,5 +232,4 @@ export default function AdminPayment() {
       </div>
     </div>
   );
-
 }
