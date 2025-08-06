@@ -4,6 +4,8 @@ import { useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
 
 export default function AdminPayment() {
   const location = useLocation();
@@ -37,7 +39,6 @@ export default function AdminPayment() {
   // Fetch requests for selected user
   useEffect(() => {
     if (!selectedUserId) return;
-
 
     const fetchRequests = async () => {
       const tables = [
@@ -121,78 +122,97 @@ export default function AdminPayment() {
   };
 
   return (
-    <div className="max-w-2xl mx-auto mt-10 bg-white p-6 rounded-xl shadow-md">
-      <h2 className="text-xl font-semibold mb-4 text-gray-800">{t('adminPayment.title')}</h2>
+    <div className="min-h-screen bg-charcoal-950 p-4 sm:p-6 lg:p-8">
+      <div className="max-w-2xl mx-auto">
+        <Card className="bg-charcoal-900 border-charcoal-800">
+          <CardHeader>
+            <CardTitle className="text-white">{t('adminPayment.title')}</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleSubmit} className="space-y-6">
+              {/* User dropdown */}
+              <div className="space-y-2">
+                <Label className="text-gray-300">{t('adminPayment.selectUser')}</Label>
+                <select
+                  value={selectedUserId}
+                  onChange={(e) => {
+                    setSelectedUserId(e.target.value);
+                    setSelectedService('');
+                  }}
+                  required
+                  className="w-full bg-charcoal-800 border-charcoal-700 text-white rounded-md shadow-sm p-2 focus:ring-accent focus:border-accent"
+                >
+                  <option value="">{t('adminPayment.chooseUser')}</option>
+                  {users.map((u) => (
+                    <option key={u.id} value={u.id} className="bg-charcoal-800">{u.name}</option>
+                  ))}
+                </select>
+              </div>
 
-      <form onSubmit={handleSubmit} className="space-y-6">
-        {/* User dropdown */}
-        <div>
-          <label className="block mb-1 text-sm font-medium text-gray-700">{t('adminPayment.selectUser')}</label>
-          <select
-            value={selectedUserId}
-            onChange={(e) => {
-              setSelectedUserId(e.target.value);
-              setSelectedService('');
-            }}
-            required
-            className="w-full rounded-md border-gray-300 shadow-sm p-2"
-          >
-            <option value="">{t('adminPayment.chooseUser')}</option>
-            {users.map((u) => (
-              <option key={u.id} value={u.id}>{u.name}</option>
-            ))}
-          </select>
-        </div>
+              {/* Service dropdown */}
+              {requests.length > 0 && (
+                <div className="space-y-2">
+                  <Label className="text-gray-300">{t('adminPayment.selectService')}</Label>
+                  <select
+                    value={selectedService}
+                    onChange={(e) => setSelectedService(e.target.value)}
+                    required
+                    className="w-full bg-charcoal-800 border-charcoal-700 text-white rounded-md shadow-sm p-2 focus:ring-accent focus:border-accent"
+                  >
+                    <option value="">{t('adminPayment.chooseRequest')}</option>
+                    {requests.map((r) => (
+                      <option key={r.id} value={r.service} className="bg-charcoal-800">
+                        {r.service} - {new Date(r.inserted_at).toLocaleDateString()}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              )}
 
-        {/* Service dropdown */}
-        {requests.length > 0 && (
-          <div>
-            <label className="block mb-1 text-sm font-medium text-gray-700">{t('adminPayment.selectService')}</label>
-            <select
-              value={selectedService}
-              onChange={(e) => setSelectedService(e.target.value)}
-              required
-              className="w-full rounded-md border-gray-300 shadow-sm p-2"
-            >
-              <option value="">{t('adminPayment.chooseRequest')}</option>
-              {requests.map((r) => (
-                <option key={r.id} value={r.service}>
-                  {r.service} - {new Date(r.inserted_at).toLocaleDateString()}
-                </option>
-              ))}
-            </select>
-          </div>
-        )}
+              {/* Amount input */}
+              <div className="space-y-2">
+                <Label className="text-gray-300">{t('adminPayment.amountOwed')}</Label>
+                <Input
+                  type="number"
+                  min="0"
+                  value={billAmount}
+                  onChange={(e) => setBillAmount(e.target.value)}
+                  required
+                  className="bg-charcoal-800 border-charcoal-700 text-white placeholder:text-gray-400"
+                />
+              </div>
 
-        {/* Amount input */}
-        <div>
-          <label className="block mb-1 text-sm font-medium text-gray-700">{t('adminPayment.amountOwed')}</label>
-          <Input
-            type="number"
-            min="0"
-            value={billAmount}
-            onChange={(e) => setBillAmount(e.target.value)}
-            required
-          />
-        </div>
+              {/* Invoice upload */}
+              <div className="space-y-2">
+                <Label className="text-gray-300">{t('adminPayment.uploadInvoice')}</Label>
+                <Input
+                  type="file"
+                  accept="application/pdf"
+                  onChange={(e) => setInvoiceFile(e.target.files[0])}
+                  className="bg-charcoal-800 border-charcoal-700 text-white file:bg-charcoal-700 file:text-white file:border-0 file:rounded-md file:px-3 file:py-1"
+                />
+              </div>
 
-        {/* Invoice upload */}
-        <div>
-          <label className="block mb-1 text-sm font-medium text-gray-700">{t('adminPayment.uploadInvoice')}</label>
-          <Input
-            type="file"
-            accept="application/pdf"
-            onChange={(e) => setInvoiceFile(e.target.files[0])}
-          />
-        </div>
+              {/* Submit */}
+              <Button type="submit" className="w-full bg-accent hover:bg-accent/90 text-black font-medium">
+                {t('adminPayment.submit')}
+              </Button>
 
-        {/* Submit */}
-        <Button type="submit" className="w-full">
-          {t('adminPayment.submit')}
-        </Button>
-
-        {status && <p className="text-sm text-center text-gray-600">{status}</p>}
-      </form>
+              {status && (
+                <div className={`text-sm font-medium text-center ${
+                  status.includes('Failed') || status.includes('Error') || status.includes('error')
+                    ? 'text-red-400'
+                    : status.includes('successfully')
+                    ? 'text-green-400'
+                    : 'text-gray-300'
+                }`}>
+                  {status}
+                </div>
+              )}
+            </form>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }
