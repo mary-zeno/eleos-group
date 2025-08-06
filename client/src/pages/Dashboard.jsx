@@ -16,7 +16,6 @@ export default function Dashboard({ user }) {
   const [userData, setUserData] = useState(null);
   const [name, setName] = useState('');
   const [role, setRole] = useState('user');
-  // const [requests, setRequests] = useState([]);
   const [requests, setRequests] = useState({ active: [], inactive: [] });
   const [loading, setLoading] = useState(true);
   const [expandedIdx, setExpandedIdx] = useState(null);
@@ -179,7 +178,6 @@ export default function Dashboard({ user }) {
     const allRequests = [...requests.active, ...requests.inactive];
     // Delete marked requests
     for (const id of requestsToDelete) {
-      // const req = requests.find((r) => r.id === id);
       const req = allRequests.find((r) => r.id === id);
       if (!req) continue;
       const { error } = await supabase.from(req.tableName).delete().eq('id', id);
@@ -190,7 +188,6 @@ export default function Dashboard({ user }) {
     for (const [id, newStatus] of Object.entries(statusChanges)) {
       if (requestsToDelete.has(id)) continue;
 
-      // const req = requests.find((r) => r.id === id);
       const req = allRequests.find((r) => r.id === id);
       if (!req) continue;
 
@@ -217,24 +214,6 @@ export default function Dashboard({ user }) {
         const email = profile?.email;
         const name = profile?.name;
 
-        // if (email && name) {
-        //   const response = await fetch('https://tykawjmgbuuywiddcrxw.supabase.co/functions/v1/send-payment-email', { //url for supabase edge function
-        //     method: 'POST',
-        //     headers: { 
-        //       'Content-Type': 'application/json',
-        //       // supabase anon (public) key
-        //       'Authorization': 'Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}' 
-        //     },
-        //     body: JSON.stringify({
-        //       to: email,
-        //       userName: name,
-        //       serviceType: req.service
-        //     })
-        //   });
-        //   if (!response.ok) {
-        //   console.error('Failed to send email:', await response.text());
-        //   }
-        // }
         if (email && name) {
           try {
             const response = await fetch('https://tykawjmgbuuywiddcrxw.supabase.co/functions/v1/send-payment-email', {
@@ -384,7 +363,6 @@ export default function Dashboard({ user }) {
                   openUserModal={openUserModal}
                   setInvoiceUrl={setInvoiceUrl}
                   navigate={navigate}
-                  // isInactiveTable={false}
                 />
 
                 <RequestTableCard
@@ -401,7 +379,6 @@ export default function Dashboard({ user }) {
                   openUserModal={openUserModal}
                   setInvoiceUrl={setInvoiceUrl}
                   navigate={navigate}
-                  // isInactiveTable={true}
                 />
               </>
             )}
