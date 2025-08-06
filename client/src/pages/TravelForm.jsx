@@ -55,28 +55,52 @@ export default function TravelForm({ user }) {
       user_id: user.id,
     };
 
-    const { error } = await supabase.from('travel_forms').insert([insertData]);
+    // Insert into travel_forms table first
+    const { data: travelFormData, error: travelFormError } = await supabase
+      .from('travel_forms')
+      .insert([insertData])
+      .select('id')
+      .single();
 
-    if (error) {
-      setStatus(t("travelForm.status.failurePrefix") + error.message);
-    } else {
-      setStatus(t("travelForm.status.success"));
-      // Reset form
-      setFormData({
-        purpose: '',
-        city: '',
-        dates: '',
-        num_travelers: '',
-        airport_pickup: false,
-        accommodation: '',
-        car_rental: false,
-        document_support: false,
-        phone_banking_setup: false,
-        city_orientation: false,
-        additional_notes: '',
-      });
-      setEstimate(''); // Clear estimate
+    if (travelFormError) {
+      setStatus(t("travelForm.status.failurePrefix") + travelFormError.message);
+      setLoading(false);
+      return;
     }
+
+    // Insert into invoices table with the generated travel_forms id
+    const invoiceData = {
+      user_id: user.id,
+      service_type: 'Travel',
+      service_uuid: travelFormData.id,
+    };
+
+    const { error: invoiceError } = await supabase
+      .from('invoices')
+      .insert([invoiceData]);
+
+    if (invoiceError) {
+      setStatus(t("travelForm.status.failurePrefix") + invoiceError.message);
+      setLoading(false);
+      return;
+    }
+
+    setStatus(t("travelForm.status.success"));
+    // Reset form
+    setFormData({
+      purpose: '',
+      city: '',
+      dates: '',
+      num_travelers: '',
+      airport_pickup: false,
+      accommodation: '',
+      car_rental: false,
+      document_support: false,
+      phone_banking_setup: false,
+      city_orientation: false,
+      additional_notes: '',
+    });
+    setEstimate(''); // Clear estimate
     setLoading(false);
   };
 

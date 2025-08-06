@@ -53,6 +53,7 @@ export default function Dashboard({ user }) {
 
   //for payment 
   const [invoiceUrl, setInvoiceUrl] = useState(null);
+  const [currentInvoicePaypalLink, setCurrentInvoicePaypalLink] = useState(null);
 
   useEffect(() => {
     const fetchUserAndData = async () => {
@@ -89,11 +90,12 @@ export default function Dashboard({ user }) {
 
     setLoading(true);
 
+    // First, get all service requests from the service tables
     const tables = [
       { name: 'travel_forms', service: t('dashboard.tables.travel') },
       { name: 'business_setup_forms', service: t('dashboard.tables.business') },
       { name: 'property_interest_forms', service: t('dashboard.tables.property') },
-    ];    
+    ];
 
     let allRequests = [];
 
@@ -147,26 +149,32 @@ export default function Dashboard({ user }) {
       userName: userIdToName[req.user_id] || t('fallback.unknown')
     }));
 
-    // Fetch invoices for admin
-    if (role === 'admin') {
-      const { data: invoicesData, error: invoicesError } = await supabase
-        .from('invoices')
-        .select('user_id, service_type, invoice_url');
+    // Now fetch invoices and match them to requests using service_uuid
+    const { data: invoicesData, error: invoicesError } = await supabase
+      .from('invoices')
+      .select('user_id, service_type, service_uuid, invoice_url, paypal_link, amount_owed');
 
-      if (!invoicesError && invoicesData?.length) {
-        const invoiceMap = {};
-        invoicesData.forEach((inv) => {
-          const key = `${inv.user_id}-${inv.service_type}`;
-          invoiceMap[key] = inv.invoice_url;
-        });
-        allRequests = allRequests.map((req) => {
-          const key = `${req.user_id}-${req.service}`;
-          return {
-            ...req,
-            invoiceUrl: invoiceMap[key] || null,
-          };
-        });
-      }
+    if (!invoicesError && invoicesData?.length) {
+      const invoiceMap = {};
+      invoicesData.forEach((inv) => {
+        const key = `${inv.user_id}-${inv.service_type}-${inv.service_uuid}`;
+        invoiceMap[key] = {
+          invoice_url: inv.invoice_url,
+          paypal_link: inv.paypal_link,
+          amount_owed: inv.amount_owed
+        };
+      });
+      
+      allRequests = allRequests.map((req) => {
+        const key = `${req.user_id}-${req.service}-${req.id}`;
+        const invoiceData = invoiceMap[key];
+        return {
+          ...req,
+          invoiceUrl: invoiceData?.invoice_url || null,
+          paypalLink: invoiceData?.paypal_link || null,
+          amount_owed: invoiceData?.amount_owed || null,
+        };
+      });
     }
 
     allRequests.sort((a, b) => new Date(b.inserted_at) - new Date(a.inserted_at));
@@ -364,7 +372,7 @@ export default function Dashboard({ user }) {
                       <TableHead className="text-gray-300">{t('dashboard.user')}</TableHead>
                       <TableHead className="text-gray-300">{t('dashboard.date')}</TableHead>
                       <TableHead className="text-gray-300">{t('dashboard.status')}</TableHead>
-                      {role === 'admin' && <TableHead className="text-gray-300">{t('dashboard.payments')}</TableHead>}
+                      <TableHead className="text-gray-300">{t('dashboard.payments')}</TableHead>
                       <TableHead className="text-gray-300">{t('dashboard.details')}</TableHead>
                     </TableRow>
                   </TableHeader>
@@ -426,29 +434,33 @@ export default function Dashboard({ user }) {
                                 </Badge>
                               )}
                             </TableCell>
-                            {role === 'admin' && (
-                              <TableCell className="py-2 px-4">
-                                {req.invoiceUrl ? (
+                            <TableCell className="py-2 px-4">
+                              {req.invoiceUrl ? (
+                                <div className="flex gap-2">
                                   <Button
                                     variant="outline"
                                     className="text-xs border-accent/50 text-accent hover:bg-accent hover:text-black"
-                                    onClick={() => setInvoiceUrl(req.invoiceUrl)}
+                                    onClick={() => {
+                                      setInvoiceUrl(req.invoiceUrl);
+                                      setCurrentInvoicePaypalLink(req.paypalLink);
+                                    }}
                                   >
                                     {t('dashboard.viewInvoice')}
                                   </Button>
-                                ) : (
-                                  isEditing && (
-                                    <Button
-                                      variant="outline"
-                                      className="text-xs border-accent/50 text-accent hover:bg-accent hover:text-black"
-                                      onClick={() => navigate('/admin/payment', { state: { request: req } })}
-                                    >
-                                      {t('dashboard.createInvoice')}
-                                    </Button>
-                                  )
-                                )}
-                              </TableCell>
-                            )}
+                                  
+                                </div>
+                              ) : (
+                                role === 'admin' && isEditing && (
+                                  <Button
+                                    variant="outline"
+                                    className="text-xs border-accent/50 text-accent hover:bg-accent hover:text-black"
+                                    onClick={() => navigate('/admin/payment', { state: { request: req } })}
+                                  >
+                                    {t('dashboard.createInvoice')}
+                                  </Button>
+                                )
+                              )}
+                            </TableCell>
                             <TableCell>
                               <Button
                                 variant="ghost"
@@ -493,12 +505,28 @@ export default function Dashboard({ user }) {
             {invoiceUrl && (
               <div className="fixed inset-0 bg-black bg-opacity-75 flex justify-center items-center z-50">
                 <div className="bg-charcoal-900 border border-charcoal-700 p-4 rounded-lg max-w-3xl w-full relative">
-                  <button
-                    className="absolute top-2 right-2 text-white bg-red-600 hover:bg-red-700 px-2 py-1 rounded"
-                    onClick={() => setInvoiceUrl(null)}
-                  >
-                    {t('dashboard.close')}
-                  </button>
+                  <div className="flex justify-between items-center mb-4">
+                    <div className="flex gap-2">
+                      {currentInvoicePaypalLink && role !== 'admin' && (
+                        <Button
+                          variant="outline"
+                          className="border-green-500/50 text-green-400 hover:bg-green-500 hover:text-black"
+                          onClick={() => window.open(currentInvoicePaypalLink, '_blank')}
+                        >
+                          Make Payment
+                        </Button>
+                      )}
+                    </div>
+                    <button
+                      className="text-white bg-red-600 hover:bg-red-700 px-2 py-1 rounded"
+                      onClick={() => {
+                        setInvoiceUrl(null);
+                        setCurrentInvoicePaypalLink(null);
+                      }}
+                    >
+                      {t('dashboard.close')}
+                    </button>
+                  </div>
                   <iframe src={invoiceUrl} width="100%" height="600px" title="Invoice PDF" className="rounded" />
                 </div>
               </div>
