@@ -126,15 +126,15 @@ export default function TravelForm({ user }) {
 
 
   return (
-    <div className="min-h-screen bg-gray-100 p-4 sm:p-6 lg:p-8 space-y-6">
+    <div className="min-h-screen bg-charcoal-950 p-4 sm:p-6 lg:p-8 space-y-6">
       <div className="max-w-4xl mx-auto">
         <div className="grid lg:grid-cols-3 gap-6">
 
           {/* Main Form */}
           <div className="lg:col-span-2">
-            <Card>
+            <Card className="bg-charcoal-900 border-charcoal-800">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
+                <CardTitle className="flex items-center gap-2 text-white">
                   <Plane className="h-5 w-5" />
                   {t("travelForm.title")}
                 </CardTitle>
@@ -144,45 +144,47 @@ export default function TravelForm({ user }) {
 
                   {/* Purpose */}
                   <div className="space-y-2">
-                    <Label>{t("travelForm.purposeLabel")}</Label>
+                    <Label className="text-gray-300">{t("travelForm.purposeLabel")}</Label>
                     <Select value={formData.purpose} onValueChange={(value) => handleChange('purpose', value)}>
-                      <SelectTrigger>
+                      <SelectTrigger className="bg-charcoal-800 border-charcoal-700 text-white">
                         <SelectValue placeholder={t("travelForm.purposePlaceholder")}/>
                       </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="Visit">{t("travelForm.purposeOptions.visit")}</SelectItem>
-                        <SelectItem value="Move">{t("travelForm.purposeOptions.move")}</SelectItem>
-                        <SelectItem value="Vacation">{t("travelForm.purposeOptions.vacation")}</SelectItem>
-                        <SelectItem value="Work">{t("travelForm.purposeOptions.work")}</SelectItem>
-
+                      <SelectContent className="bg-charcoal-800 border-charcoal-700">
+                        <SelectItem value="Visit" className="text-white hover:bg-charcoal-700">{t("travelForm.purposeOptions.visit")}</SelectItem>
+                        <SelectItem value="Move" className="text-white hover:bg-charcoal-700">{t("travelForm.purposeOptions.move")}</SelectItem>
+                        <SelectItem value="Vacation" className="text-white hover:bg-charcoal-700">{t("travelForm.purposeOptions.vacation")}</SelectItem>
+                        <SelectItem value="Work" className="text-white hover:bg-charcoal-700">{t("travelForm.purposeOptions.work")}</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
+                  
                   {/* City */}
                   <div className="space-y-2">
-                    <Label>{t("travelForm.cityLabel")}</Label>
+                    <Label className="text-gray-300">{t("travelForm.cityLabel")}</Label>
                     <Input
                       value={formData.city}
                       onChange={(e) => handleChange('city', e.target.value)}
                       placeholder={t("travelForm.cityPlaceholder")}
                       required
+                      className="bg-charcoal-800 border-charcoal-700 text-white placeholder:text-gray-400"
                     />
                   </div>
 
                   {/* Dates */}
                   <div className="space-y-2">
-                    <Label>{t("travelForm.datesLabel")}</Label>
+                    <Label className="text-gray-300">{t("travelForm.datesLabel")}</Label>
                     <Input
                       value={formData.dates}
                       onChange={(e) => handleChange('dates', e.target.value)}
                       placeholder={t("travelForm.datesPlaceholder")}
                       required
+                      className="bg-charcoal-800 border-charcoal-700 text-white placeholder:text-gray-400"
                     />
                   </div>
 
                   {/* Number of Travelers */}
                   <div className="space-y-2">
-                    <Label>{t("travelForm.numTravelersLabel")}</Label>
+                    <Label className="text-gray-300">{t("travelForm.numTravelersLabel")}</Label>
                     <Input
                       type="number"
                       value={formData.num_travelers}
@@ -191,27 +193,28 @@ export default function TravelForm({ user }) {
                       required
                       min="1"
                       max="20"
+                      className="bg-charcoal-800 border-charcoal-700 text-white placeholder:text-gray-400"
                     />
                   </div>
 
                   {/* Accommodation */}
                   <div className="space-y-2">
-                    <Label>{t("travelForm.accommodationLabel")}</Label>
+                    <Label className="text-gray-300">{t("travelForm.accommodationLabel")}</Label>
                     <Select value={formData.accommodation} onValueChange={(value) => handleChange('accommodation', value)}>
-                      <SelectTrigger>
+                      <SelectTrigger className="bg-charcoal-800 border-charcoal-700 text-white">
                         <SelectValue placeholder={t("travelForm.accommodationPlaceholder")} />
                       </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="Hotel">{t("travelForm.accommodationOptions.hotel")}</SelectItem>
-                        <SelectItem value="Guesthouse">{t("travelForm.accommodationOptions.guesthouse")}</SelectItem>
-                        <SelectItem value="Long-Term">{t("travelForm.accommodationOptions.longTerm")}</SelectItem>
+                      <SelectContent className="bg-charcoal-800 border-charcoal-700">
+                        <SelectItem value="Hotel" className="text-white hover:bg-charcoal-700">{t("travelForm.accommodationOptions.hotel")}</SelectItem>
+                        <SelectItem value="Guesthouse" className="text-white hover:bg-charcoal-700">{t("travelForm.accommodationOptions.guesthouse")}</SelectItem>
+                        <SelectItem value="Long-Term" className="text-white hover:bg-charcoal-700">{t("travelForm.accommodationOptions.longTerm")}</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
 
                   {/* Services Checkboxes */}
                   <div className="space-y-4">
-                    <Label className="text-base font-medium">{t("travelForm.additionalServicesLabel")}</Label>
+                    <Label className="text-base font-medium text-gray-300">{t("travelForm.additionalServicesLabel")}</Label>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div className="flex items-center space-x-2">
@@ -219,8 +222,9 @@ export default function TravelForm({ user }) {
                           id="airport_pickup"
                           checked={formData.airport_pickup}
                           onCheckedChange={(checked) => handleChange('airport_pickup', checked)}
+                          className="border-charcoal-600 data-[state=checked]:bg-accent data-[state=checked]:border-accent"
                         />
-                        <Label htmlFor="airport_pickup" className="text-sm">{t("travelForm.services.airportPickup")}</Label>
+                        <Label htmlFor="airport_pickup" className="text-sm text-gray-300">{t("travelForm.services.airportPickup")}</Label>
                       </div>
 
                       <div className="flex items-center space-x-2">
@@ -228,8 +232,9 @@ export default function TravelForm({ user }) {
                           id="car_rental"
                           checked={formData.car_rental}
                           onCheckedChange={(checked) => handleChange('car_rental', checked)}
+                          className="border-charcoal-600 data-[state=checked]:bg-accent data-[state=checked]:border-accent"
                         />
-                        <Label htmlFor="car_rental" className="text-sm">{t("travelForm.services.carRental")}</Label>
+                        <Label htmlFor="car_rental" className="text-sm text-gray-300">{t("travelForm.services.carRental")}</Label>
                       </div>
 
                       <div className="flex items-center space-x-2">
@@ -237,8 +242,9 @@ export default function TravelForm({ user }) {
                           id="document_support"
                           checked={formData.document_support}
                           onCheckedChange={(checked) => handleChange('document_support', checked)}
+                          className="border-charcoal-600 data-[state=checked]:bg-accent data-[state=checked]:border-accent"
                         />
-                        <Label htmlFor="document_support" className="text-sm">{t("travelForm.services.documentSupport")}</Label>
+                        <Label htmlFor="document_support" className="text-sm text-gray-300">{t("travelForm.services.documentSupport")}</Label>
                       </div>
 
                       <div className="flex items-center space-x-2">
@@ -246,8 +252,9 @@ export default function TravelForm({ user }) {
                           id="phone_banking_setup"
                           checked={formData.phone_banking_setup}
                           onCheckedChange={(checked) => handleChange('phone_banking_setup', checked)}
+                          className="border-charcoal-600 data-[state=checked]:bg-accent data-[state=checked]:border-accent"
                         />
-                        <Label htmlFor="phone_banking_setup" className="text-sm">{t("travelForm.services.phoneBanking")}</Label>
+                        <Label htmlFor="phone_banking_setup" className="text-sm text-gray-300">{t("travelForm.services.phoneBanking")}</Label>
                       </div>
 
                       <div className="flex items-center space-x-2">
@@ -255,25 +262,27 @@ export default function TravelForm({ user }) {
                           id="city_orientation"
                           checked={formData.city_orientation}
                           onCheckedChange={(checked) => handleChange('city_orientation', checked)}
+                          className="border-charcoal-600 data-[state=checked]:bg-accent data-[state=checked]:border-accent"
                         />
-                        <Label htmlFor="city_orientation" className="text-sm">{t("travelForm.services.cityOrientation")}</Label>
+                        <Label htmlFor="city_orientation" className="text-sm text-gray-300">{t("travelForm.services.cityOrientation")}</Label>
                       </div>
                     </div>
                   </div>
 
                   {/* Additional Notes */}
                   <div className="space-y-2">
-                    <Label>{t("travelForm.additionalNotesLabel")}</Label>
+                    <Label className="text-gray-300">{t("travelForm.additionalNotesLabel")}</Label>
                     <Textarea
                       value={formData.additional_notes}
                       onChange={(e) => handleChange('additional_notes', e.target.value)}
                       placeholder={t("travelForm.additionalNotesPlaceholder")}
                       rows={4}
+                      className="bg-charcoal-800 border-charcoal-700 text-white placeholder:text-gray-400"
                     />
                   </div>
 
                   {/* Submit Button */}
-                  <Button type="submit" disabled={loading} className="w-full">
+                  <Button type="submit" disabled={loading} className="w-full bg-accent hover:bg-accent/90 text-black font-medium">
                     {loading ? t("travelForm.submitting") : t("travelForm.submitButton")}
                   </Button>
 
@@ -281,13 +290,13 @@ export default function TravelForm({ user }) {
                   {status && (
                     <Alert className={
                       status.includes('successfully')
-                        ? 'border-green-200 bg-green-50'
-                        : 'border-red-200 bg-red-50'
+                        ? 'border-green-700 bg-green-900/20'
+                        : 'border-red-700 bg-red-900/20'
                     }>
                       <AlertDescription className={
                         status.includes('successfully')
-                          ? 'text-green-800'
-                          : 'text-red-800'
+                          ? 'text-green-400'
+                          : 'text-red-400'
                       }>
                         {status}
                       </AlertDescription>
@@ -300,21 +309,21 @@ export default function TravelForm({ user }) {
 
           {/* Cost Estimator Sidebar */}
           <div className="space-y-6">
-            <Card>
+            <Card className="bg-charcoal-900 border-charcoal-800">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
+                <CardTitle className="flex items-center gap-2 text-white">
                   <Calculator className="h-5 w-5" />
                   {t("travelEstimator.title")}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-gray-400">
                 {t("travelEstimator.subtitle")}
                 </p>
 
-                <Alert className="border-amber-200 bg-amber-50">
-                  <AlertTriangle className="h-4 w-4 text-amber-600" />
-                  <AlertDescription className="text-amber-800 text-xs">
+                <Alert className="border-amber-700 bg-amber-900/20">
+                  <AlertTriangle className="h-4 w-4 text-amber-400" />
+                  <AlertDescription className="text-amber-400 text-xs">
                   {t("travelEstimator.warning")}
                   </AlertDescription>
                 </Alert>
@@ -324,15 +333,15 @@ export default function TravelForm({ user }) {
                   onClick={fetchEstimate}
                   disabled={loadingEstimate || !formData.accommodation || !formData.num_travelers || !formData.dates}
                   variant="outline"
-                  className="w-full"
+                  className="w-full bg-charcoal-800 border-charcoal-700 text-white hover:bg-charcoal-700"
                 >
                   {loadingEstimate ? t("travelEstimator.loading") : t("travelEstimator.button")}
                 </Button>
 
                 {estimate && !estimate.error && (
-                  <div className="mt-4 p-4 bg-blue-50 rounded-lg">
-                    <h4 className="font-medium mb-2">{t("travelEstimator.estimate.title")}</h4>
-                    <p className="text-sm text-gray-700">
+                  <div className="mt-4 p-4 bg-blue-900/20 border border-blue-700 rounded-lg">
+                    <h4 className="font-medium mb-2 text-white">{t("travelEstimator.estimate.title")}</h4>
+                    <p className="text-sm text-gray-300">
                       <strong>{t("travelEstimator.estimate.lowRange")}</strong> ${estimate.lowStart} - ${estimate.lowEnd} <br />
                       <strong>{t("travelEstimator.estimate.highRange")}</strong> ${estimate.highStart} - ${estimate.highEnd}
                     </p>
@@ -340,13 +349,13 @@ export default function TravelForm({ user }) {
                     {estimate.notes && (
                       <>
                         <button
-                          className="text-blue-600 mt-2 text-sm underline"
+                          className="text-blue-400 mt-2 text-sm underline hover:text-blue-300"
                           onClick={() => setDetailsVisible(!detailsVisible)}
                         >
                           {detailsVisible ? t("travelEstimator.estimate.hideBreakdown") : t("travelEstimator.estimate.showBreakdown")}
                         </button>
                         {detailsVisible && (
-                          <div className="mt-2 text-xs text-gray-600 whitespace-pre-wrap">
+                          <div className="mt-2 text-xs text-gray-400 whitespace-pre-wrap">
                             {estimate.notes}
                           </div>
                         )}
@@ -356,15 +365,15 @@ export default function TravelForm({ user }) {
                 )}
 
                 {estimate && estimate.error && (
-                  <div className="mt-4 p-4 bg-red-50 text-red-700 rounded-lg">
+                  <div className="mt-4 p-4 bg-red-900/20 border border-red-700 text-red-400 rounded-lg">
                     {estimate.error}
                   </div>
                 )}
 
 
                 {!formData.accommodation || !formData.num_travelers || !formData.dates ? (
-                  <Alert>
-                    <AlertDescription className="text-sm">
+                  <Alert className="border-charcoal-700 bg-charcoal-800/50">
+                    <AlertDescription className="text-sm text-gray-400">
                     {t("travelEstimator.estimate.missingFields")}
                     </AlertDescription>
                   </Alert>
@@ -373,14 +382,14 @@ export default function TravelForm({ user }) {
             </Card>
 
             {/* Info Card */}
-            <Card>
+            <Card className="bg-charcoal-900 border-charcoal-800">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
+                <CardTitle className="flex items-center gap-2 text-white">
                   <MapPin className="h-5 w-5" />
                   {t("travelInfo.title")}
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-2 text-sm text-gray-600">
+              <CardContent className="space-y-2 text-sm text-gray-400">
                 <p>• {t("travelInfo.visa")}</p>
                 <p>• {t("travelInfo.season")}</p>
                 <p>• {t("travelInfo.currency")}</p>

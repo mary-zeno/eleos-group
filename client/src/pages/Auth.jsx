@@ -19,12 +19,10 @@ export default function Auth() {
   const handleLogin = async () => {
     setStatus('');
     setLoading(true);
-
     const { error } = await supabase.auth.signInWithPassword({
       email: email.trim(),
       password: password.trim(),
     });
-
     if (error) {
       setStatus(t('auth.status.loginError') + error.message);
     } else {
@@ -37,19 +35,16 @@ export default function Auth() {
   const handleSignup = async () => {
     setStatus('');
     setLoading(true);
-
     const { data, error } = await supabase.auth.signUp({
       email: email.trim(),
       password: password.trim(),
     });
-
     if (error) {
       setStatus(t('auth.status.signupError') + error.message);
     } else if (data?.user) {
       const { error: insertError } = await supabase
         .from('profiles')
         .insert([{ id: data.user.id, email: data.user.email, name: name.trim() }]);
-
       if (insertError) {
         setStatus(t('auth.status.profileError') + insertError.message);
       } else {
@@ -68,11 +63,11 @@ export default function Auth() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
-      <Card className="w-full max-w-md">
+    <div className="min-h-screen flex items-center justify-center bg-charcoal-950 p-4">
+      <Card className="w-full max-w-md bg-charcoal-900 border-charcoal-800">
         <CardHeader>
-          <CardTitle>{t('auth.welcome')}</CardTitle>
-          <CardDescription>{t('auth.description')}</CardDescription>
+          <CardTitle className="text-white">{t('auth.welcome')}</CardTitle>
+          <CardDescription className="text-gray-300">{t('auth.description')}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           {showNameField && (
@@ -82,50 +77,48 @@ export default function Auth() {
               value={name}
               onChange={(e) => setName(e.target.value)}
               disabled={loading}
+              className="bg-charcoal-800 border-charcoal-700 text-white placeholder:text-gray-400"
             />
           )}
-
           <Input
             type="email"
             placeholder={t('auth.emailPlaceholder')}
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             disabled={loading}
+            className="bg-charcoal-800 border-charcoal-700 text-white placeholder:text-gray-400"
           />
-
           <Input
             type="password"
             placeholder={t('auth.passwordPlaceholder')}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             disabled={loading}
+            className="bg-charcoal-800 border-charcoal-700 text-white placeholder:text-gray-400"
           />
-
           <div className="flex gap-2">
             <Button
               onClick={handleLogin}
               disabled={loading}
               variant="default"
-              className="flex-1"
+              className="flex-1 bg-accent hover:bg-accent/90 text-black font-medium"
             >
               {t('auth.login')}
             </Button>
-
             <Button
               onClick={handleSignupClick}
               disabled={loading}
               variant="outline"
-              className="flex-1"
+              className="flex-1 border-charcoal-600 text-white hover:bg-charcoal-800 hover:text-white"
             >
               {t('auth.signup')}
             </Button>
           </div>
-
           {status && (
             <div className={`text-sm font-medium ${status.toLowerCase().includes('error')
-              ? 'text-red-600'
-              : 'text-green-600'
-              }`}>
+              ? 'text-red-400'
+              : 'text-green-400'
+            }`}>
               {status}
             </div>
           )}

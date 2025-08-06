@@ -62,21 +62,26 @@ export default function SettingsPage({ user }) {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 py-8 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-charcoal-950 py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto space-y-6">
-        <Card>
+        <Card className="bg-charcoal-900 border-charcoal-800">
           <CardHeader>
-            <CardTitle className="text-2xl">{t("settings.title")}</CardTitle>
+            <CardTitle className="text-2xl text-white">{t("settings.title")}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="flex items-center justify-between mb-4">
-              <Button onClick={() => setShowForm(true)}>{t("settings.add")}</Button>
+              <Button 
+                onClick={() => setShowForm(true)}
+                className="bg-accent hover:bg-accent/90 text-black font-medium"
+              >
+                {t("settings.add")}
+              </Button>
               {status && <span className="text-sm text-gray-600">{status}</span>}
             </div>
             {properties.length > 0 ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
                 {properties.map((prop) => (
-                  <Card key={prop.id} className="flex flex-col">
+                  <Card key={prop.id} className="flex flex-col bg-charcoal-800 border-charcoal-700">
                     {prop.image_url && (
                       <img
                         src={prop.image_url}
@@ -85,14 +90,14 @@ export default function SettingsPage({ user }) {
                       />
                     )}
                     <CardContent className="flex flex-col gap-2 flex-grow">
-                      <h4 className="text-lg font-semibold">{prop.name}</h4>
-                      <p className="text-sm text-gray-600">{prop.address}</p>
-                      <p className="text-sm">
+                      <h4 className="text-lg font-semibold text-white">{prop.name}</h4>
+                      <p className="text-sm text-gray-400">{prop.address}</p>
+                      <p className="text-sm text-gray-300">
                         {t("settings.form.price", {
                           price: prop.price,
                         })}
                       </p>
-                      <p className="text-sm">
+                      <p className="text-sm text-gray-300">
                         {t("settings.form.details", {
                           bedrooms: prop.bedrooms,
                           bathrooms: prop.bathrooms,
@@ -100,7 +105,7 @@ export default function SettingsPage({ user }) {
                       </p>
                       <Button
                         onClick={() => handleDeleteProperty(prop)}
-                        className="mt-auto"
+                        className="mt-auto bg-red-600 hover:bg-red-700 text-white"
                       >
                         {t("settings.form.delete")}
                       </Button>
@@ -109,7 +114,7 @@ export default function SettingsPage({ user }) {
                 ))}
               </div>
             ) : (
-              <p className="text-gray-600">{t("settings.empty")}</p>
+              <p className="text-gray-400">{t("settings.empty")}</p>
             )}
           </CardContent>
         </Card>
@@ -117,7 +122,7 @@ export default function SettingsPage({ user }) {
         {showForm && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
             <div
-              className="bg-white rounded-lg shadow-lg p-6 w-full max-w-md relative"
+              className="bg-charcoal-900 border border-charcoal-800 rounded-lg shadow-lg p-6 w-full max-w-md relative"
               onClick={(e) => e.stopPropagation()}
             >
               <PropertyForm
@@ -196,29 +201,29 @@ function PropertyForm({ onClose, user, onPropertyAdded, setStatus }) {
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-      <h2 className="text-xl font-bold mb-2">{t("settings.form.title")}</h2>
+      <h2 className="text-xl font-bold mb-2 text-white">{t("settings.form.title")}</h2>
 
-      <label className="text-sm font-medium">{t("settings.form.labels.name")}</label>
+      <label className="text-sm font-medium text-gray-300">{t("settings.form.labels.name")}</label>
       <input
-        className="border rounded p-2"
+        className="border border-charcoal-700 bg-charcoal-800 text-white placeholder:text-gray-400 rounded p-2 focus:ring-2 focus:ring-accent focus:border-accent outline-none"
         type="text"
         value={name}
         onChange={(e) => setName(e.target.value)}
         required
       />
 
-      <label className="text-sm font-medium">{t("settings.form.labels.address")}</label>
+      <label className="text-sm font-medium text-gray-300">{t("settings.form.labels.address")}</label>
       <input
-        className="border rounded p-2"
+        className="border border-charcoal-700 bg-charcoal-800 text-white placeholder:text-gray-400 rounded p-2 focus:ring-2 focus:ring-accent focus:border-accent outline-none"
         type="text"
         value={address}
         onChange={(e) => setAddress(e.target.value)}
         required
       />
 
-      <label className="text-sm font-medium">{t("settings.form.labels.price")}</label>
+      <label className="text-sm font-medium text-gray-300">{t("settings.form.labels.price")}</label>
       <input
-        className="border rounded p-2"
+        className="border border-charcoal-700 bg-charcoal-800 text-white placeholder:text-gray-400 rounded p-2 focus:ring-2 focus:ring-accent focus:border-accent outline-none"
         type="number"
         min="0"
         value={price}
@@ -226,9 +231,9 @@ function PropertyForm({ onClose, user, onPropertyAdded, setStatus }) {
         required
       />
 
-      <label className="text-sm font-medium">{t("settings.form.labels.bedrooms")}</label>
+      <label className="text-sm font-medium text-gray-300">{t("settings.form.labels.bedrooms")}</label>
       <input
-        className="border rounded p-2"
+        className="border border-charcoal-700 bg-charcoal-800 text-white placeholder:text-gray-400 rounded p-2 focus:ring-2 focus:ring-accent focus:border-accent outline-none"
         type="number"
         min="0"
         value={bedrooms}
@@ -236,9 +241,9 @@ function PropertyForm({ onClose, user, onPropertyAdded, setStatus }) {
         required
       />
 
-      <label className="text-sm font-medium">{t("settings.form.labels.bathrooms")}</label>
+      <label className="text-sm font-medium text-gray-300">{t("settings.form.labels.bathrooms")}</label>
       <input
-        className="border rounded p-2"
+        className="border border-charcoal-700 bg-charcoal-800 text-white placeholder:text-gray-400 rounded p-2 focus:ring-2 focus:ring-accent focus:border-accent outline-none"
         type="number"
         min="0"
         value={bathrooms}
@@ -246,22 +251,32 @@ function PropertyForm({ onClose, user, onPropertyAdded, setStatus }) {
         required
       />
 
-      <label className="text-sm font-medium">{t("settings.form.labels.image")}</label>
+      <label className="text-sm font-medium text-gray-300">{t("settings.form.labels.image")}</label>
       <input
-        className="border rounded p-2"
+        className="border border-charcoal-700 bg-charcoal-800 text-white file:bg-charcoal-700 file:text-white file:border-0 file:rounded file:px-3 file:py-1 file:mr-3 rounded p-2 focus:ring-2 focus:ring-accent focus:border-accent outline-none"
         type="file"
         accept="image/*"
         onChange={(e) => setImageFile(e.target.files[0])}
       />
 
       <div className="flex justify-end gap-2">
-        <Button type="button" variant="outline" onClick={onClose}>
+        <Button 
+          type="button" 
+          variant="outline" 
+          onClick={onClose}
+          className="bg-charcoal-800 border-charcoal-700 text-white hover:bg-charcoal-700"
+        >
           Cancel
         </Button>
-        <Button type="submit">{"Submit"}</Button>
+        <Button 
+          type="submit"
+          className="bg-accent hover:bg-accent/90 text-black font-medium"
+        >
+          {"Submit"}
+        </Button>
       </div>
 
-      {localStatus && <p className="text-sm text-gray-600">{localStatus}</p>}
+      {localStatus && <p className="text-sm text-red-400">{localStatus}</p>}
     </form>
   );
 }

@@ -1,6 +1,6 @@
 {
     "nav": {
-        "appName": "ELOS Services",
+        "appName": "ELEOS Access",
         "dashboard": "Dashboard",
         "propertyForm": "Property Form",
         "travelForm": "Travel Form",
@@ -207,9 +207,9 @@
     },
     "home": {
         "hero": {
-            "title1": "Strategic Insights,",
-            "title2": "Customized",
-            "title3": "Solutions",
+            "title1": "Own. Invest. Establish.",
+            "title2": "with Confidence",
+            "title3": "",
             "description": "Easily adapt to changes and scale your operations with our flexible infrastructure, designed to support your business growth.",
             "cta": {
                 "auth": "Get Started",
