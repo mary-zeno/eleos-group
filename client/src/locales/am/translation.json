@@ -160,6 +160,8 @@
         "noRequests": "እስካሁን ምንም ጥያቄ አልተሰጠም።",
         "submitFirst": "የመጀመሪያ ጥያቄዎን አስገባ",
         "requestsTitle": "የአገልግሎት ጥያቄዎች",
+        "activeRequests": "ንቁ ጥያቄዎች",
+        "inactiveRequests": "ንቁ ያልሆኑ ጥያቄዎች።",
         "delete": "ሰርዝ",
         "service": "አገልግሎት",
         "user": "ተጠቃሚ",

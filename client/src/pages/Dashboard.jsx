@@ -8,40 +8,15 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-
-const STATUS_KEYS = [
-  'status.submitted',
-  'status.inReview',
-  'status.pendingInfo',
-  'status.inProgress',
-  'status.awaitingPayment',
-  'status.completed',
-  'status.onHold',
-  'status.cancelled',
-  'status.archived',
-];
-
-const getStatusColor = (statusKey) => {
-  const colors = {
-    'status.submitted': 'bg-blue-900 text-blue-200 border-blue-700',
-    'status.inReview': 'bg-yellow-900 text-yellow-200 border-yellow-700',
-    'status.pendingInfo': 'bg-orange-900 text-orange-200 border-orange-700',
-    'status.inProgress': 'bg-purple-900 text-purple-200 border-purple-700',
-    'status.awaitingPayment': 'bg-red-900 text-red-200 border-red-700',
-    'status.completed': 'bg-green-900 text-green-200 border-green-700',
-    'status.onHold': 'bg-gray-700 text-gray-200 border-gray-600',
-    'status.cancelled': 'bg-red-900 text-red-200 border-red-700',
-    'status.archived': 'bg-gray-700 text-gray-200 border-gray-600',
-  };
-  return colors[statusKey] || 'bg-gray-700 text-gray-200 border-gray-600';
-};
+import { ArrowLeft, User, Mail, Lock, CheckCircle, AlertCircle } from 'lucide-react';
+import RequestTableCard from '@/components/RequestTableCard';
 
 export default function Dashboard({ user }) {
   const navigate = useNavigate();
   const [userData, setUserData] = useState(null);
   const [name, setName] = useState('');
   const [role, setRole] = useState('user');
-  const [requests, setRequests] = useState([]);
+  const [requests, setRequests] = useState({ active: [], inactive: [] });
   const [loading, setLoading] = useState(true);
   const [expandedIdx, setExpandedIdx] = useState(null);
   const { t } = useTranslation();
@@ -53,6 +28,10 @@ export default function Dashboard({ user }) {
 
   //for payment 
   const [invoiceUrl, setInvoiceUrl] = useState(null);
+
+  // User contact info modal
+  const [selectedUserProfile, setSelectedUserProfile] = useState(null);
+  const [isUserModalOpen, setIsUserModalOpen] = useState(false);
 
   useEffect(() => {
     const fetchUserAndData = async () => {
@@ -171,6 +150,13 @@ export default function Dashboard({ user }) {
 
     allRequests.sort((a, b) => new Date(b.inserted_at) - new Date(a.inserted_at));
     setRequests(allRequests);
+
+    // split fetched data
+    const inactiveStatuses = ['status.completed', 'status.cancelled', 'status.archived'];
+    const activeRequests = allRequests.filter(req => !inactiveStatuses.includes(req.status));
+    const inactiveRequests = allRequests.filter(req => inactiveStatuses.includes(req.status));
+    setRequests({ active: activeRequests, inactive: inactiveRequests });
+
     setLoading(false);
   };
 
@@ -189,10 +175,10 @@ export default function Dashboard({ user }) {
 
   const handleSaveChanges = async () => {
     setLoading(true);
-
+    const allRequests = [...requests.active, ...requests.inactive];
     // Delete marked requests
     for (const id of requestsToDelete) {
-      const req = requests.find((r) => r.id === id);
+      const req = allRequests.find((r) => r.id === id);
       if (!req) continue;
       const { error } = await supabase.from(req.tableName).delete().eq('id', id);
       if (error) console.error('Delete error for id:', id, error.message);
@@ -202,7 +188,7 @@ export default function Dashboard({ user }) {
     for (const [id, newStatus] of Object.entries(statusChanges)) {
       if (requestsToDelete.has(id)) continue;
 
-      const req = requests.find((r) => r.id === id);
+      const req = allRequests.find((r) => r.id === id);
       if (!req) continue;
 
       if (req.status === newStatus) continue;
@@ -229,21 +215,26 @@ export default function Dashboard({ user }) {
         const name = profile?.name;
 
         if (email && name) {
-          await fetch('https://tykawjmgbuuywiddcrxw.supabase.co/functions/v1/send-payment-email', { //url for supabase edge function
-            method: 'POST',
-            headers: { 
-              'Content-Type': 'application/json',
-              // supabase anon (public) key
-              'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR5a2F3am1nYnV1eXdpZGRjcnh3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTA5NjY0NDIsImV4cCI6MjA2NjU0MjQ0Mn0.rlE6H5-Vf4CkIt5BNJuSVFDzREw77z-sac63OKx50FI' 
-            },
-            body: JSON.stringify({
-              to: email,
-              userName: name,
-              serviceType: req.service
-            })
-          });
-          if (!response.ok) {
-          console.error('Failed to send email:', await response.text());
+          try {
+            const response = await fetch('https://tykawjmgbuuywiddcrxw.supabase.co/functions/v1/send-payment-email', {
+              method: 'POST',
+              headers: { 
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}` // recommended approach
+              },
+              body: JSON.stringify({
+                to: email,
+                userName: name,
+                serviceType: req.service
+              })
+            });
+
+            if (!response.ok) {
+              const errorText = await response.text();
+              console.error('Failed to send email:', errorText);
+            }
+          } catch (err) {
+            console.error('Error sending email:', err);
           }
         }
       }
@@ -267,6 +258,23 @@ export default function Dashboard({ user }) {
 
   const toggleDetails = (idx) => {
     setExpandedIdx(expandedIdx === idx ? null : idx);
+  };
+
+
+  const openUserModal = async (userId) => {
+    const { data: profile, error } = await supabase
+      .from('profiles')
+      .select('name, email')
+      .eq('id', userId)
+      .single();
+
+    if (error) {
+      console.error('Failed to fetch user profile:', error.message);
+      return;
+    }
+
+    setSelectedUserProfile(profile);
+    setIsUserModalOpen(true);
   };
 
   return (
@@ -355,143 +363,42 @@ export default function Dashboard({ user }) {
                 </Button>
               </div>
             ) : (
-              <div className="overflow-x-auto">
-                <Table>
-                  <TableHeader>
-                    <TableRow className="border-charcoal-700 hover:bg-charcoal-800/50">
-                      {role === 'admin' && isEditing && <TableHead className="text-gray-300">{t('dashboard.delete')}</TableHead>}
-                      <TableHead className="text-gray-300">{t('dashboard.service')}</TableHead>
-                      <TableHead className="text-gray-300">{t('dashboard.user')}</TableHead>
-                      <TableHead className="text-gray-300">{t('dashboard.date')}</TableHead>
-                      <TableHead className="text-gray-300">{t('dashboard.status')}</TableHead>
-                      {role === 'admin' && <TableHead className="text-gray-300">{t('dashboard.payments')}</TableHead>}
-                      <TableHead className="text-gray-300">{t('dashboard.details')}</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {requests.map((req, idx) => {
-                      const isDeleted = requestsToDelete.has(req.id);
-                      const currentStatus = statusChanges[req.id] || req.status;
+              <>
+                <RequestTableCard
+                  title={t('dashboard.activeRequests')}
+                  requests={requests.active}
+                  role={role}
+                  isEditing={isEditing}
+                  requestsToDelete={requestsToDelete}
+                  toggleDeleteRequest={toggleDeleteRequest}
+                  statusChanges={statusChanges}
+                  handleStatusChange={handleStatusChange}
+                  toggleDetails={toggleDetails}
+                  expandedIdx={expandedIdx}
+                  openUserModal={openUserModal}
+                  setInvoiceUrl={setInvoiceUrl}
+                  navigate={navigate}
+                />
 
-                      return (
-                        <React.Fragment key={req.id}>
-                          <TableRow className={`border-charcoal-700 hover:bg-charcoal-800/50 ${isDeleted ? 'opacity-50 line-through' : ''}`}>
-                            {role === 'admin' && isEditing && (
-                              <TableCell>
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  onClick={() => toggleDeleteRequest(req.id)}
-                                  className="text-red-400 hover:text-red-300 hover:bg-red-900/20"
-                                >
-                                  ❌
-                                </Button>
-                              </TableCell>
-                            )}
-                            <TableCell>
-                              <Badge variant="outline" className="border-accent/50 text-accent">
-                                {req.service}
-                              </Badge>
-                            </TableCell>
-                            <TableCell className="text-gray-300">
-                              {role === 'admin' ? req.userName : 'You'}
-                            </TableCell>
-                            <TableCell className="text-gray-300">
-                              {new Date(req.inserted_at).toLocaleDateString()}
-                            </TableCell>
-                            <TableCell>
-                              {role === 'admin' && isEditing ? (
-                                <Select
-                                  value={currentStatus}
-                                  onValueChange={(value) => handleStatusChange(req.id, value)}
-                                >
-                                  <SelectTrigger className="w-40 bg-charcoal-800 border-charcoal-700 text-white">
-                                    <SelectValue>{t(currentStatus)}</SelectValue>
-                                  </SelectTrigger>
-                                  <SelectContent className="bg-charcoal-800 border-charcoal-700">
-                                    {STATUS_KEYS.map((key) => (
-                                      <SelectItem 
-                                        key={key} 
-                                        value={key}
-                                        className="text-white hover:bg-charcoal-700"
-                                      >
-                                        {t(key)}
-                                      </SelectItem>
-                                    ))}
-                                  </SelectContent>
-                                </Select>
-                              ) : (
-                                <Badge className={getStatusColor(currentStatus)}>
-                                  {t(currentStatus)}
-                                </Badge>
-                              )}
-                            </TableCell>
-                            {role === 'admin' && (
-                              <TableCell className="py-2 px-4">
-                                {req.invoiceUrl ? (
-                                  <Button
-                                    variant="outline"
-                                    className="text-xs border-accent/50 text-accent hover:bg-accent hover:text-black"
-                                    onClick={() => setInvoiceUrl(req.invoiceUrl)}
-                                  >
-                                    {t('dashboard.viewInvoice')}
-                                  </Button>
-                                ) : (
-                                  isEditing && (
-                                    <Button
-                                      variant="outline"
-                                      className="text-xs border-accent/50 text-accent hover:bg-accent hover:text-black"
-                                      onClick={() => navigate('/admin/payment', { state: { request: req } })}
-                                    >
-                                      {t('dashboard.createInvoice')}
-                                    </Button>
-                                  )
-                                )}
-                              </TableCell>
-                            )}
-                            <TableCell>
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                className="text-2xl text-gray-400 hover:text-white hover:bg-charcoal-800"
-                                onClick={() => toggleDetails(idx)}
-                              >
-                                {expandedIdx === idx ? '▴' : '▾'}
-                              </Button>
-                            </TableCell>
-                          </TableRow>
-                          {expandedIdx === idx && (
-                            <TableRow className="bg-charcoal-800/50 border-charcoal-700">
-                              <TableCell colSpan={role === 'admin' && isEditing ? 7 : 6}>
-                                <div className="p-4 space-y-2">
-                                  <h4 className="font-medium mb-2 text-white">{t('dashboard.requestDetails')}</h4>
-                                  <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
-                                    {Object.entries(req).map(([key, value]) =>
-                                      !['id', 'user_id', 'inserted_at', 'service', 'status', 'tableName', 'userName'].includes(key) && (
-                                        <div key={key} className="flex">
-                                          <span className="font-medium mr-2 min-w-0 flex-shrink-0 text-gray-300">
-                                            {key.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}:
-                                          </span>
-                                          <span className="text-gray-400 break-words">
-                                            {String(value) || 'N/A'}
-                                          </span>
-                                        </div>
-                                      )
-                                    )}
-                                  </div>
-                                </div>
-                              </TableCell>
-                            </TableRow>
-                          )}
-                        </React.Fragment>
-                      );
-                    })}
-                  </TableBody>
-                </Table>
-              </div>
+                <RequestTableCard
+                  title={t('dashboard.inactiveRequests')}
+                  requests={requests.inactive}
+                  role={role}
+                  isEditing={isEditing} 
+                  requestsToDelete={requestsToDelete}
+                  toggleDeleteRequest={toggleDeleteRequest}
+                  statusChanges={statusChanges}
+                  handleStatusChange={handleStatusChange}
+                  toggleDetails={toggleDetails}
+                  expandedIdx={expandedIdx}
+                  openUserModal={openUserModal}
+                  setInvoiceUrl={setInvoiceUrl}
+                  navigate={navigate}
+                />
+              </>
             )}
             {invoiceUrl && (
-              <div className="fixed inset-0 bg-black bg-opacity-75 flex justify-center items-center z-50">
+              <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
                 <div className="bg-charcoal-900 border border-charcoal-700 p-4 rounded-lg max-w-3xl w-full relative">
                   <button
                     className="absolute top-2 right-2 text-white bg-red-600 hover:bg-red-700 px-2 py-1 rounded"
@@ -500,6 +407,23 @@ export default function Dashboard({ user }) {
                     {t('dashboard.close')}
                   </button>
                   <iframe src={invoiceUrl} width="100%" height="600px" title="Invoice PDF" className="rounded" />
+                </div>
+              </div>
+            )}
+            {isUserModalOpen && selectedUserProfile && (
+              <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+                <div className="bg-white p-6 rounded-lg shadow-lg max-w-sm w-full relative">
+                  <button
+                    className="absolute top-2 right-2 text-white bg-red-600 px-2 py-1 rounded"
+                    onClick={() => setIsUserModalOpen(false)}
+                  >
+                    ✕
+                  </button>
+                  <h2 className="text-xl font-semibold mb-4">User Contact Info</h2>
+                  <div className="space-y-2 text-gray-800">
+                    <div><strong>Name:</strong> {selectedUserProfile.name}</div>
+                    <div><strong>Email:</strong> {selectedUserProfile.email}</div>
+                  </div>
                 </div>
               </div>
             )}

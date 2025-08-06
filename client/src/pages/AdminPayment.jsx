@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from '../supabaseClient';
 import { useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { ArrowLeft, User, Mail, Lock, CheckCircle, AlertCircle } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 
@@ -18,6 +20,7 @@ export default function AdminPayment() {
   const [status, setStatus] = useState('');
   const [invoiceFile, setInvoiceFile] = useState(null);
   const { t } = useTranslation();
+  const navigate = useNavigate();
   
   // Fetch non-admin users
   useEffect(() => {
@@ -123,6 +126,20 @@ export default function AdminPayment() {
 
   return (
     <div className="min-h-screen bg-charcoal-950 p-4 sm:p-6 lg:p-8">
+      {/* Back to Dashboard */}
+      <div className="max-w-2xl mx-auto">
+        <div className="flex items-center gap-4">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => navigate('/dashboard')}
+            className="flex items-center gap-2"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            {t('editProfile.back')}
+          </Button>
+        </div>
+      </div>
       <div className="max-w-2xl mx-auto">
         <Card className="bg-charcoal-900 border-charcoal-800">
           <CardHeader>

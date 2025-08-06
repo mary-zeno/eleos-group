@@ -134,13 +134,15 @@ export default function Navigation({ user }) {
               </div>
             ) : (
               <div className="hidden md:flex space-x-4">
-                <Button 
-                  variant="ghost" 
-                  onClick={() => navigate("/auth")}
-                  className="text-white hover:text-accent hover:bg-gray-800 font-light transition-colors duration-300"
-                >
-                  {t("nav.login")}
-                </Button>
+                {location.pathname !== "/auth" && !user && (
+                  <Button 
+                    variant="ghost" 
+                    onClick={() => navigate("/auth")}
+                    className="text-white hover:text-accent hover:bg-gray-800 font-light transition-colors duration-300"
+                  >
+                    {t("nav.login")}
+                  </Button>
+                )}
               </div>
             )}
 
