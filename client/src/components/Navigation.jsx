@@ -127,9 +127,11 @@ export default function Navigation({ user }) {
               </div>
             ) : (
               <div className="hidden md:flex space-x-4">
-                <Button variant="ghost" onClick={() => navigate("/auth")}>
-                  {t("nav.login")}
-                </Button>
+                {location.pathname !== "/auth" && !user && (
+                  <Button variant="ghost" onClick={() => navigate("/auth")}>
+                    {t("nav.login")}
+                  </Button>
+                )}
               </div>
             )}
 

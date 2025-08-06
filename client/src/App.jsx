@@ -56,7 +56,14 @@ function App() {
             </Layout>
           } 
         />
-        <Route path="/auth" element={<Auth />} />
+        <Route 
+          path="/auth" 
+          element={
+            <Layout user={user}>
+              <Auth />
+            </Layout>
+          }
+        />
         
         {user && (
           <>
