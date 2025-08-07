@@ -244,9 +244,17 @@
             }
         },
         "footer": {
-            "title": "ELOS አገልግሎቶች",
+            "title": "ELEOS አገልግሎቶች",
             "tagline": "የኢትዮጵያ አማልክትን ከታመኑ አገልግሎቶች ጋር በመገናኘት",
-            "copyright": "© 2024 ELOS አገልግሎቶች። መብቱ የተጠበቀ ነው።"
+            "copyright": "© 2024 ELEOS አገልግሎቶች። መብቱ የተጠበቀ ነው።",
+            "contact": "አግኙን።",
+            "phoneHeader": "ስልክ",
+            "phone": "+1 (202) 492 3417",
+            "emailHeader": "ኢሜይል",
+            "email": "info@eleosgroups.net",
+            "addressHeader": "አድራሻ",
+            "address1": "5622 Columbia Pike Ste 202",
+            "address2": "Falls Church VA 22041"
         }
     },
     "propertyform": {
