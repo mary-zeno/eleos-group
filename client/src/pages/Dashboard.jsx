@@ -153,13 +153,14 @@ export default function Dashboard({ user }) {
     // Now fetch invoices and match them to requests using service_uuid
     const { data: invoicesData, error: invoicesError } = await supabase
       .from('invoices')
-      .select('user_id, service_type, service_uuid, invoice_url, paypal_link, amount_owed');
+      .select('id, user_id, service_type, service_uuid, invoice_url, paypal_link, amount_owed');
 
     if (!invoicesError && invoicesData?.length) {
       const invoiceMap = {};
       invoicesData.forEach((inv) => {
         const key = `${inv.user_id}-${inv.service_type}-${inv.service_uuid}`;
         invoiceMap[key] = {
+          invoice_id: inv.id,
           invoice_url: inv.invoice_url,
           paypal_link: inv.paypal_link,
           amount_owed: inv.amount_owed
@@ -171,6 +172,7 @@ export default function Dashboard({ user }) {
         const invoiceData = invoiceMap[key];
         return {
           ...req,
+          invoiceId: invoiceData?.invoice_id || null,
           invoiceUrl: invoiceData?.invoice_url || null,
           paypalLink: invoiceData?.paypal_link || null,
           amount_owed: invoiceData?.amount_owed || null,
@@ -468,11 +470,27 @@ export default function Dashboard({ user }) {
                                     variant="outline"
                                     className="text-xs border-accent/50 text-accent hover:bg-accent hover:text-black"
                                     onClick={() => {
-                                      setInvoiceUrl(req.invoiceUrl);
-                                      setCurrentInvoicePaypalLink(req.paypalLink);
+                                      if (role === 'admin' && isEditing) {
+                                        // Navigate to edit invoice page
+                                        navigate('/admin/payment', { 
+                                          state: { 
+                                            request: req,
+                                            invoice: {
+                                              id: req.invoiceId, // Use the actual invoice ID
+                                              amount_owed: req.amount_owed,
+                                              paypal_link: req.paypalLink,
+                                              invoice_url: req.invoiceUrl
+                                            }
+                                          } 
+                                        });
+                                      } else {
+                                        // View invoice in modal
+                                        setInvoiceUrl(req.invoiceUrl);
+                                        setCurrentInvoicePaypalLink(req.paypalLink);
+                                      }
                                     }}
                                   >
-                                    {t('dashboard.viewInvoice')}
+                                    {role === 'admin' && isEditing ? t('dashboard.editInvoice') : t('dashboard.viewInvoice')}
                                   </Button>
                                   
                                 </div>
@@ -534,7 +552,7 @@ export default function Dashboard({ user }) {
                 <div className="bg-charcoal-900 border border-charcoal-700 p-4 rounded-lg max-w-3xl w-full relative">
                   <div className="flex justify-between items-center mb-4">
                     <div className="flex gap-2">
-                      {currentInvoicePaypalLink && role !== 'admin' && (
+                      {currentInvoicePaypalLink  && (
                         <Button
                           variant="outline"
                           className="border-green-500/50 text-green-400 hover:bg-green-500 hover:text-black"
