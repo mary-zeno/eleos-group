@@ -160,6 +160,8 @@
         "noRequests": "No requests submitted yet.",
         "submitFirst": "Submit Your First Request",
         "requestsTitle": "Service Requests",
+        "activeRequests": "Active Requests",
+        "inactiveRequests": "Inactive Requests",
         "delete": "Delete",
         "service": "Service",
         "user": "User",
