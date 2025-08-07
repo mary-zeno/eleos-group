@@ -15,7 +15,6 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 
-
 export default function PropertyForm({ user }) {
   const [formData, setFormData] = useState({
     property_type: "",
@@ -56,11 +55,10 @@ export default function PropertyForm({ user }) {
       user_id: user.id,
     };
 
-    // Insert into property_interest_forms table first
     const { data: propertyFormData, error: propertyFormError } = await supabase
       .from("property_interest_forms")
       .insert([insertData])
-      .select('id')
+      .select("id")
       .single();
 
     if (propertyFormError) {
@@ -69,15 +67,14 @@ export default function PropertyForm({ user }) {
       return;
     }
 
-    // Insert into requests table with the generated property_interest_forms id
     const requestData = {
       user_id: user.id,
-      service_type: 'Property',
+      service_type: "Property",
       service_uuid: propertyFormData.id,
     };
 
     const { error: requestError } = await supabase
-      .from('invoices')
+      .from("invoices")
       .insert([requestData]);
 
     if (requestError) {
@@ -104,11 +101,9 @@ export default function PropertyForm({ user }) {
   };
 
   const fetchProperties = async () => {
-    if (!user) return;
     const { data, error } = await supabase
       .from("properties")
       .select("*")
-      .eq("user_id", user.id)
       .order("created_at", { ascending: false });
 
     if (error) {
@@ -120,34 +115,28 @@ export default function PropertyForm({ user }) {
 
   useEffect(() => {
     fetchProperties();
-  }, [user]);
+  }, []); // ← Run only on mount
 
   return (
-    // CHANGED: Main background from bg-gray-100 to bg-charcoal-950
     <div className="min-h-screen bg-charcoal-950 p-4 sm:p-6 lg:p-8">
       <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* Form */}
-        {/* CHANGED: Added dark styling to Card - bg-charcoal-900 border-charcoal-800 */}
+        {/* Left: Form */}
         <Card className="bg-charcoal-900 border-charcoal-800">
           <CardHeader>
-            {/* CHANGED: Added text-white to title */}
             <CardTitle className="text-white">{t("propertyform.title")}</CardTitle>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* Property Type */}
               <div className="space-y-2">
-                {/* CHANGED: Added text-gray-300 to labels throughout */}
                 <Label className="text-gray-300">{t("propertyform.fields.propertyType")}</Label>
                 <Select
                   value={formData.property_type}
                   onValueChange={(value) => handleChange("property_type", value)}
                 >
-                  {/* CHANGED: Added dark styling to Select trigger */}
                   <SelectTrigger className="bg-charcoal-800 border-charcoal-700 text-white">
                     <SelectValue placeholder={t("propertyform.fields.propertyTypePlaceholder")} />
                   </SelectTrigger>
-                  {/* CHANGED: Added dark styling to Select content */}
                   <SelectContent className="bg-charcoal-800 border-charcoal-700">
                     <SelectItem value="Land" className="text-white hover:bg-charcoal-700">{t("propertyform.options.propertyTypes.land")}</SelectItem>
                     <SelectItem value="House" className="text-white hover:bg-charcoal-700">{t("propertyform.options.propertyTypes.house")}</SelectItem>
@@ -178,12 +167,9 @@ export default function PropertyForm({ user }) {
               {/* Location */}
               <div className="space-y-2">
                 <Label className="text-gray-300">{t("propertyform.fields.location")}</Label>
-                {/* CHANGED: Added dark styling to Input fields */}
                 <Input
                   value={formData.location_preferences}
-                  onChange={(e) =>
-                    handleChange("location_preferences", e.target.value)
-                  }
+                  onChange={(e) => handleChange("location_preferences", e.target.value)}
                   placeholder={t("propertyform.fields.locationPlaceholder")}
                   required
                   className="bg-charcoal-800 border-charcoal-700 text-white placeholder:text-gray-400"
@@ -204,15 +190,12 @@ export default function PropertyForm({ user }) {
                 />
               </div>
 
-              {/* Financing Needs */}
+              {/* Financing */}
               <div className="flex items-center space-x-2">
-                {/* CHANGED: Added styling to Checkbox for dark theme compatibility */}
                 <Checkbox
                   id="financing"
                   checked={formData.financing_needs}
-                  onCheckedChange={(checked) =>
-                    handleChange("financing_needs", checked)
-                  }
+                  onCheckedChange={(checked) => handleChange("financing_needs", checked)}
                   className="border-charcoal-600 data-[state=checked]:bg-accent data-[state=checked]:border-accent"
                 />
                 <Label htmlFor="financing" className="text-gray-300">{t("propertyform.fields.financing")}</Label>
@@ -224,9 +207,7 @@ export default function PropertyForm({ user }) {
                   <Label className="text-gray-300">{t("propertyform.fields.financingDetails")}</Label>
                   <Input
                     value={formData.financing_details}
-                    onChange={(e) =>
-                      handleChange("financing_details", e.target.value)
-                    }
+                    onChange={(e) => handleChange("financing_details", e.target.value)}
                     placeholder={t("propertyform.fields.financingDetailsPlaceholder")}
                     className="bg-charcoal-800 border-charcoal-700 text-white placeholder:text-gray-400"
                   />
@@ -256,9 +237,7 @@ export default function PropertyForm({ user }) {
                 <Checkbox
                   id="existing"
                   checked={formData.existing_property}
-                  onCheckedChange={(checked) =>
-                    handleChange("existing_property", checked)
-                  }
+                  onCheckedChange={(checked) => handleChange("existing_property", checked)}
                   className="border-charcoal-600 data-[state=checked]:bg-accent data-[state=checked]:border-accent"
                 />
                 <Label htmlFor="existing" className="text-gray-300">
@@ -272,9 +251,7 @@ export default function PropertyForm({ user }) {
                   <Label className="text-gray-300">{t("propertyform.fields.existingPropertyLocation")}</Label>
                   <Input
                     value={formData.existing_property_location}
-                    onChange={(e) =>
-                      handleChange("existing_property_location", e.target.value)
-                    }
+                    onChange={(e) => handleChange("existing_property_location", e.target.value)}
                     placeholder={t("propertyform.fields.existingPropertyLocationPlaceholder")}
                     className="bg-charcoal-800 border-charcoal-700 text-white placeholder:text-gray-400"
                   />
@@ -284,53 +261,37 @@ export default function PropertyForm({ user }) {
               {/* Additional Requests */}
               <div className="space-y-2">
                 <Label className="text-gray-300">{t("propertyform.fields.additionalRequests")}</Label>
-                {/* CHANGED: Added dark styling to Textarea */}
                 <Textarea
                   value={formData.additional_requests}
-                  onChange={(e) =>
-                    handleChange("additional_requests", e.target.value)
-                  }
+                  onChange={(e) => handleChange("additional_requests", e.target.value)}
                   placeholder={t("propertyform.fields.additionalRequestsPlaceholder")}
                   rows={4}
                   className="bg-charcoal-800 border-charcoal-700 text-white placeholder:text-gray-400"
                 />
               </div>
 
-              {/* Submit Button */}
-              {/* CHANGED: Added accent color styling to submit button */}
+              {/* Submit */}
               <Button type="submit" disabled={loading} className="w-full bg-accent hover:bg-accent/90 text-black font-medium">
                 {loading ? t("propertyform.buttons.submitting") : t("propertyform.buttons.submit")}
               </Button>
 
-              {/* CHANGED: Updated status message colors for dark theme */}
               {status && (
-                <div
-                  className={`text-sm font-medium ${status.includes(t("propertyform.status.error")) ||
-                    status.includes("error") ||
-                    status.includes("failed")
-                    ? "text-red-400"  // Changed from text-red-600 to text-red-400 for better contrast on dark background
-                    : "text-green-400"  // Changed from text-green-600 to text-green-400 for better contrast on dark background
-                    }`}
-                >
+                <div className={`text-sm font-medium ${status.includes("error") ? "text-red-400" : "text-green-400"}`}>
                   {status}
                 </div>
               )}
-
             </form>
           </CardContent>
         </Card>
 
-        {/* Right: Properties Display */}
+        {/* Right: Display Properties */}
         <div className="space-y-4">
-          {/* CHANGED: Added text-white to section heading */}
           <h2 className="text-xl font-semibold text-white">{t("propertyform.yourProperties")}</h2>
           {properties.length === 0 ? (
-            // CHANGED: Changed text color from text-gray-600 to text-gray-400 for better contrast
             <p className="text-gray-400">{t("propertyform.noProperties")}</p>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {properties.map((prop) => (
-                // CHANGED: Added dark styling to property cards
                 <Card key={prop.id} className="bg-charcoal-900 border-charcoal-800">
                   <CardContent className="p-4">
                     {prop.image_url && (
@@ -340,11 +301,8 @@ export default function PropertyForm({ user }) {
                         className="w-full h-40 object-cover rounded-md mb-3"
                       />
                     )}
-                    {/* CHANGED: Added text-white to property name */}
                     <h4 className="text-lg font-semibold text-white">{prop.name}</h4>
-                    {/* CHANGED: Changed text color from text-gray-700 to text-gray-300 */}
                     <p className="text-sm text-gray-300">{prop.address}</p>
-                    {/* CHANGED: Changed text color to text-gray-300 for property details */}
                     <p className="text-sm text-gray-300">{t("propertyform.propertyCard.price")}: ${prop.price}</p>
                     <p className="text-sm text-gray-300">
                       {t("propertyform.propertyCard.bedrooms")}: {prop.bedrooms} |{" "}
