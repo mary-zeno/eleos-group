@@ -166,6 +166,8 @@
         "service": "Service",
         "user": "User",
         "date": "Date",
+        "name": "Name",
+        "email": "Email",
         "status": "Status",
         "payments": "Payments",
         "details": "Details",
@@ -178,7 +180,8 @@
             "travel": "Travel",
             "business": "Business",
             "property": "Property"
-        }
+        },
+        "userInfoTitle": "User Info"
     },
     "editProfile": {
         "back": "Back to Dashboard",
