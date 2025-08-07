@@ -166,6 +166,8 @@
         "service": "አገልግሎት",
         "user": "ተጠቃሚ",
         "date": "ቀን",
+        "name": "ስም",
+        "email": "ኢሜይል",
         "status": "ሁኔታ",
         "payments": "ክፍያዎች",
         "details": "ዝርዝሮች",
@@ -178,7 +180,8 @@
             "travel": "ጉዞ",
             "business": "ንግድ",
             "property": "ንብረት"
-        }
+        },
+        "userInfoTitle": "የተጠቃሚ መረጃ"
     },
     "editProfile": {
         "back": "ወደ ዳሽቦርድ ተመለስ",
