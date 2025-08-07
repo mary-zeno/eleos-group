@@ -246,7 +246,15 @@
         "footer": {
             "title": "ELOS Services",
             "tagline": "Connecting Ethiopian diaspora with trusted home country services",
-            "copyright": "© 2024 ELOS Services. All rights reserved."
+            "copyright": "© 2024 ELOS Services. All rights reserved.",
+            "contact": "Contact Us",
+            "phoneHeader": "Phone",
+            "phone": "+1 (202) 492 3417",
+            "emailHeader": "Email",
+            "email": "info@eleosgroups.net",
+            "addressHeader": "Address",
+            "address1": "5622 Columbia Pike Ste 202",
+            "address2": "Falls Church VA 22041"
         }
     },
     "propertyform": {

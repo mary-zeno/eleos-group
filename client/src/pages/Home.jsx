@@ -7,7 +7,7 @@ import { Card, CardContent } from "@/components/ui/card";
 const LineDrop = ({ length = 60, thickness = 2, opacity = 0.2, fallDelay = 0, xPos = 0, speed = 'normal' }) => {
   // Choose animation speed
   const animationClass = speed === 'fast' ? 'animate-fall-fast' : speed === 'slow' ? 'animate-fall-slow' : 'animate-fall';
-  
+
   return (
     <div
       className={`absolute pointer-events-none ${animationClass}`}
@@ -29,7 +29,7 @@ const LineDrop = ({ length = 60, thickness = 2, opacity = 0.2, fallDelay = 0, xP
 const makeDrops = (count = 40, width = typeof window !== 'undefined' ? window.innerWidth : 1200) => {
   const drops = [];
   const speeds = ['fast', 'normal', 'slow'];
-  
+
   for (let i = 0; i < count; i++) {
     drops.push({
       id: i,
@@ -155,17 +155,76 @@ export default function Home({ user }) {
       {/* Footer */}
       <footer className="bg-black text-white py-16 border-t border-gray-800 relative z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center space-y-4">
-            <h3 className="text-3xl font-light">{t('home.footer.title')}</h3>
-            <p className="text-gray-300 font-light text-lg">{t('home.footer.tagline')}</p>
-            <div className="pt-8 border-t border-gray-800">
-              <p className="text-sm text-accent font-light">{t('home.footer.copyright')}</p>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16">
+
+            {/* Main Content Section */}
+            <div className="text-center lg:text-left space-y-4">
+              <h3 className="text-3xl font-light">{t('home.footer.title')}</h3>
+              <p className="text-gray-300 font-light text-lg">{t('home.footer.tagline')}</p>
             </div>
+
+            {/* Contact Information Section */}
+            <div className="space-y-8">
+              <h4 className="text-xl font-light text-center lg:text-left mb-6">{t('home.footer.contact')}</h4>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 lg:gap-4">
+
+                {/* Phone */}
+                <div className="text-center sm:text-left space-y-2">
+                  <div className="flex items-center justify-center sm:justify-start space-x-2">
+                    <div className="w-5 h-5 rounded-full bg-accent flex items-center justify-center">
+                      <svg className="w-3 h-3 text-black" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z" />
+                      </svg>
+                    </div>
+                    <span className="text-sm font-medium text-gray-300">{t('home.footer.phoneHeader')}</span>
+                  </div>
+                  <p className="text-white font-light">{t('home.footer.phone')}</p>
+                </div>
+
+                {/* Email */}
+                <div className="text-center sm:text-left space-y-2">
+                  <div className="flex items-center justify-center sm:justify-start space-x-2">
+                    <div className="w-5 h-5 rounded-full bg-accent flex items-center justify-center">
+                      <svg className="w-3 h-3 text-black" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
+                        <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
+                      </svg>
+                    </div>
+                    <span className="text-sm font-medium text-gray-300">{t('home.footer.emailHeader')}</span>
+                  </div>
+                  <p className="text-white font-light">{t('home.footer.email')}</p>
+                </div>
+
+                {/* Address */}
+                <div className="text-center sm:text-left space-y-2">
+                  <div className="flex items-center justify-center sm:justify-start space-x-2">
+                    <div className="w-5 h-5 rounded-full bg-accent flex items-center justify-center">
+                      <svg className="w-3 h-3 text-black" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
+                      </svg>
+                    </div>
+                    <span className="text-sm font-medium text-gray-300">{t('home.footer.addressHeader')}</span>
+                  </div>
+                  <p className="text-white font-light">
+                  {t('home.footer.address1')}<br />
+                  {t('home.footer.address2')}
+                  </p>
+                </div>
+
+              </div>
+            </div>
+
+          </div>
+
+          {/* Copyright Section */}
+          <div className="pt-8 mt-12 border-t border-gray-800 text-center">
+            <p className="text-sm text-accent font-light">{t('home.footer.copyright')}</p>
           </div>
         </div>
       </footer>
 
-      {/* Floating Action Buttons */}
+      {/* Floating Action Buttons
       <div className="fixed bottom-8 right-8 z-30 flex space-x-4">
         <button className="bg-white text-black rounded-full p-4 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
           <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -182,7 +241,7 @@ export default function Home({ user }) {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18" />
           </svg>
         </button>
-      </div>
+      </div> */}
     </div>
   );
 }
