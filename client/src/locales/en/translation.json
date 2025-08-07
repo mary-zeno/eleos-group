@@ -170,6 +170,7 @@
         "payments": "Payments",
         "details": "Details",
         "viewInvoice": "View Invoice",
+        "editInvoice": "Edit Invoice",
         "createInvoice": "Create Invoice",
         "requestDetails": "Request Details:",
         "close": "Close",

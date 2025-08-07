@@ -12,39 +12,48 @@ export default function AdminPayment() {
   const location = useLocation();
   const navigate = useNavigate();
   const { t } = useTranslation();
+
   const passedRequest = location.state?.request || null;
-  
+  const passedInvoice = location.state?.invoice || null;
+
   const [billAmount, setBillAmount] = useState('');
   const [paypalLink, setPaypalLink] = useState('');
-  const [status, setStatus] = useState('');
   const [invoiceFile, setInvoiceFile] = useState(null);
+  const [invoiceUrl, setInvoiceUrl] = useState('');
+  const [invoiceId, setInvoiceId] = useState(null);
+  const [status, setStatus] = useState('');
 
-  // Load existing invoice data when component mounts if we have a passed request
   useEffect(() => {
-    if (!passedRequest) return;
-
-    const loadExistingInvoice = async () => {
-      const { data: existingInvoice, error } = await supabase
-        .from('invoices')
-        .select('amount_owed, paypal_link')
-        .eq('user_id', passedRequest.user_id)
-        .eq('service_type', passedRequest.service)
-        .eq('service_uuid', passedRequest.id)
-        .single();
-
-      if (!error && existingInvoice) {
-        setBillAmount(existingInvoice.amount_owed || '');
-        setPaypalLink(existingInvoice.paypal_link || '');
-        setStatus('Editing existing invoice');
-      } else {
-        setBillAmount('');
-        setPaypalLink('');
+    const fetchExistingInvoice = async () => {
+      if (passedInvoice) {
+        // Prefill with passed invoice data
+        setBillAmount(passedInvoice.amount_owed || '');
+        setPaypalLink(passedInvoice.paypal_link || '');
+        setInvoiceUrl(passedInvoice.invoice_url || '');
+        setInvoiceId(passedInvoice.id);
         setStatus('');
+      } else if (passedRequest) {
+        // Try loading from DB if invoice wasn't passed in
+        const { data: existingInvoice, error } = await supabase
+          .from('invoices')
+          .select('id, amount_owed, paypal_link, invoice_url')
+          .eq('user_id', passedRequest.user_id)
+          .eq('service_type', passedRequest.service)
+          .eq('service_uuid', passedRequest.id)
+          .single();
+
+        if (existingInvoice) {
+          setBillAmount(existingInvoice.amount_owed || '');
+          setPaypalLink(existingInvoice.paypal_link || '');
+          setInvoiceUrl(existingInvoice.invoice_url || '');
+          setInvoiceId(existingInvoice.id);
+          // setStatus('Editing existing invoice');
+        }
       }
     };
 
-    loadExistingInvoice();
-  }, [passedRequest]);
+    fetchExistingInvoice();
+  }, [passedRequest, passedInvoice]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -54,7 +63,7 @@ export default function AdminPayment() {
     }
 
     setStatus('Uploading...');
-    let invoiceUrl = null;
+    let uploadedInvoiceUrl = invoiceUrl;
 
     if (invoiceFile) {
       const fileExt = invoiceFile.name.split('.').pop();
@@ -63,7 +72,10 @@ export default function AdminPayment() {
 
       const { error: uploadError } = await supabase.storage
         .from('invoices')
-        .upload(filePath, invoiceFile);
+        .upload(filePath, invoiceFile, {
+          cacheControl: '3600',
+          upsert: true
+        });
 
       if (uploadError) {
         setStatus('Failed to upload invoice: ' + uploadError.message);
@@ -71,40 +83,26 @@ export default function AdminPayment() {
       }
 
       const { data } = supabase.storage.from('invoices').getPublicUrl(filePath);
-      invoiceUrl = data.publicUrl;
+      uploadedInvoiceUrl = data.publicUrl;
     }
 
-    // Check if an invoice already exists for this specific request
-    const { data: existingInvoice, error: checkError } = await supabase
-      .from('invoices')
-      .select('id, invoice_url')
-      .eq('user_id', passedRequest.user_id)
-      .eq('service_type', passedRequest.service)
-      .eq('service_uuid', passedRequest.id)
-      .single();
-
-    if (checkError && checkError.code !== 'PGRST116') {
-      setStatus('Error checking existing invoice: ' + checkError.message);
-      return;
-    }
+    const invoiceData = {
+      user_id: passedRequest.user_id,
+      service_type: passedRequest.service,
+      service_uuid: passedRequest.id,
+      amount_owed: billAmount,
+      paypal_link: paypalLink,
+      invoice_url: uploadedInvoiceUrl,
+    };
 
     let result;
-    if (existingInvoice) {
-      // Update existing invoice
-      const updateData = {
-        amount_owed: billAmount,
-        paypal_link: paypalLink,
-      };
-      
-      // Only update invoice_url if a new file was uploaded
-      if (invoiceUrl) {
-        updateData.invoice_url = invoiceUrl;
-      }
 
+    if (invoiceId) {
+      // Update
       result = await supabase
         .from('invoices')
-        .update(updateData)
-        .eq('id', existingInvoice.id);
+        .update(invoiceData)
+        .eq('id', invoiceId);
 
       if (result.error) {
         setStatus('Failed to update invoice: ' + result.error.message);
@@ -112,17 +110,10 @@ export default function AdminPayment() {
       }
       setStatus('Invoice updated successfully!');
     } else {
-      // Insert new invoice
-      result = await supabase.from('invoices').insert([
-        {
-          user_id: passedRequest.user_id,
-          service_type: passedRequest.service,
-          service_uuid: passedRequest.id,
-          amount_owed: billAmount,
-          invoice_url: invoiceUrl,
-          paypal_link: paypalLink,
-        },
-      ]);
+      // Insert
+      result = await supabase
+        .from('invoices')
+        .insert([invoiceData]);
 
       if (result.error) {
         setStatus('Failed to create invoice: ' + result.error.message);
@@ -131,37 +122,34 @@ export default function AdminPayment() {
       setStatus('Invoice created successfully!');
     }
 
+    // Reset
     setBillAmount('');
     setPaypalLink('');
     setInvoiceFile(null);
+    setInvoiceId(null);
+    setInvoiceUrl('');
   };
-
+// START OF CARDS
   if (!passedRequest) {
     return (
-      <div className="min-h-screen bg-charcoal-950 p-4 sm:p-6 lg:p-8">
-        <div className="max-w-2xl mx-auto">
-          <Card className="bg-charcoal-900 border-charcoal-800">
-            <CardHeader>
-              <CardTitle className="text-white">Create Invoice</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-red-400">No request selected. Please navigate from the dashboard.</p>
-              <Button 
-                onClick={() => navigate('/dashboard')} 
-                className="mt-4 bg-accent hover:bg-accent/90 text-black"
-              >
-                Back to Dashboard
-              </Button>
-            </CardContent>
-          </Card>
-        </div>
+      <div className="min-h-screen bg-charcoal-950 p-4">
+        <Card className="bg-charcoal-900 border-charcoal-800 max-w-xl mx-auto">
+          <CardHeader>
+            <CardTitle className="text-white">Invoice</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-red-400">No request selected. Please navigate from the dashboard.</p>
+            <Button onClick={() => navigate('/dashboard')} className="mt-4 bg-accent text-black">
+              Back to Dashboard
+            </Button>
+          </CardContent>
+        </Card>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-charcoal-950 p-4 sm:p-6 lg:p-8">
-      {/* Back to Dashboard */}
+    <div className="min-h-screen bg-charcoal-950 p-4">
       <div className="max-w-2xl mx-auto mb-6">
         <Button
           variant="ghost"
@@ -177,78 +165,78 @@ export default function AdminPayment() {
       <div className="max-w-2xl mx-auto">
         <Card className="bg-charcoal-900 border-charcoal-800">
           <CardHeader>
-            <CardTitle className="text-white">Create Invoice</CardTitle>
+            <CardTitle className="text-white">
+              {/* {invoiceId ? 'Edit Invoice' : 'Create Invoice'} */}
+            </CardTitle>
           </CardHeader>
           <CardContent>
-            {/* Request Information Display */}
-            <div className="mb-6 p-4 bg-charcoal-800 rounded-lg">
-              <h3 className="text-lg font-medium text-white mb-2">Request Details</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
-                <div className="text-gray-300"><strong>User:</strong> {passedRequest.userName}</div>
-                <div className="text-gray-300"><strong>Service:</strong> {passedRequest.service}</div>
-                <div className="text-gray-300"><strong>Date:</strong> {new Date(passedRequest.inserted_at).toLocaleDateString()}</div>
-                <div className="text-gray-300"><strong>Request ID:</strong> {passedRequest.id}</div>
-              </div>
-            </div>
+
+          {/* START FORM CAUTION */}
 
             <form onSubmit={handleSubmit} className="space-y-6">
-              {/* Amount input */}
+              {/* Amount */}
               <div className="space-y-2">
                 <Label className="text-gray-300">Amount Owed (USD)</Label>
                 <Input
                   type="number"
-                  min="0"
-                  step="0.01"
                   value={billAmount}
                   onChange={(e) => setBillAmount(e.target.value)}
                   required
-                  placeholder="Enter amount"
-                  className="bg-charcoal-800 border-charcoal-700 text-white placeholder:text-gray-400"
+                  className="bg-charcoal-800 border-charcoal-700 text-white"
                 />
               </div>
 
               {/* PayPal Link */}
               <div className="space-y-2">
-                <Label className="text-gray-300">PayPal Payment Link</Label>
+                <Label className="text-gray-300">PayPal Link</Label>
                 <Input
                   type="url"
-                  placeholder="https://paypal.me/..."
                   value={paypalLink}
                   onChange={(e) => setPaypalLink(e.target.value)}
-                  className="bg-charcoal-800 border-charcoal-700 text-white placeholder:text-gray-400"
+                  className="bg-charcoal-800 border-charcoal-700 text-white"
                 />
               </div>
 
-              {/* Invoice upload */}
+              {/* Upload */}
               <div className="space-y-2">
                 <Label className="text-gray-300">Upload Invoice (PDF)</Label>
                 <Input
                   type="file"
                   accept="application/pdf"
                   onChange={(e) => setInvoiceFile(e.target.files[0])}
-                  className="bg-charcoal-800 border-charcoal-700 text-white file:bg-charcoal-700 file:text-white file:border-0 file:rounded-md file:px-3 file:py-1"
+                  className="bg-charcoal-800 border-charcoal-700 text-white"
                 />
+                {invoiceUrl && !invoiceFile && (
+                  <a
+                    href={invoiceUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-400 underline text-sm"
+                  >
+                    View Existing Invoice
+                  </a>
+                )}
               </div>
-
-              {/* Submit */}
               <Button type="submit" className="w-full bg-accent hover:bg-accent/90 text-black font-medium">
-                {status === 'Editing existing invoice' ? 'Update Invoice' : 'Create Invoice'}
+                {invoiceId ? 'Save' : 'Save'}
               </Button>
 
               {status && (
-                <div className={`text-sm font-medium text-center ${
-                  status.includes('Failed') || status.includes('Error') || status.includes('error')
+                <p className={`text-sm text-center mt-2 ${
+                  status.includes('Failed') || status.includes('Error')
                     ? 'text-red-400'
                     : status.includes('successfully')
                     ? 'text-green-400'
                     : 'text-gray-300'
                 }`}>
                   {status}
-                </div>
+                </p>
               )}
             </form>
+            {/* END FORM CAUTION */}
           </CardContent>
         </Card>
+
       </div>
     </div>
   );
