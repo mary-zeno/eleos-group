@@ -410,10 +410,12 @@ export default function Dashboard({ user }) {
                       const isDeleted = requestsToDelete.has(req.id);
                       const currentStatus = statusChanges[req.id] || req.status;
 
+                      // row when in edit mode
                       return (
                         <React.Fragment key={req.id}>
                           <TableRow className={`border-charcoal-700 hover:bg-charcoal-800/50 ${isDeleted ? 'opacity-50 line-through' : ''}`}>
                             {role === 'admin' && isEditing && (
+                              // delete button
                               <TableCell>
                                 <Button
                                   variant="ghost"
@@ -425,6 +427,7 @@ export default function Dashboard({ user }) {
                                 </Button>
                               </TableCell>
                             )}
+                            {/* service */}
                             <TableCell>
                               <Badge variant="outline" className="border-accent/50 text-accent">
                                 {req.service}
@@ -433,9 +436,11 @@ export default function Dashboard({ user }) {
                             <TableCell className="text-gray-300">
                               {role === 'admin' ? req.userName : 'You'}
                             </TableCell>
+                            {/* date */}
                             <TableCell className="text-gray-300">
                               {new Date(req.inserted_at).toLocaleDateString()}
                             </TableCell>
+                            {/* status */}
                             <TableCell>
                               {role === 'admin' && isEditing ? (
                                 <Select
@@ -463,6 +468,7 @@ export default function Dashboard({ user }) {
                                 </Badge>
                               )}
                             </TableCell>
+                            {/* ADMIN PAYMENT FORMS */}
                             <TableCell className="py-2 px-4">
                               {req.invoiceUrl ? (
                                 <div className="flex gap-2">
@@ -506,6 +512,7 @@ export default function Dashboard({ user }) {
                                 )
                               )}
                             </TableCell>
+                            {/* END ADMIN PAYMENT FORMS */}
                             <TableCell>
                               <Button
                                 variant="ghost"
