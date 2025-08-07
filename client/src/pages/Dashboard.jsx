@@ -11,12 +11,34 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { ArrowLeft, User, Mail, Lock, CheckCircle, AlertCircle } from 'lucide-react';
 import RequestTableCard from '@/components/RequestTableCard';
 
+// Status configuration
+const STATUS_KEYS = [
+  'status.submitted',
+  'status.inProgress',
+  'status.awaitingPayment',
+  'status.completed',
+  'status.cancelled',
+  'status.archived'
+];
+
+const getStatusColor = (status) => {
+  const statusColors = {
+    'status.submitted': 'bg-blue-100 text-blue-800 border-blue-200',
+    'status.inProgress': 'bg-yellow-100 text-yellow-800 border-yellow-200',
+    'status.awaitingPayment': 'bg-orange-100 text-orange-800 border-orange-200',
+    'status.completed': 'bg-green-100 text-green-800 border-green-200',
+    'status.cancelled': 'bg-red-100 text-red-800 border-red-200',
+    'status.archived': 'bg-gray-100 text-gray-800 border-gray-200'
+  };
+  return statusColors[status] || 'bg-gray-100 text-gray-800 border-gray-200';
+};
+
 export default function Dashboard({ user }) {
   const navigate = useNavigate();
   const [userData, setUserData] = useState(null);
   const [name, setName] = useState('');
   const [role, setRole] = useState('user');
-  const [requests, setRequests] = useState({ active: [], inactive: [] });
+  const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
   const [expandedIdx, setExpandedIdx] = useState(null);
   const { t } = useTranslation();
@@ -159,11 +181,8 @@ export default function Dashboard({ user }) {
     allRequests.sort((a, b) => new Date(b.inserted_at) - new Date(a.inserted_at));
     setRequests(allRequests);
 
-    // split fetched data
-    const inactiveStatuses = ['status.completed', 'status.cancelled', 'status.archived'];
-    const activeRequests = allRequests.filter(req => !inactiveStatuses.includes(req.status));
-    const inactiveRequests = allRequests.filter(req => inactiveStatuses.includes(req.status));
-    setRequests({ active: activeRequests, inactive: inactiveRequests });
+    // Set all requests (not splitting into active/inactive for now)
+    setRequests(allRequests);
 
     setLoading(false);
   };
@@ -183,10 +202,10 @@ export default function Dashboard({ user }) {
 
   const handleSaveChanges = async () => {
     setLoading(true);
-    const allRequests = [...requests.active, ...requests.inactive];
+    
     // Delete marked requests
     for (const id of requestsToDelete) {
-      const req = allRequests.find((r) => r.id === id);
+      const req = requests.find((r) => r.id === id);
       if (!req) continue;
       const { error } = await supabase.from(req.tableName).delete().eq('id', id);
       if (error) console.error('Delete error for id:', id, error.message);
@@ -196,7 +215,7 @@ export default function Dashboard({ user }) {
     for (const [id, newStatus] of Object.entries(statusChanges)) {
       if (requestsToDelete.has(id)) continue;
 
-      const req = allRequests.find((r) => r.id === id);
+      const req = requests.find((r) => r.id === id);
       if (!req) continue;
 
       if (req.status === newStatus) continue;
@@ -360,7 +379,7 @@ export default function Dashboard({ user }) {
               <div className="text-center py-8">
                 <p className="text-gray-300">{t('dashboard.loading')}</p>
               </div>
-            ) : requests.length === 0 ? (
+            ) : (!requests || requests.length === 0) ? (
               <div className="text-center py-8">
                 <p className="text-gray-400">{t('dashboard.noRequests')}</p>
                 <Button 
