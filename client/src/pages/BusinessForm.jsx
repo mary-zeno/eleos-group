@@ -66,26 +66,50 @@ export default function BusinessSetupForm({ user }) {
       user_id: user.id,
     };
 
-    const { error } = await supabase.from('business_setup_forms').insert([insertData]);
+    // Insert into business_setup_forms table first
+    const { data: businessFormData, error: businessFormError } = await supabase
+      .from('business_setup_forms')
+      .insert([insertData])
+      .select('id')
+      .single();
 
-    if (error) {
-      setStatus(t('businessForm.status.fail') + error.message);
-    } else {
-      setStatus(t('businessForm.status.success'));
-      // Reset form
-      setFormData({
-        business_type: '',
-        sector: '',
-        legal_status: '',
-        office_setup: false,
-        investment: '',
-        location: '',
-        need_local_staff: false,
-        support_needed: [],
-        timeline: '',
-        notes: '',
-      });
+    if (businessFormError) {
+      setStatus(t('businessForm.status.fail') + businessFormError.message);
+      setLoading(false);
+      return;
     }
+
+    // Insert into requests table with the generated business_setup_forms id
+    const requestData = {
+      user_id: user.id,
+      service_type: 'Business',
+      service_uuid: businessFormData.id,
+    };
+
+    const { error: requestError } = await supabase
+      .from('invoices')
+      .insert([requestData]);
+
+    if (requestError) {
+      setStatus(t('businessForm.status.fail') + requestError.message);
+      setLoading(false);
+      return;
+    }
+
+    setStatus(t('businessForm.status.success'));
+    // Reset form
+    setFormData({
+      business_type: '',
+      sector: '',
+      legal_status: '',
+      office_setup: false,
+      investment: '',
+      location: '',
+      need_local_staff: false,
+      support_needed: [],
+      timeline: '',
+      notes: '',
+    });
     setLoading(false);
   };
 

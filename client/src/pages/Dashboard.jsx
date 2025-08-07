@@ -11,12 +11,34 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { ArrowLeft, User, Mail, Lock, CheckCircle, AlertCircle } from 'lucide-react';
 import RequestTableCard from '@/components/RequestTableCard';
 
+// Status configuration
+const STATUS_KEYS = [
+  'status.submitted',
+  'status.inProgress',
+  'status.awaitingPayment',
+  'status.completed',
+  'status.cancelled',
+  'status.archived'
+];
+
+const getStatusColor = (status) => {
+  const statusColors = {
+    'status.submitted': 'bg-blue-100 text-blue-800 border-blue-200',
+    'status.inProgress': 'bg-yellow-100 text-yellow-800 border-yellow-200',
+    'status.awaitingPayment': 'bg-orange-100 text-orange-800 border-orange-200',
+    'status.completed': 'bg-green-100 text-green-800 border-green-200',
+    'status.cancelled': 'bg-red-100 text-red-800 border-red-200',
+    'status.archived': 'bg-gray-100 text-gray-800 border-gray-200'
+  };
+  return statusColors[status] || 'bg-gray-100 text-gray-800 border-gray-200';
+};
+
 export default function Dashboard({ user }) {
   const navigate = useNavigate();
   const [userData, setUserData] = useState(null);
   const [name, setName] = useState('');
   const [role, setRole] = useState('user');
-  const [requests, setRequests] = useState({ active: [], inactive: [] });
+  const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
   const [expandedIdx, setExpandedIdx] = useState(null);
   const { t } = useTranslation();
@@ -32,6 +54,7 @@ export default function Dashboard({ user }) {
   // User contact info modal
   const [selectedUserProfile, setSelectedUserProfile] = useState(null);
   const [isUserModalOpen, setIsUserModalOpen] = useState(false);
+  const [currentInvoicePaypalLink, setCurrentInvoicePaypalLink] = useState(null);
 
   useEffect(() => {
     const fetchUserAndData = async () => {
@@ -68,11 +91,12 @@ export default function Dashboard({ user }) {
 
     setLoading(true);
 
+    // First, get all service requests from the service tables
     const tables = [
       { name: 'travel_forms', service: t('dashboard.tables.travel') },
       { name: 'business_setup_forms', service: t('dashboard.tables.business') },
       { name: 'property_interest_forms', service: t('dashboard.tables.property') },
-    ];    
+    ];
 
     let allRequests = [];
 
@@ -126,36 +150,39 @@ export default function Dashboard({ user }) {
       userName: userIdToName[req.user_id] || t('fallback.unknown')
     }));
 
-    // Fetch invoices for admin
-    if (role === 'admin') {
-      const { data: invoicesData, error: invoicesError } = await supabase
-        .from('invoices')
-        .select('user_id, service_type, invoice_url');
+    // Now fetch invoices and match them to requests using service_uuid
+    const { data: invoicesData, error: invoicesError } = await supabase
+      .from('invoices')
+      .select('user_id, service_type, service_uuid, invoice_url, paypal_link, amount_owed');
 
-      if (!invoicesError && invoicesData?.length) {
-        const invoiceMap = {};
-        invoicesData.forEach((inv) => {
-          const key = `${inv.user_id}-${inv.service_type}`;
-          invoiceMap[key] = inv.invoice_url;
-        });
-        allRequests = allRequests.map((req) => {
-          const key = `${req.user_id}-${req.service}`;
-          return {
-            ...req,
-            invoiceUrl: invoiceMap[key] || null,
-          };
-        });
-      }
+    if (!invoicesError && invoicesData?.length) {
+      const invoiceMap = {};
+      invoicesData.forEach((inv) => {
+        const key = `${inv.user_id}-${inv.service_type}-${inv.service_uuid}`;
+        invoiceMap[key] = {
+          invoice_url: inv.invoice_url,
+          paypal_link: inv.paypal_link,
+          amount_owed: inv.amount_owed
+        };
+      });
+      
+      allRequests = allRequests.map((req) => {
+        const key = `${req.user_id}-${req.service}-${req.id}`;
+        const invoiceData = invoiceMap[key];
+        return {
+          ...req,
+          invoiceUrl: invoiceData?.invoice_url || null,
+          paypalLink: invoiceData?.paypal_link || null,
+          amount_owed: invoiceData?.amount_owed || null,
+        };
+      });
     }
 
     allRequests.sort((a, b) => new Date(b.inserted_at) - new Date(a.inserted_at));
     setRequests(allRequests);
 
-    // split fetched data
-    const inactiveStatuses = ['status.completed', 'status.cancelled', 'status.archived'];
-    const activeRequests = allRequests.filter(req => !inactiveStatuses.includes(req.status));
-    const inactiveRequests = allRequests.filter(req => inactiveStatuses.includes(req.status));
-    setRequests({ active: activeRequests, inactive: inactiveRequests });
+    // Set all requests (not splitting into active/inactive for now)
+    setRequests(allRequests);
 
     setLoading(false);
   };
@@ -175,10 +202,10 @@ export default function Dashboard({ user }) {
 
   const handleSaveChanges = async () => {
     setLoading(true);
-    const allRequests = [...requests.active, ...requests.inactive];
+    
     // Delete marked requests
     for (const id of requestsToDelete) {
-      const req = allRequests.find((r) => r.id === id);
+      const req = requests.find((r) => r.id === id);
       if (!req) continue;
       const { error } = await supabase.from(req.tableName).delete().eq('id', id);
       if (error) console.error('Delete error for id:', id, error.message);
@@ -188,7 +215,7 @@ export default function Dashboard({ user }) {
     for (const [id, newStatus] of Object.entries(statusChanges)) {
       if (requestsToDelete.has(id)) continue;
 
-      const req = allRequests.find((r) => r.id === id);
+      const req = requests.find((r) => r.id === id);
       if (!req) continue;
 
       if (req.status === newStatus) continue;
@@ -352,7 +379,7 @@ export default function Dashboard({ user }) {
               <div className="text-center py-8">
                 <p className="text-gray-300">{t('dashboard.loading')}</p>
               </div>
-            ) : requests.length === 0 ? (
+            ) : (!requests || requests.length === 0) ? (
               <div className="text-center py-8">
                 <p className="text-gray-400">{t('dashboard.noRequests')}</p>
                 <Button 
@@ -363,49 +390,170 @@ export default function Dashboard({ user }) {
                 </Button>
               </div>
             ) : (
-              <>
-                <RequestTableCard
-                  title={t('dashboard.activeRequests')}
-                  requests={requests.active}
-                  role={role}
-                  isEditing={isEditing}
-                  requestsToDelete={requestsToDelete}
-                  toggleDeleteRequest={toggleDeleteRequest}
-                  statusChanges={statusChanges}
-                  handleStatusChange={handleStatusChange}
-                  toggleDetails={toggleDetails}
-                  expandedIdx={expandedIdx}
-                  openUserModal={openUserModal}
-                  setInvoiceUrl={setInvoiceUrl}
-                  navigate={navigate}
-                />
+              <div className="overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow className="border-charcoal-700 hover:bg-charcoal-800/50">
+                      {role === 'admin' && isEditing && <TableHead className="text-gray-300">{t('dashboard.delete')}</TableHead>}
+                      <TableHead className="text-gray-300">{t('dashboard.service')}</TableHead>
+                      <TableHead className="text-gray-300">{t('dashboard.user')}</TableHead>
+                      <TableHead className="text-gray-300">{t('dashboard.date')}</TableHead>
+                      <TableHead className="text-gray-300">{t('dashboard.status')}</TableHead>
+                      <TableHead className="text-gray-300">{t('dashboard.payments')}</TableHead>
+                      <TableHead className="text-gray-300">{t('dashboard.details')}</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {requests.map((req, idx) => {
+                      const isDeleted = requestsToDelete.has(req.id);
+                      const currentStatus = statusChanges[req.id] || req.status;
 
-                <RequestTableCard
-                  title={t('dashboard.inactiveRequests')}
-                  requests={requests.inactive}
-                  role={role}
-                  isEditing={isEditing} 
-                  requestsToDelete={requestsToDelete}
-                  toggleDeleteRequest={toggleDeleteRequest}
-                  statusChanges={statusChanges}
-                  handleStatusChange={handleStatusChange}
-                  toggleDetails={toggleDetails}
-                  expandedIdx={expandedIdx}
-                  openUserModal={openUserModal}
-                  setInvoiceUrl={setInvoiceUrl}
-                  navigate={navigate}
-                />
-              </>
+                      return (
+                        <React.Fragment key={req.id}>
+                          <TableRow className={`border-charcoal-700 hover:bg-charcoal-800/50 ${isDeleted ? 'opacity-50 line-through' : ''}`}>
+                            {role === 'admin' && isEditing && (
+                              <TableCell>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => toggleDeleteRequest(req.id)}
+                                  className="text-red-400 hover:text-red-300 hover:bg-red-900/20"
+                                >
+                                  ❌
+                                </Button>
+                              </TableCell>
+                            )}
+                            <TableCell>
+                              <Badge variant="outline" className="border-accent/50 text-accent">
+                                {req.service}
+                              </Badge>
+                            </TableCell>
+                            <TableCell className="text-gray-300">
+                              {role === 'admin' ? req.userName : 'You'}
+                            </TableCell>
+                            <TableCell className="text-gray-300">
+                              {new Date(req.inserted_at).toLocaleDateString()}
+                            </TableCell>
+                            <TableCell>
+                              {role === 'admin' && isEditing ? (
+                                <Select
+                                  value={currentStatus}
+                                  onValueChange={(value) => handleStatusChange(req.id, value)}
+                                >
+                                  <SelectTrigger className="w-40 bg-charcoal-800 border-charcoal-700 text-white">
+                                    <SelectValue>{t(currentStatus)}</SelectValue>
+                                  </SelectTrigger>
+                                  <SelectContent className="bg-charcoal-800 border-charcoal-700">
+                                    {STATUS_KEYS.map((key) => (
+                                      <SelectItem 
+                                        key={key} 
+                                        value={key}
+                                        className="text-white hover:bg-charcoal-700"
+                                      >
+                                        {t(key)}
+                                      </SelectItem>
+                                    ))}
+                                  </SelectContent>
+                                </Select>
+                              ) : (
+                                <Badge className={getStatusColor(currentStatus)}>
+                                  {t(currentStatus)}
+                                </Badge>
+                              )}
+                            </TableCell>
+                            <TableCell className="py-2 px-4">
+                              {req.invoiceUrl ? (
+                                <div className="flex gap-2">
+                                  <Button
+                                    variant="outline"
+                                    className="text-xs border-accent/50 text-accent hover:bg-accent hover:text-black"
+                                    onClick={() => {
+                                      setInvoiceUrl(req.invoiceUrl);
+                                      setCurrentInvoicePaypalLink(req.paypalLink);
+                                    }}
+                                  >
+                                    {t('dashboard.viewInvoice')}
+                                  </Button>
+                                  
+                                </div>
+                              ) : (
+                                role === 'admin' && isEditing && (
+                                  <Button
+                                    variant="outline"
+                                    className="text-xs border-accent/50 text-accent hover:bg-accent hover:text-black"
+                                    onClick={() => navigate('/admin/payment', { state: { request: req } })}
+                                  >
+                                    {t('dashboard.createInvoice')}
+                                  </Button>
+                                )
+                              )}
+                            </TableCell>
+                            <TableCell>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                className="text-2xl text-gray-400 hover:text-white hover:bg-charcoal-800"
+                                onClick={() => toggleDetails(idx)}
+                              >
+                                {expandedIdx === idx ? '▴' : '▾'}
+                              </Button>
+                            </TableCell>
+                          </TableRow>
+                          {expandedIdx === idx && (
+                            <TableRow className="bg-charcoal-800/50 border-charcoal-700">
+                              <TableCell colSpan={role === 'admin' && isEditing ? 7 : 6}>
+                                <div className="p-4 space-y-2">
+                                  <h4 className="font-medium mb-2 text-white">{t('dashboard.requestDetails')}</h4>
+                                  <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
+                                    {Object.entries(req).map(([key, value]) =>
+                                      !['id', 'user_id', 'inserted_at', 'service', 'status', 'tableName', 'userName'].includes(key) && (
+                                        <div key={key} className="flex">
+                                          <span className="font-medium mr-2 min-w-0 flex-shrink-0 text-gray-300">
+                                            {key.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}:
+                                          </span>
+                                          <span className="text-gray-400 break-words">
+                                            {String(value) || 'N/A'}
+                                          </span>
+                                        </div>
+                                      )
+                                    )}
+                                  </div>
+                                </div>
+                              </TableCell>
+                            </TableRow>
+                          )}
+                        </React.Fragment>
+                      );
+                    })}
+                  </TableBody>
+                </Table>
+              </div>
             )}
             {invoiceUrl && (
               <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
                 <div className="bg-charcoal-900 border border-charcoal-700 p-4 rounded-lg max-w-3xl w-full relative">
-                  <button
-                    className="absolute top-2 right-2 text-white bg-red-600 hover:bg-red-700 px-2 py-1 rounded"
-                    onClick={() => setInvoiceUrl(null)}
-                  >
-                    {t('dashboard.close')}
-                  </button>
+                  <div className="flex justify-between items-center mb-4">
+                    <div className="flex gap-2">
+                      {currentInvoicePaypalLink && role !== 'admin' && (
+                        <Button
+                          variant="outline"
+                          className="border-green-500/50 text-green-400 hover:bg-green-500 hover:text-black"
+                          onClick={() => window.open(currentInvoicePaypalLink, '_blank')}
+                        >
+                          Make Payment
+                        </Button>
+                      )}
+                    </div>
+                    <button
+                      className="text-white bg-red-600 hover:bg-red-700 px-2 py-1 rounded"
+                      onClick={() => {
+                        setInvoiceUrl(null);
+                        setCurrentInvoicePaypalLink(null);
+                      }}
+                    >
+                      {t('dashboard.close')}
+                    </button>
+                  </div>
                   <iframe src={invoiceUrl} width="100%" height="600px" title="Invoice PDF" className="rounded" />
                 </div>
               </div>

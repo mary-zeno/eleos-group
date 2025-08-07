@@ -1,84 +1,55 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from '../supabaseClient';
-import { useLocation } from 'react-router-dom';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, User, Mail, Lock, CheckCircle, AlertCircle } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 
 export default function AdminPayment() {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { t } = useTranslation();
   const passedRequest = location.state?.request || null;
-  const [requests, setRequests] = useState([]);
-  const [users, setUsers] = useState([]);
-  const [selectedUserId, setSelectedUserId] = useState(passedRequest?.user_id || '');
-  const [selectedService, setSelectedService] = useState(passedRequest?.service || '');
+  
   const [billAmount, setBillAmount] = useState('');
+  const [paypalLink, setPaypalLink] = useState('');
   const [status, setStatus] = useState('');
   const [invoiceFile, setInvoiceFile] = useState(null);
-  const { t } = useTranslation();
-  const navigate = useNavigate();
-  
-  // Fetch non-admin users
+
+  // Load existing invoice data when component mounts if we have a passed request
   useEffect(() => {
-    const fetchUsers = async () => {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('id, name')
-        .eq('role', 'user');
-      if (error) {
-        console.error('Error fetching users:', error.message);
+    if (!passedRequest) return;
+
+    const loadExistingInvoice = async () => {
+      const { data: existingInvoice, error } = await supabase
+        .from('invoices')
+        .select('amount_owed, paypal_link')
+        .eq('user_id', passedRequest.user_id)
+        .eq('service_type', passedRequest.service)
+        .eq('service_uuid', passedRequest.id)
+        .single();
+
+      if (!error && existingInvoice) {
+        setBillAmount(existingInvoice.amount_owed || '');
+        setPaypalLink(existingInvoice.paypal_link || '');
+        setStatus('Editing existing invoice');
       } else {
-        const filtered = data.filter((user) => user.name?.trim());
-        setUsers(filtered);
+        setBillAmount('');
+        setPaypalLink('');
+        setStatus('');
       }
     };
-    fetchUsers();
-  }, []);
 
-  // Fetch requests for selected user
-  useEffect(() => {
-    if (!selectedUserId) return;
-
-    const fetchRequests = async () => {
-      const tables = [
-        { name: 'travel_forms', service: 'Travel' },
-        { name: 'business_setup_forms', service: 'Business' },
-        { name: 'property_interest_forms', service: 'Property' },
-      ];
-
-      let allRequests = [];
-
-      for (const table of tables) {
-        const { data, error } = await supabase
-          .from(table.name)
-          .select('id, inserted_at')
-          .eq('user_id', selectedUserId);
-
-        if (!error && data.length) {
-          const formatted = data.map((entry) => ({
-            id: entry.id,
-            service: table.service,
-            inserted_at: entry.inserted_at,
-          }));
-          allRequests = allRequests.concat(formatted);
-        }
-      }
-
-      allRequests.sort((a, b) => new Date(b.inserted_at) - new Date(a.inserted_at));
-      setRequests(allRequests);
-    };
-
-    fetchRequests();
-  }, [selectedUserId]);
+    loadExistingInvoice();
+  }, [passedRequest]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!selectedUserId || !selectedService || !billAmount) {
-      setStatus('Please fill in all fields.');
+    if (!passedRequest || !billAmount) {
+      setStatus('Please fill in all required fields.');
       return;
     }
 
@@ -87,7 +58,7 @@ export default function AdminPayment() {
 
     if (invoiceFile) {
       const fileExt = invoiceFile.name.split('.').pop();
-      const fileName = `${selectedUserId}-${Date.now()}.${fileExt}`;
+      const fileName = `${passedRequest.user_id}-${Date.now()}.${fileExt}`;
       const filePath = `invoices/${fileName}`;
 
       const { error: uploadError } = await supabase.storage
@@ -103,105 +74,154 @@ export default function AdminPayment() {
       invoiceUrl = data.publicUrl;
     }
 
-    const { error: insertError } = await supabase.from('invoices').insert([
-      {
-        user_id: selectedUserId,
-        service_type: selectedService,
-        amount_owed: billAmount,
-        invoice_url: invoiceUrl,
-      },
-    ]);
+    // Check if an invoice already exists for this specific request
+    const { data: existingInvoice, error: checkError } = await supabase
+      .from('invoices')
+      .select('id, invoice_url')
+      .eq('user_id', passedRequest.user_id)
+      .eq('service_type', passedRequest.service)
+      .eq('service_uuid', passedRequest.id)
+      .single();
 
-    if (insertError) {
-      setStatus('Failed to insert invoice: ' + insertError.message);
+    if (checkError && checkError.code !== 'PGRST116') {
+      setStatus('Error checking existing invoice: ' + checkError.message);
       return;
     }
 
-    setStatus('Invoice created successfully!');
+    let result;
+    if (existingInvoice) {
+      // Update existing invoice
+      const updateData = {
+        amount_owed: billAmount,
+        paypal_link: paypalLink,
+      };
+      
+      // Only update invoice_url if a new file was uploaded
+      if (invoiceUrl) {
+        updateData.invoice_url = invoiceUrl;
+      }
+
+      result = await supabase
+        .from('invoices')
+        .update(updateData)
+        .eq('id', existingInvoice.id);
+
+      if (result.error) {
+        setStatus('Failed to update invoice: ' + result.error.message);
+        return;
+      }
+      setStatus('Invoice updated successfully!');
+    } else {
+      // Insert new invoice
+      result = await supabase.from('invoices').insert([
+        {
+          user_id: passedRequest.user_id,
+          service_type: passedRequest.service,
+          service_uuid: passedRequest.id,
+          amount_owed: billAmount,
+          invoice_url: invoiceUrl,
+          paypal_link: paypalLink,
+        },
+      ]);
+
+      if (result.error) {
+        setStatus('Failed to create invoice: ' + result.error.message);
+        return;
+      }
+      setStatus('Invoice created successfully!');
+    }
+
     setBillAmount('');
-    setSelectedService('');
-    setSelectedUserId('');
+    setPaypalLink('');
     setInvoiceFile(null);
   };
+
+  if (!passedRequest) {
+    return (
+      <div className="min-h-screen bg-charcoal-950 p-4 sm:p-6 lg:p-8">
+        <div className="max-w-2xl mx-auto">
+          <Card className="bg-charcoal-900 border-charcoal-800">
+            <CardHeader>
+              <CardTitle className="text-white">Create Invoice</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-red-400">No request selected. Please navigate from the dashboard.</p>
+              <Button 
+                onClick={() => navigate('/dashboard')} 
+                className="mt-4 bg-accent hover:bg-accent/90 text-black"
+              >
+                Back to Dashboard
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-charcoal-950 p-4 sm:p-6 lg:p-8">
       {/* Back to Dashboard */}
-      <div className="max-w-2xl mx-auto">
-        <div className="flex items-center gap-4">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => navigate('/dashboard')}
-            className="flex items-center gap-2"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            {t('editProfile.back')}
-          </Button>
-        </div>
+      <div className="max-w-2xl mx-auto mb-6">
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => navigate('/dashboard')}
+          className="flex items-center gap-2 text-gray-300 hover:text-white"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          Back to Dashboard
+        </Button>
       </div>
+
       <div className="max-w-2xl mx-auto">
         <Card className="bg-charcoal-900 border-charcoal-800">
           <CardHeader>
-            <CardTitle className="text-white">{t('adminPayment.title')}</CardTitle>
+            <CardTitle className="text-white">Create Invoice</CardTitle>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-6">
-              {/* User dropdown */}
-              <div className="space-y-2">
-                <Label className="text-gray-300">{t('adminPayment.selectUser')}</Label>
-                <select
-                  value={selectedUserId}
-                  onChange={(e) => {
-                    setSelectedUserId(e.target.value);
-                    setSelectedService('');
-                  }}
-                  required
-                  className="w-full bg-charcoal-800 border-charcoal-700 text-white rounded-md shadow-sm p-2 focus:ring-accent focus:border-accent"
-                >
-                  <option value="">{t('adminPayment.chooseUser')}</option>
-                  {users.map((u) => (
-                    <option key={u.id} value={u.id} className="bg-charcoal-800">{u.name}</option>
-                  ))}
-                </select>
+            {/* Request Information Display */}
+            <div className="mb-6 p-4 bg-charcoal-800 rounded-lg">
+              <h3 className="text-lg font-medium text-white mb-2">Request Details</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
+                <div className="text-gray-300"><strong>User:</strong> {passedRequest.userName}</div>
+                <div className="text-gray-300"><strong>Service:</strong> {passedRequest.service}</div>
+                <div className="text-gray-300"><strong>Date:</strong> {new Date(passedRequest.inserted_at).toLocaleDateString()}</div>
+                <div className="text-gray-300"><strong>Request ID:</strong> {passedRequest.id}</div>
               </div>
+            </div>
 
-              {/* Service dropdown */}
-              {requests.length > 0 && (
-                <div className="space-y-2">
-                  <Label className="text-gray-300">{t('adminPayment.selectService')}</Label>
-                  <select
-                    value={selectedService}
-                    onChange={(e) => setSelectedService(e.target.value)}
-                    required
-                    className="w-full bg-charcoal-800 border-charcoal-700 text-white rounded-md shadow-sm p-2 focus:ring-accent focus:border-accent"
-                  >
-                    <option value="">{t('adminPayment.chooseRequest')}</option>
-                    {requests.map((r) => (
-                      <option key={r.id} value={r.service} className="bg-charcoal-800">
-                        {r.service} - {new Date(r.inserted_at).toLocaleDateString()}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              )}
-
+            <form onSubmit={handleSubmit} className="space-y-6">
               {/* Amount input */}
               <div className="space-y-2">
-                <Label className="text-gray-300">{t('adminPayment.amountOwed')}</Label>
+                <Label className="text-gray-300">Amount Owed (USD)</Label>
                 <Input
                   type="number"
                   min="0"
+                  step="0.01"
                   value={billAmount}
                   onChange={(e) => setBillAmount(e.target.value)}
                   required
+                  placeholder="Enter amount"
+                  className="bg-charcoal-800 border-charcoal-700 text-white placeholder:text-gray-400"
+                />
+              </div>
+
+              {/* PayPal Link */}
+              <div className="space-y-2">
+                <Label className="text-gray-300">PayPal Payment Link</Label>
+                <Input
+                  type="url"
+                  placeholder="https://paypal.me/..."
+                  value={paypalLink}
+                  onChange={(e) => setPaypalLink(e.target.value)}
                   className="bg-charcoal-800 border-charcoal-700 text-white placeholder:text-gray-400"
                 />
               </div>
 
               {/* Invoice upload */}
               <div className="space-y-2">
-                <Label className="text-gray-300">{t('adminPayment.uploadInvoice')}</Label>
+                <Label className="text-gray-300">Upload Invoice (PDF)</Label>
                 <Input
                   type="file"
                   accept="application/pdf"
@@ -212,7 +232,7 @@ export default function AdminPayment() {
 
               {/* Submit */}
               <Button type="submit" className="w-full bg-accent hover:bg-accent/90 text-black font-medium">
-                {t('adminPayment.submit')}
+                {status === 'Editing existing invoice' ? 'Update Invoice' : 'Create Invoice'}
               </Button>
 
               {status && (

@@ -56,28 +56,50 @@ export default function PropertyForm({ user }) {
       user_id: user.id,
     };
 
-    const { error } = await supabase
+    // Insert into property_interest_forms table first
+    const { data: propertyFormData, error: propertyFormError } = await supabase
       .from("property_interest_forms")
-      .insert([insertData]);
+      .insert([insertData])
+      .select('id')
+      .single();
 
-    if (error) {
-      setStatus(t("propertyform.status.error") + error.message);
-    } else {
-      setStatus(t("propertyform.status.success"));
-      setFormData({
-        property_type: "",
-        purpose: "",
-        location_preferences: "",
-        budget: "",
-        financing_needs: false,
-        financing_details: "",
-        timeline: "",
-        existing_property: false,
-        existing_property_location: "",
-        additional_requests: "",
-      });
-      fetchProperties();
+    if (propertyFormError) {
+      setStatus(t("propertyform.status.error") + propertyFormError.message);
+      setLoading(false);
+      return;
     }
+
+    // Insert into requests table with the generated property_interest_forms id
+    const requestData = {
+      user_id: user.id,
+      service_type: 'Property',
+      service_uuid: propertyFormData.id,
+    };
+
+    const { error: requestError } = await supabase
+      .from('invoices')
+      .insert([requestData]);
+
+    if (requestError) {
+      setStatus(t("propertyform.status.error") + requestError.message);
+      setLoading(false);
+      return;
+    }
+
+    setStatus(t("propertyform.status.success"));
+    setFormData({
+      property_type: "",
+      purpose: "",
+      location_preferences: "",
+      budget: "",
+      financing_needs: false,
+      financing_details: "",
+      timeline: "",
+      existing_property: false,
+      existing_property_location: "",
+      additional_requests: "",
+    });
+    fetchProperties();
     setLoading(false);
   };
 
