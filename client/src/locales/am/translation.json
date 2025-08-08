@@ -13,7 +13,9 @@
     "common": {
         "yes": "አዎ",
         "no": "አይ",
-        "na": "የለም"
+        "na": "የለም",
+        "edit": "አርትዕ", 
+        "delete": "ሰርዝ"
     },
     "status": {
         "submitted": "ተሰጥቷል",

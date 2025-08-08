@@ -13,7 +13,9 @@
     "common": {
         "yes": "Yes",
         "no": "No",
-        "na": "N/A"
+        "na": "N/A",
+        "edit": "Edit", 
+        "delete": "Delete"
     },
     "status": {
         "submitted": "Submitted",

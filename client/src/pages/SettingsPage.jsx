@@ -350,20 +350,22 @@ function PropertyForm({ onClose, user, onPropertyAdded, setStatus, property }) {
         onChange={(e) => setImageFile(e.target.files[0])}
       />
 
-      <div className="flex justify-end gap-2">
+      <div className="flex justify-end gap-3">
         <Button
-          type="button"
           variant="outline"
-          onClick={onClose}
-          className="bg-charcoal-800 border-charcoal-700 text-white hover:bg-charcoal-700"
+          size="sm"
+          onClick={() => onEdit(property.id)}
+          className="bg-transparent border-charcoal-600 text-gray-300 hover:bg-charcoal-700 hover:text-white hover:border-charcoal-500 transition-all duration-200"
         >
-          {t("Cancel") || "Cancel"}
+          {t('common.edit')}
         </Button>
         <Button
-          type="submit"
-          className="bg-accent hover:bg-accent/90 text-black font-medium"
+          variant="outline"
+          size="sm"
+          onClick={() => onDelete(property.id)}
+          className="bg-transparent border-red-800 text-red-400 hover:bg-red-900/20 hover:text-red-300 hover:border-red-600 transition-all duration-200"
         >
-          {t("Submit") || "Submit"}
+          {t('common.delete')}
         </Button>
       </div>
 
