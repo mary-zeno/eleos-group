@@ -14,6 +14,7 @@ import { Calculator, Plane, MapPin, AlertTriangle } from 'lucide-react';
 export default function TravelForm({ user }) {
   const [formData, setFormData] = useState({
     purpose: '',
+    start_city: '',
     city: '',
     dates: '',
     num_travelers: '',
@@ -89,6 +90,7 @@ export default function TravelForm({ user }) {
     // Reset form
     setFormData({
       purpose: '',
+      start_city: '',
       city: '',
       dates: '',
       num_travelers: '',
@@ -120,7 +122,8 @@ export default function TravelForm({ user }) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          location: formData.location || "Ethiopia", // Add location field to formData if not there
+          starting: formData.start_city,
+          location: formData.city || "Ethiopia", // Add location field to formData if not there
           accommodation: formData.accommodation,
           people: Number(formData.num_travelers),
           season: season
@@ -138,7 +141,7 @@ export default function TravelForm({ user }) {
           notes: data.notes || "",
         });
       } else {
-        setEstimate({ error: t("travelEstimator.estimate.error") });
+        setEstimate({notes: data.notes || ""});
       }
     } catch (err) {
       setEstimate({ error: t("travelEstimator.estimate.errorFetch") });
@@ -181,7 +184,17 @@ export default function TravelForm({ user }) {
                       </SelectContent>
                     </Select>
                   </div>
-                  
+                  {/* Start City */}
+                  <div className="space-y-2">
+                    <Label className="text-gray-300">{t("travelForm.startCityLabel")}</Label>
+                    <Input
+                      value={formData.start_city}
+                      onChange={(e) => handleChange('start_city', e.target.value)}
+                      placeholder={t("travelForm.startCityPlaceholder")}
+                      required
+                      className="bg-charcoal-800 border-charcoal-700 text-white placeholder:text-gray-400"
+                    />
+                  </div>
                   {/* City */}
                   <div className="space-y-2">
                     <Label className="text-gray-300">{t("travelForm.cityLabel")}</Label>
@@ -355,20 +368,30 @@ export default function TravelForm({ user }) {
                 <Button
                   type="button"
                   onClick={fetchEstimate}
-                  disabled={loadingEstimate || !formData.accommodation || !formData.num_travelers || !formData.dates}
+                  disabled={loadingEstimate ||!formData.start_city|| !formData.city || !formData.accommodation || !formData.num_travelers || !formData.dates}
                   variant="outline"
                   className="w-full bg-charcoal-800 border-charcoal-700 text-white hover:bg-charcoal-700"
                 >
                   {loadingEstimate ? t("travelEstimator.loading") : t("travelEstimator.button")}
                 </Button>
 
-                {estimate && !estimate.error && (
-                  <div className="mt-4 p-4 bg-blue-900/20 border border-blue-700 rounded-lg">
-                    <h4 className="font-medium mb-2 text-white">{t("travelEstimator.estimate.title")}</h4>
-                    <p className="text-sm text-gray-300">
-                      <strong>{t("travelEstimator.estimate.lowRange")}</strong> ${estimate.lowStart} - ${estimate.lowEnd} <br />
-                      <strong>{t("travelEstimator.estimate.highRange")}</strong> ${estimate.highStart} - ${estimate.highEnd}
-                    </p>
+                {estimate && (
+                  <div className={`mt-4 p-4 rounded-lg ${
+                    estimate.lowStart && estimate.lowEnd && estimate.highStart && estimate.highEnd
+                      ? "bg-blue-900/20 border border-blue-700 text-white"
+                      : "bg-yellow-900/20 border border-yellow-700 text-yellow-400"
+                  }`}>
+                    {estimate.lowStart && estimate.lowEnd && estimate.highStart && estimate.highEnd ? (
+                      <>
+                        <h4 className="font-medium mb-2">{t("travelEstimator.estimate.title")}</h4>
+                        <p className="text-sm">
+                          <strong>{t("travelEstimator.estimate.lowRange")}</strong> ${estimate.lowStart} - ${estimate.lowEnd} <br />
+                          <strong>{t("travelEstimator.estimate.highRange")}</strong> ${estimate.highStart} - ${estimate.highEnd}
+                        </p>
+                      </>
+                    ) : (
+                      <p className="text-sm italic">{t("travelEstimator.estimate.partialData") || "Estimate data not fully available."}</p>
+                    )}
 
                     {estimate.notes && (
                       <>
@@ -385,12 +408,6 @@ export default function TravelForm({ user }) {
                         )}
                       </>
                     )}
-                  </div>
-                )}
-
-                {estimate && estimate.error && (
-                  <div className="mt-4 p-4 bg-red-900/20 border border-red-700 text-red-400 rounded-lg">
-                    {estimate.error}
                   </div>
                 )}
 

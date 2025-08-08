@@ -20,6 +20,7 @@ app.add_middleware(
 )
 
 class EstimateRequest(BaseModel):
+    starting: str
     location: str
     accommodation: str
     people: int
@@ -30,15 +31,16 @@ def get_estimate(data: EstimateRequest):
     prompt = f"""
     You are a travel cost estimator for Ethiopia. Provide an estimated range of total travel cost in USD based on the following inputs:
 
-    - City/Region: {data.location}
+    - Departing City: {data.starting}
+    - Arriving City/Region: {data.location}
     - Type of accommodation: {data.accommodation}
     - Number of travelers: {data.people}
     - Travel month: {data.season}
 
    Return the result in the following format:
 
-    Low Estimate Range: $XXXX - $YYYY
-    High Estimate Range: $AAAA - $BBBB  
+    Total Low Estimate Range: $XXXX - $YYYY
+    Total High Estimate Range: $AAAA - $BBBB  
     Cost Breakdown: Cost breakdown for both ranges.
     """
 
@@ -80,10 +82,10 @@ def get_estimate(data: EstimateRequest):
             "low_estimate_end": int(low_match.group(2).replace(",", "")),
             "high_estimate_start": int(high_match.group(1).replace(",", "")),
             "high_estimate_end": int(high_match.group(2).replace(",", "")),
-            "notes": content
+            "notes": content  # used for "Show Breakdown"
         }
     else:
         return {
-            "error": "Could not parse estimate ranges from model output",
-            "raw": content
+            "notes": content  # no parsing success, but raw response still shown
         }
+

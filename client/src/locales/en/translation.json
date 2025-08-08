@@ -359,8 +359,10 @@
             "vacation": "Vacation",
             "work": "Work"
         },
-        "cityLabel": "Specific City or Region in Ethiopia",
+        "startCityLabel": "From (Specific City or Region):",
+        "cityLabel": "To (Specific City or Region in Ethiopia):",
         "cityPlaceholder": "e.g. Addis Ababa, Lalibela",
+        "startCityPlaceholder": "e.g. New York City, Washington D.C",
         "datesLabel": "Dates of Travel",
         "datesPlaceholder": "e.g. July 10 - July 20, 2024",
         "numTravelersLabel": "Number of Travelers",
@@ -404,7 +406,8 @@
             "hideBreakdown": "Hide Breakdown",
             "error": "Could not parse estimate.",
             "errorFetch": "Error contacting the travel estimator.",
-            "missingFields": "Please fill in accommodation type, number of travelers, and dates to get an estimate."
+            "missingFields": "Please fill in accommodation type, number of travelers, and dates to get an estimate.",
+            "partialData": "Ranges could not be made please see your estimates in the breakdown."
         }
     },
     "travelInfo": {
