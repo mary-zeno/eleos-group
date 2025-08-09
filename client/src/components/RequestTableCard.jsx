@@ -79,7 +79,7 @@ export default function RequestTableCard({
                       <TableCell>
                         {role === 'admin' ? (
                           <button
-                            className="text-blue-600 underline hover:text-blue-800"
+                          className="p-0 m-0 bg-transparent border-0 cursor-pointer text-gray-200 font-semibold hover:text-accent hover:font-bold focus:outline-none focus:ring-2 focus:ring-accent/40 rounded transition-colors duration-150"
                             onClick={() => openUserModal(req.user_id)}
                           >
                             {req.userName}

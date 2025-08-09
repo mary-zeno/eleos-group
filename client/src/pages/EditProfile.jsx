@@ -7,32 +7,55 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { ArrowLeft, User, Mail, Lock, CheckCircle, AlertCircle } from 'lucide-react';
+import { Separator } from "@/components/ui/separator"
+import { ArrowLeft, User, Mail, Lock, CheckCircle, AlertCircle, Phone, Globe, MessageSquare, UserCheck } from 'lucide-react';
 
 export default function EditProfile({ user }) {
   const navigate = useNavigate();
   const [email, setEmail] = useState(user?.email || '');
   const [name, setName] = useState('');
   const [password, setPassword] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [countryResidence, setCountryResidence] = useState('');
+  const [language, setLanguage] = useState('');
+  const [emergencyContactMember1, setEmergencyContactMember1] = useState('');
+  const [emergencyContact1, setEmergencyContact1] = useState('');
+  const [communicationReference, setCommunicationReference] = useState('');
   const [status, setStatus] = useState('');
   const [loading, setLoading] = useState(false);
   const { t } = useTranslation();
 
   useEffect(() => {
-    const fetchName = async () => {
+    const fetchProfile = async () => {
       if (!user?.id) return;
 
       const { data, error } = await supabase
         .from('profiles')
-        .select('name')
+        .select(`
+          name, 
+          phone_number, 
+          country_residence, 
+          language, 
+          emergency_contact_member1, 
+          emergency_contact1, 
+          communication_reference
+        `)
         .eq('id', user.id)
         .single();
 
-      if (data) setName(data.name || '');
-      if (error) console.error('Failed to fetch name:', error.message);
+      if (data) {
+        setName(data.name || '');
+        setPhoneNumber(data.phone_number || '');
+        setCountryResidence(data.country_residence || '');
+        setLanguage(data.language || '');
+        setEmergencyContactMember1(data.emergency_contact_member1 || '');
+        setEmergencyContact1(data.emergency_contact1 || '');
+        setCommunicationReference(data.communication_reference || '');
+      }
+      if (error) console.error('Failed to fetch profile:', error.message);
     };
 
-    fetchName();
+    fetchProfile();
   }, [user]);
 
   const handleUpdate = async () => {
@@ -59,10 +82,20 @@ export default function EditProfile({ user }) {
         }
       }
 
-      // Update name in profiles table
+      // Update profile information in profiles table
+      const profileUpdates = {
+        name: name.trim(),
+        phone_number: phoneNumber.trim() || null,
+        country_residence: countryResidence.trim() || null,
+        language: language.trim() || null,
+        emergency_contact_member1: emergencyContactMember1.trim() || null,
+        emergency_contact1: emergencyContact1.trim() || null,
+        communication_reference: communicationReference.trim() || null,
+      };
+
       const { error: profileError } = await supabase
         .from('profiles')
-        .update({ name: name.trim() })
+        .update(profileUpdates)
         .eq('id', user.id);
 
       if (profileError) {
@@ -108,61 +141,183 @@ export default function EditProfile({ user }) {
           </CardHeader>
           <CardContent className="space-y-6">
 
-            {/* Email Field */}
-            <div className="space-y-2">
-              <Label htmlFor="email" className="flex items-center gap-2 text-gray-300">
-                <Mail className="h-4 w-4" />
-                {t('editProfile.emailLabel')}
-              </Label>
-              <Input
-                id="email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder={t('editProfile.emailPlaceholder')}
-                disabled={loading}
-                className="bg-charcoal-800 border-charcoal-700 text-white placeholder:text-gray-400"
-              />
-              <p className="text-sm text-gray-400">
-                {t('editProfile.emailNote')}
-              </p>
+            {/* Basic Information Section */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-medium text-white">{t('editProfile.sections.basicInfo')}</h3>
+
+              {/* Email Field */}
+              <div className="space-y-2">
+                <Label htmlFor="email" className="flex items-center gap-2 text-gray-300">
+                  <Mail className="h-4 w-4" />
+                  {t('editProfile.emailLabel')}
+                </Label>
+                <Input
+                  id="email"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder={t('editProfile.emailPlaceholder')}
+                  disabled={loading}
+                  className="bg-charcoal-800 border-charcoal-700 text-white placeholder:text-gray-400"
+                />
+                <p className="text-sm text-gray-400">
+                  {t('editProfile.emailNote')}
+                </p>
+              </div>
+
+              {/* Name Field */}
+              <div className="space-y-2">
+                <Label htmlFor="name" className="flex items-center gap-2 text-gray-300">
+                  <User className="h-4 w-4" />
+                  {t('editProfile.nameLabel')}
+                </Label>
+                <Input
+                  id="name"
+                  type="text"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder={t('editProfile.namePlaceholder')}
+                  disabled={loading}
+                  className="bg-charcoal-800 border-charcoal-700 text-white placeholder:text-gray-400"
+                />
+              </div>
+
+              {/* Password Field */}
+              <div className="space-y-2">
+                <Label htmlFor="password" className="flex items-center gap-2 text-gray-300">
+                  <Lock className="h-4 w-4" />
+                  {t('editProfile.passwordLabel')}
+                </Label>
+                <Input
+                  id="password"
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder={t('editProfile.passwordPlaceholder')}
+                  disabled={loading}
+                  className="bg-charcoal-800 border-charcoal-700 text-white placeholder:text-gray-400"
+                />
+                <p className="text-sm text-gray-400">
+                  {t('editProfile.passwordNote')}
+                </p>
+              </div>
             </div>
 
-            {/* Name Field */}
-            <div className="space-y-2">
-              <Label htmlFor="name" className="flex items-center gap-2 text-gray-300">
-                <User className="h-4 w-4" />
-                {t('editProfile.nameLabel')}
-              </Label>
-              <Input
-                id="name"
-                type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder={t('editProfile.namePlaceholder')}
-                disabled={loading}
-                className="bg-charcoal-800 border-charcoal-700 text-white placeholder:text-gray-400"
-              />
+            <Separator className="bg-charcoal-700" />
+
+            {/* Contact Information Section */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-medium text-white">{t('editProfile.sections.contactInfo')}</h3>
+
+              {/* Phone Number */}
+              <div className="space-y-2">
+                <Label htmlFor="phoneNumber" className="flex items-center gap-2 text-gray-300">
+                  <Phone className="h-4 w-4" />
+                  {t('editProfile.phoneLabel')}
+                </Label>
+                <Input
+                  id="phoneNumber"
+                  type="tel"
+                  value={phoneNumber}
+                  onChange={(e) => setPhoneNumber(e.target.value)}
+                  placeholder={t('editProfile.phonePlaceholder')}
+                  disabled={loading}
+                  className="bg-charcoal-800 border-charcoal-700 text-white placeholder:text-gray-400"
+                />
+              </div>
+
+              {/* Country of Residence */}
+              <div className="space-y-2">
+                <Label htmlFor="countryResidence" className="flex items-center gap-2 text-gray-300">
+                  <Globe className="h-4 w-4" />
+                  {t('editProfile.countryLabel')}
+                </Label>
+                <Input
+                  id="countryResidence"
+                  type="text"
+                  value={countryResidence}
+                  onChange={(e) => setCountryResidence(e.target.value)}
+                  placeholder={t('editProfile.countryPlaceholder')}
+                  disabled={loading}
+                  className="bg-charcoal-800 border-charcoal-700 text-white placeholder:text-gray-400"
+                />
+              </div>
+
+              {/* Language */}
+              <div className="space-y-2">
+                <Label htmlFor="language" className="flex items-center gap-2 text-gray-300">
+                  <MessageSquare className="h-4 w-4" />
+                  {t('editProfile.languageLabel')}
+                </Label>
+                <Input
+                  id="language"
+                  type="text"
+                  value={language}
+                  onChange={(e) => setLanguage(e.target.value)}
+                  placeholder={t('editProfile.languagePlaceholder')}
+                  disabled={loading}
+                  className="bg-charcoal-800 border-charcoal-700 text-white placeholder:text-gray-400"
+                />
+              </div>
+
+              {/* Communication Preference */}
+              <div className="space-y-2">
+                <Label htmlFor="communicationPreference" className="flex items-center gap-2 text-gray-300">
+                  <Mail className="h-4 w-4" />
+                  {t('dashboard.profile.communicationPreference')}
+                </Label>
+                <Input
+                  id="communicationPreference"
+                  type="text"
+                  value={communicationReference} 
+                  onChange={(e) => setCommunicationReference(e.target.value)} 
+                  placeholder={t('editProfile.communicationPlaceholder')}
+                  disabled={loading}
+                  className="bg-charcoal-800 border-charcoal-700 text-white placeholder:text-gray-400"
+                />
+
+              </div>
             </div>
 
-            {/* Password Field */}
-            <div className="space-y-2">
-              <Label htmlFor="password" className="flex items-center gap-2 text-gray-300">
-                <Lock className="h-4 w-4" />
-                {t('editProfile.passwordLabel')}
-              </Label>
-              <Input
-                id="password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder={t('editProfile.emailPlaceholder')}
-                disabled={loading}
-                className="bg-charcoal-800 border-charcoal-700 text-white placeholder:text-gray-400"
-              />
-              <p className="text-sm text-gray-400">
-                {t('editProfile.passwordNote')}
-              </p>
+            <Separator className="bg-charcoal-700" />
+
+            {/* Emergency Contact Section */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-medium text-white">{t('editProfile.sections.emergencyContact')}</h3>
+
+              {/* Emergency Contact Name */}
+              <div className="space-y-2">
+                <Label htmlFor="emergencyContactMember1" className="flex items-center gap-2 text-gray-300">
+                  <UserCheck className="h-4 w-4" />
+                  {t('editProfile.emergencyNameLabel')}
+                </Label>
+                <Input
+                  id="emergencyContactMember1"
+                  type="text"
+                  value={emergencyContactMember1}
+                  onChange={(e) => setEmergencyContactMember1(e.target.value)}
+                  placeholder={t('editProfile.emergencyNamePlaceholder')}
+                  disabled={loading}
+                  className="bg-charcoal-800 border-charcoal-700 text-white placeholder:text-gray-400"
+                />
+              </div>
+
+              {/* Emergency Contact Phone */}
+              <div className="space-y-2">
+                <Label htmlFor="emergencyContact1" className="flex items-center gap-2 text-gray-300">
+                  <Phone className="h-4 w-4" />
+                  {t('editProfile.emergencyPhoneLabel')}
+                </Label>
+                <Input
+                  id="emergencyContact1"
+                  type="tel"
+                  value={emergencyContact1}
+                  onChange={(e) => setEmergencyContact1(e.target.value)}
+                  placeholder={t('editProfile.emergencyPhonePlaceholder')}
+                  disabled={loading}
+                  className="bg-charcoal-800 border-charcoal-700 text-white placeholder:text-gray-400"
+                />
+              </div>
             </div>
 
             {/* Status Message */}
@@ -210,7 +365,6 @@ export default function EditProfile({ user }) {
             <div className="pt-4 border-t border-charcoal-700">
               <h3 className="text-sm font-medium text-white mb-2">{t('editProfile.currentInfo')}</h3>
               <div className="text-sm text-gray-400 space-y-1">
-                <p><strong className="text-gray-300">{t('editProfile.userId')}</strong> {user?.id}</p>
                 <p><strong className="text-gray-300">{t('editProfile.created')}</strong> {user?.created_at ? new Date(user.created_at).toLocaleDateString() : t('common.na')}</p>
                 <p><strong className="text-gray-300">{t('editProfile.emailVerified')}</strong> {user?.email_confirmed_at ? t('common.yes') : t('common.no')}</p>
               </div>
