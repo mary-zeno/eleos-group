@@ -212,7 +212,7 @@ function PropertyForm({ onClose, user, onPropertyAdded, setStatus, property }) {
     setPrice(property?.price || "");
     setBedrooms(property?.bedrooms || "");
     setBathrooms(property?.bathrooms || "");
-    setImageFile(null); // Reset file input on open
+    setImageFile(null); 
     setLocalStatus("");
   }, [property]);
 

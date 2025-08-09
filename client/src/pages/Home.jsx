@@ -53,18 +53,18 @@ export default function Home({ user }) {
 
   const services = [
     {
-      title: t('Travel Services'),
-      description: t('Comprehensive travel planning and relocaiton support for Ethiopia visits.'),
+      title: t('home.services.travel.title'),
+      description: t('home.services.travel.desc'),
       href: user ? '/travel-form' : '/auth',
     },
     {
-      title: t('Business Setup'),
-      description: t('Professional assistance with business registration and legal requirements.'),
+      title: t('home.services.business.title'),
+      description: t('home.services.business.desc'),
       href: user ? '/business-form' : '/auth',
     },
     {
-      title: t('Property Services'),
-      description: t('Find, buy, rent, or manage properties in Ethiopia with expert guidance.'),
+      title: t('home.services.property.title'),
+      description: t('home.services.property.desc'),
       href: user ? '/property-form' : '/auth',
     },
   ];

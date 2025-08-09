@@ -8,7 +8,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { ArrowLeft, User, Mail, Lock, CheckCircle, AlertCircle } from 'lucide-react';
+import { ArrowLeft, User, Mail, Lock, CheckCircle, AlertCircle, Phone, Globe, MessageSquare, UserCheck } from 'lucide-react';
 import RequestTableCard from '@/components/RequestTableCard';
 
 export default function Dashboard({ user }) {
@@ -16,6 +16,14 @@ export default function Dashboard({ user }) {
   const [userData, setUserData] = useState(null);
   const [name, setName] = useState('');
   const [role, setRole] = useState('user');
+  const [profileData, setProfileData] = useState({
+    phone_number: '',
+    country_residence: '',
+    language: '',
+    emergency_contact_member1: '',
+    emergency_contact1: '',
+    communication_reference: ''
+  });
   const [requests, setRequests] = useState({ active: [], inactive: [] });
   const [loading, setLoading] = useState(true);
   const [expandedIdx, setExpandedIdx] = useState(null);
@@ -45,7 +53,16 @@ export default function Dashboard({ user }) {
 
       const { data: profile, error: profileError } = await supabase
         .from('profiles')
-        .select('name, role')
+        .select(`
+          name, 
+          role, 
+          phone_number, 
+          country_residence, 
+          language, 
+          emergency_contact_member1, 
+          emergency_contact1, 
+          communication_reference
+        `)
         .eq('id', user.id)
         .single();
 
@@ -53,9 +70,25 @@ export default function Dashboard({ user }) {
         console.error('Error fetching profile:', profileError.message);
         setName('');
         setRole('user');
+        setProfileData({
+          phone_number: '',
+          country_residence: '',
+          language: '',
+          emergency_contact_member1: '',
+          emergency_contact1: '',
+          communication_reference: ''
+        });
       } else {
         setName(profile.name || '');
         setRole(profile.role || 'user');
+        setProfileData({
+          phone_number: profile.phone_number || '',
+          country_residence: profile.country_residence || '',
+          language: profile.language || '',
+          emergency_contact_member1: profile.emergency_contact_member1 || '',
+          emergency_contact1: profile.emergency_contact1 || '',
+          communication_reference: profile.communication_reference || ''
+        });
       }
 
       await fetchRequests(user, profile?.role || 'user');
@@ -106,10 +139,20 @@ export default function Dashboard({ user }) {
     // Collect unique user_ids from allRequests
     const uniqueUserIds = [...new Set(allRequests.map((r) => r.user_id))];
 
-    // Fetch profiles for these user ids
+    // Fetch profiles for these user ids with all fields
     const { data: profiles, error: profilesError } = await supabase
       .from('profiles')
-      .select('id, name')
+      .select(`
+        id, 
+        name, 
+        email, 
+        phone_number, 
+        country_residence, 
+        language, 
+        emergency_contact_member1, 
+        emergency_contact1, 
+        communication_reference
+      `)
       .in('id', uniqueUserIds);
 
     if (profilesError) {
@@ -118,14 +161,17 @@ export default function Dashboard({ user }) {
 
     // Map user_id to user name
     const userIdToName = {};
+    const userIdToProfile = {};
     profiles?.forEach((p) => {
       userIdToName[p.id] = p.name || t('fallback.noName');
+      userIdToProfile[p.id] = p;
     });
 
     // Add userName field to each request
     allRequests = allRequests.map((req) => ({
       ...req,
-      userName: userIdToName[req.user_id] || t('fallback.unknown')
+      userName: userIdToName[req.user_id] || t('fallback.unknown'),
+      userProfile: userIdToProfile[req.user_id] || null
     }));
 
     // Now fetch invoices and match them to requests using service_uuid
@@ -271,11 +317,30 @@ export default function Dashboard({ user }) {
     setExpandedIdx(expandedIdx === idx ? null : idx);
   };
 
-
   const openUserModal = async (userId) => {
+    // Try to get profile from already fetched data first
+    const allRequestsList = [...requests.active, ...requests.inactive];
+    const existingProfile = allRequestsList.find(r => r.user_id === userId)?.userProfile;
+    
+    if (existingProfile) {
+      setSelectedUserProfile(existingProfile);
+      setIsUserModalOpen(true);
+      return;
+    }
+
+    // Fallback to fetch from database
     const { data: profile, error } = await supabase
       .from('profiles')
-      .select('name, email')
+      .select(`
+        name, 
+        email, 
+        phone_number, 
+        country_residence, 
+        language, 
+        emergency_contact_member1, 
+        emergency_contact1, 
+        communication_reference
+      `)
       .eq('id', userId)
       .single();
 
@@ -297,14 +362,68 @@ export default function Dashboard({ user }) {
             <CardTitle className="text-2xl text-white">{t('dashboard.title')}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-              <div>
-                <p className="text-sm text-gray-300">
-                  <strong>{t('dashboard.loggedInAs')}</strong> {name || user?.email}
-                </p>
-                <p className="text-sm text-gray-300">
-                  <strong>{t('dashboard.role')}</strong> {role}
-                </p>
+            <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-6">
+              <div className="space-y-4">
+                {/* Basic Info */}
+                <div>
+                  <p className="text-sm text-gray-300">
+                    <strong>{t('dashboard.loggedInAs')}</strong> {name || user?.email}
+                  </p>
+                  <p className="text-sm text-gray-300">
+                    <strong>{t('dashboard.role')}</strong> {role}
+                  </p>
+                </div>
+
+                {/* Extended Profile Info */}
+                <div className="space-y-4">
+                  {/* Basic Contact Information */}
+                  {(profileData.phone_number || profileData.country_residence || profileData.language || profileData.communication_reference) && (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2 border-t border-charcoal-700">
+                      {profileData.phone_number && (
+                        <div className="flex items-center gap-2 text-sm text-gray-300">
+                          <Phone className="w-4 h-4 text-accent" />
+                          <span><strong>{t('dashboard.profile.phone')}:</strong> {profileData.phone_number}</span>
+                        </div>
+                      )}
+                      {profileData.country_residence && (
+                        <div className="flex items-center gap-2 text-sm text-gray-300">
+                          <Globe className="w-4 h-4 text-accent" />
+                          <span><strong>{t('dashboard.profile.country')}:</strong> {profileData.country_residence}</span>
+                        </div>
+                      )}
+                      {profileData.language && (
+                        <div className="flex items-center gap-2 text-sm text-gray-300">
+                          <MessageSquare className="w-4 h-4 text-accent" />
+                          <span><strong>{t('dashboard.profile.language')}:</strong> {profileData.language}</span>
+                        </div>
+                      )}
+                      {profileData.communication_reference && (
+                        <div className="flex items-center gap-2 text-sm text-gray-300 md:col-span-2">
+                          <Mail className="w-4 h-4 text-accent" />
+                          <span><strong>{t('dashboard.profile.communicationPreference')}:</strong> {profileData.communication_reference}</span>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Emergency Contact Information */}
+                  {(profileData.emergency_contact_member1 || profileData.emergency_contact1) && (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2 border-t border-charcoal-700">
+                      {profileData.emergency_contact_member1 && (
+                        <div className="flex items-center gap-2 text-sm text-gray-300">
+                          <UserCheck className="w-4 h-4 text-accent" />
+                          <span><strong>{t('dashboard.profile.emergencyContact')}:</strong> {profileData.emergency_contact_member1}</span>
+                        </div>
+                      )}
+                      {profileData.emergency_contact1 && (
+                        <div className="flex items-center gap-2 text-sm text-gray-300">
+                          <Phone className="w-4 h-4 text-accent" />
+                          <span><strong>{t('dashboard.profile.emergencyPhone')}:</strong> {profileData.emergency_contact1}</span>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           </CardContent>
@@ -443,7 +562,7 @@ export default function Dashboard({ user }) {
             )}
             {isUserModalOpen && selectedUserProfile && (
               <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-                <div className="bg-charcoal-900 border border-charcoal-800 p-6 rounded-lg shadow-lg max-w-sm w-full relative">
+                <div className="bg-charcoal-900 border border-charcoal-800 p-6 rounded-lg shadow-lg max-w-lg w-full relative">
                   <button
                     className="absolute top-2 right-2 text-white bg-red-600 px-2 py-1 rounded hover:bg-red-700"
                     onClick={() => setIsUserModalOpen(false)}
@@ -451,9 +570,51 @@ export default function Dashboard({ user }) {
                     ✕
                   </button>
                   <h2 className="text-xl font-semibold mb-4 text-white">{t('dashboard.userInfoTitle') || 'User Contact Info'}</h2>
-                  <div className="space-y-2 text-gray-300">
-                    <div><strong>{t('dashboard.name') || 'Name'}:</strong> {selectedUserProfile.name}</div>
-                    <div><strong>{t('dashboard.email') || 'Email'}:</strong> {selectedUserProfile.email}</div>
+                  <div className="space-y-3 text-gray-300">
+                    <div className="flex items-center gap-2">
+                      <User className="w-4 h-4 text-accent" />
+                      <span><strong>{t('dashboard.name') || 'Name'}:</strong> {selectedUserProfile.name || 'N/A'}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Mail className="w-4 h-4 text-accent" />
+                      <span><strong>{t('dashboard.email') || 'Email'}:</strong> {selectedUserProfile.email || 'N/A'}</span>
+                    </div>
+                    {selectedUserProfile.phone_number && (
+                      <div className="flex items-center gap-2">
+                        <Phone className="w-4 h-4 text-accent" />
+                        <span><strong>Phone:</strong> {selectedUserProfile.phone_number}</span>
+                      </div>
+                    )}
+                    {selectedUserProfile.country_residence && (
+                      <div className="flex items-center gap-2">
+                        <Globe className="w-4 h-4 text-accent" />
+                        <span><strong>{t('dashboard.profile.country')}:</strong> {selectedUserProfile.country_residence}</span>
+                      </div>
+                    )}
+                    {selectedUserProfile.language && (
+                      <div className="flex items-center gap-2">
+                        <MessageSquare className="w-4 h-4 text-accent" />
+                        <span><strong>{t('dashboard.profile.language')}:</strong> {selectedUserProfile.language}</span>
+                      </div>
+                    )}
+                    {selectedUserProfile.emergency_contact_member1 && (
+                      <div className="flex items-center gap-2">
+                        <UserCheck className="w-4 h-4 text-accent" />
+                        <span><strong>{t('dashboard.profile.emergencyContact')}:</strong> {selectedUserProfile.emergency_contact_member1}</span>
+                      </div>
+                    )}
+                    {selectedUserProfile.emergency_contact1 && (
+                      <div className="flex items-center gap-2">
+                        <Phone className="w-4 h-4 text-accent" />
+                        <span><strong>{t('dashboard.profile.emergencyPhone')}:</strong> {selectedUserProfile.emergency_contact1}</span>
+                      </div>
+                    )}
+                    {selectedUserProfile.communication_reference && (
+                      <div className="flex items-center gap-2">
+                        <Mail className="w-4 h-4 text-accent" />
+                        <span><strong>{t('dashboard.profile.communicationPreference')}:</strong> {selectedUserProfile.communication_reference}</span>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
