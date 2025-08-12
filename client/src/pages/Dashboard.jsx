@@ -232,10 +232,10 @@ export default function Dashboard({ user }) {
 
   const handleSaveChanges = async () => {
     setLoading(true);
-    
+    const allRequests = [...requests.active, ...requests.inactive];
     // Delete marked requests
     for (const id of requestsToDelete) {
-      const req = requests.find((r) => r.id === id);
+      const req = allRequests.find((r) => r.id === id);
       if (!req) continue;
       const { error } = await supabase.from(req.tableName).delete().eq('id', id);
       if (error) console.error('Delete error for id:', id, error.message);
@@ -245,7 +245,7 @@ export default function Dashboard({ user }) {
     for (const [id, newStatus] of Object.entries(statusChanges)) {
       if (requestsToDelete.has(id)) continue;
 
-      const req = requests.find((r) => r.id === id);
+      const req = allRequests.find((r) => r.id === id);
       if (!req) continue;
 
       if (req.status === newStatus) continue;
@@ -313,8 +313,8 @@ export default function Dashboard({ user }) {
     setStatusChanges({});
   };
 
-  const toggleDetails = (idx) => {
-    setExpandedIdx(expandedIdx === idx ? null : idx);
+  const toggleDetails = (id) => { 
+    setExpandedIdx(expandedIdx === id ? null : id);
   };
 
   const openUserModal = async (userId) => {

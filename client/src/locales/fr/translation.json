@@ -189,7 +189,7 @@
         "createInvoice": "Créer une facture",
         "requestDetails": "Détails de la demande :",
         "close": "Fermer",
-        "makePayment": "ክፍያ ይፈጽሙ",
+        "makePayment": "Effectuer le paiement",
         "tables": {
             "travel": "Voyage",
             "business": "Entreprise",

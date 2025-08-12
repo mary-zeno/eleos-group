@@ -291,7 +291,7 @@ function PropertyForm({ onClose, user, onPropertyAdded, setStatus, property }) {
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-4">
       <h2 className="text-xl font-bold mb-2 text-white">
-        {property ? t("settings.form.editTitle") || "Edit Property" : t("settings.form.title")}
+        {property ? t("settings.editTitle") || "Edit Property" : t("settings.form.title")}
       </h2>
 
       <label className="text-sm font-medium text-gray-300">{t("settings.form.labels.name")}</label>
@@ -350,7 +350,7 @@ function PropertyForm({ onClose, user, onPropertyAdded, setStatus, property }) {
         onChange={(e) => setImageFile(e.target.files[0])}
       />
 
-      <div className="flex justify-end gap-3">
+      {/* <div className="flex justify-end gap-3">
         <Button
           variant="outline"
           size="sm"
@@ -367,7 +367,25 @@ function PropertyForm({ onClose, user, onPropertyAdded, setStatus, property }) {
         >
           {t('common.delete')}
         </Button>
+      </div> */}
+      <div className="flex justify-end gap-3">
+        {/* <Button
+          variant="outline"
+          size="sm"
+          onClick={onClose}
+          className="bg-transparent border-charcoal-600 text-gray-300 hover:bg-charcoal-700 hover:text-white hover:border-charcoal-500 transition-all duration-200"
+        >
+          ×
+        </Button> */}
+        <Button
+          type="submit"
+          size="sm"
+          className="bg-accent hover:bg-accent/90 text-black font-medium"
+        >
+          {t('settings.saveEdit')}
+        </Button>
       </div>
+
 
       {localStatus && <p className="text-sm text-red-400">{localStatus}</p>}
     </form>

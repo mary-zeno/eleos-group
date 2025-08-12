@@ -385,7 +385,9 @@
             "details": "Bedrooms: {{bedrooms}} | Bathrooms: {{bathrooms}}",
             "price": "Price: ${{price}}",
             "delete": "Delete"
-        }
+        },
+        "editTitle": "Edit Property",
+        "saveEdit": "Save Changes"
     },
     "travelForm": {
         "title": "Travel & Relocation Form",

@@ -160,14 +160,15 @@ export default function RequestTableCard({
                           variant="ghost"
                           size="sm"
                           className="text-2xl text-gray-400 hover:text-white hover:bg-charcoal-800"
-                          onClick={() => toggleDetails(idx)}
+                          onClick={() => toggleDetails(req.id)} //changed from idx
                         >
-                          {expandedIdx === idx ? '▴' : '▾'}
+                          {/* changed from idx */}
+                          {expandedIdx === req.id ? '▴' : '▾'} 
                         </Button>
                       </TableCell>
                     </TableRow>
-
-                    {expandedIdx === idx && (
+                          {/* changed from idx */}
+                    {expandedIdx === req.id && (
                       <TableRow className="bg-charcoal-800/50 border-charcoal-700">
                         <TableCell colSpan={role === 'admin' && isEditing ? 7 : 6}>
                           <div className="p-4 space-y-2">

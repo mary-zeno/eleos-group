@@ -385,7 +385,9 @@
             "details": "መኝታ ክፍሎች: {{bedrooms}} | መታጠቢያ ክፍሎች: {{bathrooms}}",
             "price": "ዋጋ: ${{price}}",
             "delete": "ሰርዝ"
-        }
+        },
+        "editTitle": "ንብረት አርትዕ",
+        "saveEdit": "ለውጦችን አስቀምጥ"
     },
     "travelForm": {
         "title": "የጉዞ እና የመኖሪያ ቅጽ",
