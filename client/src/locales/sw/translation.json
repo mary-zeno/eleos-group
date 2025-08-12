@@ -1,0 +1,459 @@
+{
+    "nav": {
+        "appName": "ELEOS Access",
+        "dashboard": "Dashibodi",
+        "propertyForm": "Fomu ya Mali",
+        "travelForm": "Fomu ya Msafara",
+        "businessForm": "Fomu ya Biashara",
+        "editProfile": "Hariri Wasifu",
+        "settings": "Mipangilio",
+        "logout": "Toka",
+        "login": "Ingia"
+    },
+    "common": {
+        "yes": "Ndiyo",
+        "no": "Hapana",
+        "na": "Haijulikani",
+        "edit": "Hariri",
+        "delete": "Futa"
+    },
+    "status": {
+        "submitted": "Imewasilishwa",
+        "inReview": "Inakaguliwa",
+        "pendingInfo": "Inasubiri Maelezo",
+        "inProgress": "Inaendelea",
+        "awaitingPayment": "Inasubiri Malipo",
+        "completed": "Imekamilika",
+        "onHold": "Imesimamishwa",
+        "cancelled": "Imeghairiwa",
+        "archived": "Imehifadhiwa"
+    },
+    "fallback": {
+        "noName": "Hakuna Jina",
+        "unknown": "Haijulikani"
+    },
+    "adminPayment": {
+        "title": "Tengeneza Ankara",
+        "selectUser": "Chagua Mtumiaji",
+        "chooseUser": "-- Chagua Mtumiaji --",
+        "selectService": "Chagua Ombi la Huduma",
+        "chooseRequest": "-- Chagua Ombi --",
+        "amountOwed": "Kiasi Kinachoshurutishwa (USD)",
+        "uploadInvoice": "Pakia Ankara (PDF)",
+        "submit": "Wasilisha Ankara",
+        "status": {
+            "uploading": "Inapakia...",
+            "success": "Ankara imetengenezwa kikamilifu!",
+            "missing": "Tafadhali jaza sehemu zote.",
+            "failUpload": "Imeshindwa kupakia ankara: ",
+            "failInsert": "Imeshindwa kuingiza ankara: "
+        }
+    },
+    "auth": {
+        "welcome": "Karibu",
+        "description": "Ingia au tengeneza akaunti mpya",
+        "namePlaceholder": "Jina Kamili",
+        "emailPlaceholder": "Barua Pepe",
+        "passwordPlaceholder": "Nenosiri",
+        "login": "Ingia",
+        "signup": "Jisajili",
+        "completeProfile": "Kamiliisha Wasifu",
+        "optionalInfo": "Hiari: Kamiliisha wasifu wako (unaweza kuruka na kuongeza baadaye)",
+        "phonePlaceholder": "Nambari ya Simu (hiari)",
+        "countryPlaceholder": "Nchi ya Makazi (hiari)",
+        "languagePlaceholder": "Lugha Unayopendelea (hiari)",
+        "communicationPlaceholder": "Mapendeleo ya Mawasiliano (hiari)",
+        "emergencyNamePlaceholder": "Jina la Mtu wa Dharura (hiari)",
+        "emergencyPhonePlaceholder": "Simu ya Mtu wa Dharura (hiari)",
+        "skipProfile": "Ruka kwa sasa - Tengeneza akaunti kwa maelezo ya msingi",
+        "status": {
+            "loginSuccess": "Umeingia kikamilifu! Inaelekeza...",
+            "signupSuccess": "Usajili umefanikiwa! Tafadhali angalia barua pepe yako kuthibitisha akaunti yako.",
+            "loginError": "Hitilafu ya Kuingia: ",
+            "signupError": "Hitilafu ya Usajili: ",
+            "profileError": "Hitilafu ya utengenezaji wa wasifu: ",
+            "missingBasic": " Jina/barua pepe/nenosiri havikupatikana.",
+            "noUser": " Haikuweza kutengeneza mtumiaji."
+        }
+    },
+    "businessForm": {
+        "title": "Fomu ya Kuanzisha Biashara",
+        "typeLabel": "Aina ya Biashara",
+        "typePlaceholder": "Chagua aina ya biashara",
+        "sectorLabel": "Sekta/Tasnia",
+        "sectorPlaceholder": "k.m. Teknolojia, Utengenezaji, Biashara",
+        "legalStatusLabel": "Hadhi ya Kisheria",
+        "legalStatusPlaceholder": "Chagua hadhi ya kisheria",
+        "investmentLabel": "Uongezaji wa Makadiriyo (USD/ETB)",
+        "investmentPlaceholder": "k.m. $50,000 au 2,500,000 ETB",
+        "locationLabel": "Mahali Unayopendelea",
+        "locationPlaceholder": "k.m. Addis Ababa, eneo la Bole",
+        "timelineLabel": "Ratiba ya Kuanzisha",
+        "timelinePlaceholder": "Chagua ratiba",
+        "additionalRequirementsLabel": "Mahitaji Mengineyo",
+        "officeSetup": "Nahitaji Uanzishaji wa Ofisi",
+        "localStaff": "Nahitaji Uajiri wa Wafanyakazi wa Ndani",
+        "supportLabel": "Huduma za Usaidizi Zinazohitajika",
+        "notesLabel": "Maelezo Mengineyo",
+        "notesPlaceholder": "Mahitaji maalum, maswali, au maelezo mengineyo...",
+        "submit": "Wasilisha Ombi la Kuanzisha Biashara",
+        "submitting": "Inawasilisha...",
+        "status": {
+            "success": "Imewasilishwa kikamilifu!",
+            "fail": "Uwasilishaji umeshindikana: ",
+            "auth": "Lazima uwe umeingia ili kuwasilisha fomu hii."
+        },
+        "options": {
+            "businessType": {
+                "sole": "Umiliki wa Mtu Mmoja",
+                "plc": "PLC (Kampuni ya Kibinafsi ya Kikomo)",
+                "branch": "Ofisi ya Tawi",
+                "partner": "Ushirika"
+            },
+            "legalStatus": {
+                "new": "Biashara Mpya",
+                "expand": "Kupanua Biashara Iliyopo"
+            },
+            "timeline": {
+                "short": "Miezi 1–3",
+                "medium": "Miezi 3–6"
+            },
+            "support": {
+                "legal": "Usajili wa kisheria",
+                "tax": "Kitambulisho cha Kodi",
+                "license": "Utaalamu",
+                "recruit": "Uajiri"
+            }
+        },
+        "sidebar": {
+            "typesTitle": "Aina za Biashara nchini Ethiopia",
+            "sole": {
+                "title": "Umiliki wa Mtu Mmoja",
+                "desc": "Aina rahisi zaidi, mmiliki mmoja, uwajibikaji usio na kikomo"
+            },
+            "plc": {
+                "title": "PLC",
+                "desc": "Kampuni ya Kibinafsi ya Kikomo, uwajibikaji wa kikomo, angalau wahisa 2"
+            },
+            "branch": {
+                "title": "Ofisi ya Tawi",
+                "desc": "Uongezaji wa kampuni ya kigeni, mtu wa kisheria mmoja"
+            },
+            "partner": {
+                "title": "Ushirika",
+                "desc": "Washirika 2+, umiliki wa pamoja na uwajibikaji"
+            },
+            "investmentTitle": "Mahitaji ya Uwekezaji",
+            "invest": {
+                "manufacturing": "Utengenezaji: Angalau $200,000",
+                "service": "Huduma: Angalau $150,000",
+                "trading": "Biashara: Angalau $50,000",
+                "joint": "Miradi ya pamoja: Mahitaji ya chini yanaweza kutumika",
+                "note": "*Mahitaji yanaweza kutofautiana kulingana na sekta na kanuni za sasa"
+            },
+            "timelineTitle": "Ratiba ya Kawaida ya Kuanzisha",
+            "timeline": {
+                "name": "Uhifadhi wa jina: wiki 1–2",
+                "legal": "Usajili wa kisheria: wiki 2–4",
+                "license": "Utaalamu: wiki 2–6",
+                "tax": "Usajili wa kodi: wiki 1–2",
+                "bank": "Akaunti ya benki: wiki 1–2"
+            }
+        }
+    },
+    "dashboard": {
+        "title": "Karibu kwenye Dashibodi yako",
+        "loggedInAs": "Umeingia kama:",
+        "role": "Jukumu:",
+        "editMode": "Hali ya Kuhariri",
+        "saveChanges": "Hifadhi Mabadiliko",
+        "cancel": "Ghairi",
+        "editActive": "Hali ya kuhariri inatumika. Unaweza kusasisha hali na kuweka alama maombi kwa ufutaji.",
+        "loading": "Inapakia maombi...",
+        "noRequests": "Hakuna maombi yaliyowasilishwa bado.",
+        "submitFirst": "Wasilisha Ombi lako la Kwanza",
+        "requestsTitle": "Maombi ya Huduma",
+        "activeRequests": "Maombi ya Kazi",
+        "inactiveRequests": "Maombi Yasiyo ya Kazi",
+        "delete": "Futa",
+        "service": "Huduma",
+        "user": "Mtumiaji",
+        "date": "Tarehe",
+        "name": "Jina",
+        "email": "Barua Pepe",
+        "status": "Hali",
+        "payments": "Malipo",
+        "details": "Maelezo",
+        "viewInvoice": "Ona Ankara",
+        "editInvoice": "Hariri Ankara",
+        "createInvoice": "Tengeneza Ankara",
+        "requestDetails": "Maelezo ya Ombi:",
+        "close": "Funga",
+        "makePayment": "Fanya Malipo",
+        "tables": {
+            "travel": "Msafara",
+            "business": "Biashara",
+            "property": "Mali"
+        },
+        "userInfoTitle": "Maelezo ya Mtumiaji",
+        "profile": {
+            "phone": "Simu",
+            "country": "Nchi",
+            "language": "Lugha",
+            "communicationPreference": "Mapendeleo ya Mawasiliano",
+            "emergencyContact": "Mtu wa Dharura",
+            "emergencyPhone": "Simu ya Dharura"
+        }
+    },
+    "editProfile": {
+        "back": "Rudi kwenye Dashibodi",
+        "title": "Hariri Wasifu",
+        "emailLabel": "Anwani ya Barua Pepe",
+        "emailPlaceholder": "Ingiza barua pepe yako",
+        "emailNote": "Kubadilisha barua pepe yako kutahitaji uthibitisho",
+        "nameLabel": "Jina la Kuonyesha",
+        "namePlaceholder": "Ingiza jina lako kamili",
+        "passwordLabel": "Nenosiri Jipya",
+        "passwordPlaceholder": "Acha tupu ili kuweka nenosiri la sasa",
+        "passwordNote": "Ingiza nenosiri tu kama unataka kulibadilisha",
+        "save": "Hifadhi Mabadiliko",
+        "saving": "Inahifadhi...",
+        "cancel": "Ghairi",
+        "userId": "Kitambulisho cha Mtumiaji",
+        "created": "Akaunti Imetengenezwa",
+        "emailVerified": "Barua Pepe Imethibitishwa",
+        "currentInfo": "Maelezo ya Sasa",
+        "phoneLabel": "Nambari ya Simu",
+        "phonePlaceholder": "Ingiza nambari ya simu yako",
+        "countryLabel": "Nchi ya Makazi",
+        "countryPlaceholder": "Ingiza nchi ya makazi yako",
+        "languageLabel": "Lugha Unayopendelea",
+        "languagePlaceholder": "Ingiza lugha unayopendelea",
+        "communicationPlaceholder": "Ingiza mapendeleo ya mawasiliano: barua pepe / SMS / WhatsApp",
+        "emergencyNameLabel": "Jina la Mtu wa Dharura",
+        "emergencyNamePlaceholder": "Ingiza jina la mtu wa dharura",
+        "emergencyPhoneLabel": "Simu ya Mtu wa Dharura",
+        "emergencyPhonePlaceholder": "Ingiza simu ya mtu wa dharura",
+        "sections": {
+            "basicInfo": "Maelezo ya Msingi",
+            "contactInfo": "Maelezo ya Mawasiliano",
+            "emergencyContact": "Mtu wa Dharura"
+        },
+        "status": {
+            "userNotFound": "Mtumiaji hakupatikana. Tafadhali ingia tena.",
+            "authUpdateError": "Hitilafu ya kusasisha uthibitisho: ",
+            "profileUpdateError": "Hitilafu ya kusasisha wasifu: ",
+            "profileUpdateSuccess": "Wasifu umesasishwa kikamilifu!",
+            "unexpectedError": "Hitilafu isiyotarajiwa: "
+        }
+    },
+    "home": {
+        "hero": {
+            "title1": "Miliki. Wekeza. Anzisha.",
+            "title2": "kwa Ujasiri",
+            "title3": "",
+            "description": "Badilika kwa urahisi na kupanua shughuli zako na miundombinu yetu inayobadilika, iliyoundwa kusaidia ukuaji wa biashara yako.",
+            "cta": {
+                "auth": "Anza",
+                "user": "Nenda kwenye Dashibodi"
+            }
+        },
+        "services": {
+            "title": "Huduma Zetu",
+            "desc": {
+                "auth": "Msaada mkamilifu kwa mahitaji yako yote ya muunganisho wa Ethiopia",
+                "user": "Fikia huduma zako zote kutoka dashibodi yako au anza na ombi jipya hapa chini"
+            },
+            "travel": {
+                "title": "Huduma za Msafara",
+                "desc": "Mpangilio mkamilifu wa msafara na usaidizi wa uhamishaji kwa ziara za Ethiopia."
+            },
+            "business": {
+                "title": "Kuanzisha Biashara",
+                "desc": "Msaidizi wa kitaalamu na usajili wa biashara na mahitaji ya kisheria."
+            },
+            "property": {
+                "title": "Huduma za Mali",
+                "desc": "Pata, nunua, kodi, au simamia mali nchini Ethiopia na mwongozo wa mtaalamu."
+            },
+            "card": {
+                "auth": "Anza",
+                "user": "Fikia Fomu"
+            }
+        },
+        "footer": {
+            "title": "Huduma za ELOS",
+            "tagline": "Kuunganisha diaspora ya Ethiopia na huduma za nchi za nyumbani zinazotegemewa",
+            "copyright": "© 2024 Huduma za ELOS. Haki zote zimehifadhiwa.",
+            "contact": "Wasiliana Nasi",
+            "phoneHeader": "Simu",
+            "phone": "+1 (202) 492 3417",
+            "emailHeader": "Barua Pepe",
+            "email": "info@eleosgroups.net",
+            "addressHeader": "Anwani",
+            "address1": "5622 Columbia Pike Ste 202",
+            "address2": "Falls Church VA 22041"
+        }
+    },
+    "propertyform": {
+        "title": "Fomu ya Riba ya Mali",
+        "fields": {
+            "propertyType": "Aina ya Mali",
+            "propertyTypePlaceholder": "Chagua aina ya mali",
+            "purpose": "Kusudi",
+            "purposePlaceholder": "Chagua kusudi",
+            "location": "Mapendeleo ya Mahali",
+            "locationPlaceholder": "k.m. Addis Ababa, eneo la Bole",
+            "budget": "Bajeti (USD)",
+            "budgetPlaceholder": "Ingiza bajeti yako",
+            "financing": "Je, unahitaji fedha?",
+            "financingDetails": "Benki au Ombi la Msaada",
+            "financingDetailsPlaceholder": "Eleza mahitaji yako ya fedha",
+            "timeline": "Ratiba",
+            "timelinePlaceholder": "Chagua ratiba",
+            "existingProperty": "Je, una mali iliyopo unayotaka kusimamia?",
+            "existingPropertyLocation": "Mahali pa Mali Iliyopo",
+            "existingPropertyLocationPlaceholder": "Mahali pa mali iliyopo",
+            "additionalRequests": "Maombi Mengineyo / Maoni",
+            "additionalRequestsPlaceholder": "Maelezo mengineyo au maombi maalumu"
+        },
+        "options": {
+            "propertyTypes": {
+                "land": "Ardhi",
+                "house": "Nyumba",
+                "apartment": "Ghorofa",
+                "commercial": "Kibiashara"
+            },
+            "purposes": {
+                "buy": "Nunua",
+                "rent": "Kodi",
+                "manage": "Simamia Iliyopo"
+            },
+            "timelines": {
+                "immediate": "Mara Moja",
+                "short": "Miezi 1–3",
+                "long": "Miezi 6+"
+            }
+        },
+        "buttons": {
+            "submit": "Wasilisha Riba ya Mali",
+            "submitting": "Inawasilisha..."
+        },
+        "status": {
+            "success": "Imewasilishwa kikamilifu!",
+            "error": "Uwasilishaji umeshindikana",
+            "notLoggedIn": "Lazima uwe umeingia ili kuwasilisha fomu hii."
+        },
+        "yourProperties": "Mali Zako",
+        "noProperties": "Hakuna mali zilizopatikana.",
+        "propertyCard": {
+            "price": "Bei",
+            "bedrooms": "Vyumba vya Kulala",
+            "bathrooms": "Vyumba vya Kuogea"
+        }
+    },
+    "settings": {
+        "title": "Mali Zako",
+        "add": "Ongeza Mali Mpya",
+        "status": {
+            "deleting": "Inafuta mali...",
+            "deleteFail": "Imeshindwa kufuta mali: ",
+            "error": "Hitilafu ya kufuta mali: ",
+            "uploadFail": "Imeshindwa kupakia picha:",
+            "saveFail": "Imeshindwa kuhifadhi mali:"
+        },
+        "empty": "Hakuna mali zilizopatikana. Ongeza moja!",
+        "form": {
+            "title": "Ongeza Mali Mpya",
+            "labels": {
+                "name": "Jina",
+                "address": "Anwani",
+                "price": "Bei (USD)",
+                "bedrooms": "Vyumba vya Kulala",
+                "bathrooms": "Vyumba vya Kuogea",
+                "image": "Pakia Picha (hiari)"
+            },
+            "buttons": {
+                "cancel": "Ghairi",
+                "submit": "Ongeza Mali"
+            },
+            "status": {
+                "missing": "Tafadhali jaza sehemu zote zinazohitajika.",
+                "uploadFail": "Imeshindwa kupakia picha:",
+                "saveFail": "Imeshindwa kuhifadhi mali:"
+            },
+            "details": "Vyumba vya kulala: {{bedrooms}} | Vyumba vya kuogea: {{bathrooms}}",
+            "price": "Bei: ${{price}}",
+            "delete": "Futa"
+        }
+    },
+    "travelForm": {
+        "title": "Fomu ya Msafara na Uhamishaji",
+        "purposeLabel": "Kusudi la Msafara",
+        "purposePlaceholder": "Chagua kusudi",
+        "purposeOptions": {
+            "visit": "Tembelea",
+            "move": "Hamia",
+            "vacation": "Likizo",
+            "work": "Kazi"
+        },
+        "startCityLabel": "Kutoka (Jiji Maalum au Mkoa):",
+        "cityLabel": "Kwenda (Jiji Maalum au Mkoa nchini Ethiopia):",
+        "cityPlaceholder": "k.m. Addis Ababa, Lalibela",
+        "startCityPlaceholder": "k.m. New York City, Washington D.C",
+        "datesLabel": "Tarehe za Msafara",
+        "datesPlaceholder": "k.m. Julai 10 - Julai 20, 2024",
+        "numTravelersLabel": "Idadi ya Wasafiri",
+        "numTravelersPlaceholder": "1",
+        "accommodationLabel": "Malazi Yanahitajika",
+        "accommodationPlaceholder": "Chagua aina ya malazi",
+        "accommodationOptions": {
+            "hotel": "Hoteli",
+            "guesthouse": "Nyumba ya Wageni",
+            "longTerm": "Muda Mrefu"
+        },
+        "additionalServicesLabel": "Huduma Ziada",
+        "services": {
+            "airportPickup": "Upokezi wa Uwanja wa Ndege",
+            "carRental": "Ukodishaji Gari",
+            "documentSupport": "Msaada wa Nyaraka (Viza, Kitambulisho, n.k.)",
+            "phoneBanking": "Uanzishaji wa Simu na Benki",
+            "cityOrientation": "Uelekezi wa Jiji Unahitajika"
+        },
+        "additionalNotesLabel": "Huduma Ziada au Maelezo",
+        "additionalNotesPlaceholder": "Mahitaji maalum au maelezo mengineyo...",
+        "submitButton": "Wasilisha Ombi la Msafara",
+        "submitting": "Inawasilisha...",
+        "status": {
+            "success": "Imewasilishwa kikamilifu!",
+            "loginRequired": "Lazima uwe umeingia ili kuwasilisha fomu hii.",
+            "failurePrefix": "Uwasilishaji umeshindikana: "
+        }
+    },
+    "travelEstimator": {
+        "title": "Mkadiriaji wa Gharama za Msafara",
+        "subtitle": "Pata makadiriyo ya gharama ya msafara wako yaliyoongozwa na AI.",
+        "warning": "Inahitaji huduma ya makadiriyo ya msafara inayotumika kwenye 127.0.0.1.8000",
+        "button": "Pata Makadiriyo ya Msafara",
+        "loading": "Inapata Makadiriyo...",
+        "estimate": {
+            "title": "Makadiriyo ya Gharama za Msafara",
+            "lowRange": "Miwango ya Makadiriyo ya Chini",
+            "highRange": "Miwango ya Makadiriyo ya Juu",
+            "showBreakdown": "Onyesha Mgawanyiko wa Gharama",
+            "hideBreakdown": "Ficha Mgawanyiko",
+            "error": "Haikuweza kuchambua makadiriyo.",
+            "errorFetch": "Hitilafu ya kuwasiliana na mkadiriaji wa msafara.",
+            "missingFields": "Tafadhali jaza aina ya malazi, idadi ya wasafiri, na tarehe ili kupata makadiriyo.",
+            "partialData": "Miwango haikuweza kufanywa tafadhali ona makadiriyo yako katika mgawanyiko."
+        }
+    },
+    "travelInfo": {
+        "title": "Maelezo ya Msafara wa Ethiopia",
+        "visa": "Viza inahitajika kwa wasafiri wengi",
+        "season": "Wakati bora wa kutembelea: Oktoba hadi Machi",
+        "currency": "Sarafu ya ndani: Ethiopian Birr (ETB)",
+        "timezone": "Saa za eneo: EAT (UTC+3)",
+        "airport": "Viwanja vikuu vya ndege: ADD (Addis Ababa)"
+    }
+}

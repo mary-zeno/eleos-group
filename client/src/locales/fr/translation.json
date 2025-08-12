@@ -1,0 +1,459 @@
+{
+    "nav": {
+        "appName": "ELEOS Accès",
+        "dashboard": "Tableau de bord",
+        "propertyForm": "Formulaire de propriété",
+        "travelForm": "Formulaire de voyage",
+        "businessForm": "Formulaire d'entreprise",
+        "editProfile": "Modifier le profil",
+        "settings": "Paramètres",
+        "logout": "Se déconnecter",
+        "login": "Se connecter"
+    },
+    "common": {
+        "yes": "Oui",
+        "no": "Non",
+        "na": "S.O.",
+        "edit": "Modifier",
+        "delete": "Supprimer"
+    },
+    "status": {
+        "submitted": "Soumis",
+        "inReview": "En examen",
+        "pendingInfo": "Information en attente",
+        "inProgress": "En cours",
+        "awaitingPayment": "En attente de paiement",
+        "completed": "Terminé",
+        "onHold": "En pause",
+        "cancelled": "Annulé",
+        "archived": "Archivé"
+    },
+    "fallback": {
+        "noName": "Pas de nom",
+        "unknown": "Inconnu"
+    },
+    "adminPayment": {
+        "title": "Créer une facture",
+        "selectUser": "Sélectionner un utilisateur",
+        "chooseUser": "-- Choisir un utilisateur --",
+        "selectService": "Sélectionner une demande de service",
+        "chooseRequest": "-- Choisir une demande --",
+        "amountOwed": "Montant dû (USD)",
+        "uploadInvoice": "Télécharger la facture (PDF)",
+        "submit": "Soumettre la facture",
+        "status": {
+            "uploading": "Téléchargement en cours...",
+            "success": "Facture créée avec succès !",
+            "missing": "Veuillez remplir tous les champs.",
+            "failUpload": "Échec du téléchargement de la facture : ",
+            "failInsert": "Échec de l'insertion de la facture : "
+        }
+    },
+    "auth": {
+        "welcome": "Bienvenue",
+        "description": "Connectez-vous ou créez un nouveau compte",
+        "namePlaceholder": "Nom complet",
+        "emailPlaceholder": "Email",
+        "passwordPlaceholder": "Mot de passe",
+        "login": "Se connecter",
+        "signup": "S'inscrire",
+        "completeProfile": "Compléter le profil",
+        "optionalInfo": "Optionnel : Complétez votre profil (vous pouvez ignorer ceci et l'ajouter plus tard)",
+        "phonePlaceholder": "Numéro de téléphone (optionnel)",
+        "countryPlaceholder": "Pays de résidence (optionnel)",
+        "languagePlaceholder": "Langue préférée (optionnel)",
+        "communicationPlaceholder": "Préférence de communication (optionnel)",
+        "emergencyNamePlaceholder": "Nom du contact d'urgence (optionnel)",
+        "emergencyPhonePlaceholder": "Téléphone du contact d'urgence (optionnel)",
+        "skipProfile": "Ignorer pour maintenant - Créer un compte avec les informations de base",
+        "status": {
+            "loginSuccess": "Connexion réussie ! Redirection...",
+            "signupSuccess": "Inscription réussie ! Veuillez vérifier votre email pour confirmer votre compte.",
+            "loginError": "Erreur de connexion : ",
+            "signupError": "Erreur d'inscription : ",
+            "profileError": "Erreur de création de profil : ",
+            "missingBasic": " Nom/email/mot de passe manquant.",
+            "noUser": " Impossible de créer l'utilisateur."
+        }
+    },
+    "businessForm": {
+        "title": "Formulaire de création d'entreprise",
+        "typeLabel": "Type d'entreprise",
+        "typePlaceholder": "Sélectionner le type d'entreprise",
+        "sectorLabel": "Secteur/Industrie",
+        "sectorPlaceholder": "ex. Technologie, Fabrication, Commerce",
+        "legalStatusLabel": "Statut juridique",
+        "legalStatusPlaceholder": "Sélectionner le statut juridique",
+        "investmentLabel": "Investissement estimé (USD/ETB)",
+        "investmentPlaceholder": "ex. 50 000 $ ou 2 500 000 ETB",
+        "locationLabel": "Lieu préféré",
+        "locationPlaceholder": "ex. Addis-Abeba, zone Bole",
+        "timelineLabel": "Délai de création",
+        "timelinePlaceholder": "Sélectionner le délai",
+        "additionalRequirementsLabel": "Exigences supplémentaires",
+        "officeSetup": "Besoin d'aménagement de bureau",
+        "localStaff": "Besoin de recrutement de personnel local",
+        "supportLabel": "Services de soutien nécessaires",
+        "notesLabel": "Notes supplémentaires",
+        "notesPlaceholder": "Toute exigence spécifique, questions ou informations supplémentaires...",
+        "submit": "Soumettre la demande de création d'entreprise",
+        "submitting": "Soumission en cours...",
+        "status": {
+            "success": "Soumis avec succès !",
+            "fail": "Échec de la soumission : ",
+            "auth": "Vous devez être connecté pour soumettre ce formulaire."
+        },
+        "options": {
+            "businessType": {
+                "sole": "Entreprise individuelle",
+                "plc": "Société privée à responsabilité limitée",
+                "branch": "Succursale",
+                "partner": "Partenariat"
+            },
+            "legalStatus": {
+                "new": "Nouvelle entreprise",
+                "expand": "Expansion d'une entreprise existante"
+            },
+            "timeline": {
+                "short": "1–3 mois",
+                "medium": "3–6 mois"
+            },
+            "support": {
+                "legal": "Enregistrement légal",
+                "tax": "Numéro d'identification fiscale",
+                "license": "Licences",
+                "recruit": "Recrutement"
+            }
+        },
+        "sidebar": {
+            "typesTitle": "Types d'entreprises en Éthiopie",
+            "sole": {
+                "title": "Entreprise individuelle",
+                "desc": "Forme la plus simple, propriétaire unique, responsabilité illimitée"
+            },
+            "plc": {
+                "title": "Société privée",
+                "desc": "Société privée à responsabilité limitée, min. 2 actionnaires"
+            },
+            "branch": {
+                "title": "Succursale",
+                "desc": "Extension d'une société étrangère, même entité juridique"
+            },
+            "partner": {
+                "title": "Partenariat",
+                "desc": "2+ partenaires, propriété et responsabilité partagées"
+            },
+            "investmentTitle": "Exigences d'investissement",
+            "invest": {
+                "manufacturing": "Fabrication : Min 200 000 $",
+                "service": "Service : Min 150 000 $",
+                "trading": "Commerce : Min 50 000 $",
+                "joint": "Coentreprises : des minimums plus bas peuvent s'appliquer",
+                "note": "*Les exigences peuvent varier selon le secteur et les réglementations actuelles"
+            },
+            "timelineTitle": "Délai typique de création",
+            "timeline": {
+                "name": "Réservation de nom : 1–2 semaines",
+                "legal": "Enregistrement légal : 2–4 semaines",
+                "license": "Licences : 2–6 semaines",
+                "tax": "Enregistrement fiscal : 1–2 semaines",
+                "bank": "Compte bancaire : 1–2 semaines"
+            }
+        }
+    },
+    "dashboard": {
+        "title": "Bienvenue sur votre tableau de bord",
+        "loggedInAs": "Connecté en tant que :",
+        "role": "Rôle :",
+        "editMode": "Mode édition",
+        "saveChanges": "Sauvegarder les modifications",
+        "cancel": "Annuler",
+        "editActive": "Le mode édition est actif. Vous pouvez mettre à jour les statuts et marquer les demandes pour suppression.",
+        "loading": "Chargement des demandes...",
+        "noRequests": "Aucune demande soumise pour le moment.",
+        "submitFirst": "Soumettre votre première demande",
+        "requestsTitle": "Demandes de service",
+        "activeRequests": "Demandes actives",
+        "inactiveRequests": "Demandes inactives",
+        "delete": "Supprimer",
+        "service": "Service",
+        "user": "Utilisateur",
+        "date": "Date",
+        "name": "Nom",
+        "email": "Email",
+        "status": "Statut",
+        "payments": "Paiements",
+        "details": "Détails",
+        "viewInvoice": "Voir la facture",
+        "editInvoice": "Modifier la facture",
+        "createInvoice": "Créer une facture",
+        "requestDetails": "Détails de la demande :",
+        "close": "Fermer",
+        "makePayment": "Effectuer le paiement",
+        "tables": {
+            "travel": "Voyage",
+            "business": "Entreprise",
+            "property": "Propriété"
+        },
+        "userInfoTitle": "Informations utilisateur",
+        "profile": {
+            "phone": "Téléphone",
+            "country": "Pays",
+            "language": "Langue",
+            "communicationPreference": "Préférence de communication",
+            "emergencyContact": "Contact d'urgence",
+            "emergencyPhone": "Téléphone d'urgence"
+        }
+    },
+    "editProfile": {
+        "back": "Retour au tableau de bord",
+        "title": "Modifier le profil",
+        "emailLabel": "Adresse email",
+        "emailPlaceholder": "Entrez votre email",
+        "emailNote": "Changer votre email nécessitera une vérification",
+        "nameLabel": "Nom d'affichage",
+        "namePlaceholder": "Entrez votre nom complet",
+        "passwordLabel": "Nouveau mot de passe",
+        "passwordPlaceholder": "Laissez vide pour conserver le mot de passe actuel",
+        "passwordNote": "Entrez un mot de passe seulement si vous voulez le changer",
+        "save": "Sauvegarder les modifications",
+        "saving": "Sauvegarde...",
+        "cancel": "Annuler",
+        "userId": "ID utilisateur",
+        "created": "Compte créé",
+        "emailVerified": "Email vérifié",
+        "currentInfo": "Informations actuelles",
+        "phoneLabel": "Numéro de téléphone",
+        "phonePlaceholder": "Entrez votre numéro de téléphone",
+        "countryLabel": "Pays de résidence",
+        "countryPlaceholder": "Entrez votre pays de résidence",
+        "languageLabel": "Langue préférée",
+        "languagePlaceholder": "Entrez votre langue préférée",
+        "communicationPlaceholder": "Entrez la préférence de communication : email / SMS / WhatsApp",
+        "emergencyNameLabel": "Nom du contact d'urgence",
+        "emergencyNamePlaceholder": "Entrez le nom du contact d'urgence",
+        "emergencyPhoneLabel": "Téléphone du contact d'urgence",
+        "emergencyPhonePlaceholder": "Entrez le téléphone du contact d'urgence",
+        "sections": {
+            "basicInfo": "Informations de base",
+            "contactInfo": "Informations de contact",
+            "emergencyContact": "Contact d'urgence"
+        },
+        "status": {
+            "userNotFound": "Utilisateur non trouvé. Veuillez vous reconnecter.",
+            "authUpdateError": "Erreur de mise à jour de l'authentification : ",
+            "profileUpdateError": "Erreur de mise à jour du profil : ",
+            "profileUpdateSuccess": "Profil mis à jour avec succès !",
+            "unexpectedError": "Erreur inattendue : "
+        }
+    },
+    "home": {
+        "hero": {
+            "title1": "Posséder. Investir. Établir.",
+            "title2": "en toute confiance",
+            "title3": "",
+            "description": "Adaptez-vous facilement aux changements et développez vos opérations avec notre infrastructure flexible, conçue pour soutenir la croissance de votre entreprise.",
+            "cta": {
+                "auth": "Commencer",
+                "user": "Aller au tableau de bord"
+            }
+        },
+        "services": {
+            "title": "Nos services",
+            "desc": {
+                "auth": "Support complet pour tous vos besoins de connexion éthiopienne",
+                "user": "Accédez à tous vos services depuis votre tableau de bord ou commencez par une nouvelle demande ci-dessous"
+            },
+            "travel": {
+                "title": "Services de voyage",
+                "desc": "Planification de voyage complète et support de relocalisation pour les visites en Éthiopie."
+            },
+            "business": {
+                "title": "Création d'entreprise",
+                "desc": "Assistance professionnelle pour l'enregistrement d'entreprise et les exigences légales."
+            },
+            "property": {
+                "title": "Services immobiliers",
+                "desc": "Trouvez, achetez, louez ou gérez des propriétés en Éthiopie avec des conseils d'experts."
+            },
+            "card": {
+                "auth": "Commencer",
+                "user": "Accéder au formulaire"
+            }
+        },
+        "footer": {
+            "title": "ELOS Services",
+            "tagline": "Connecter la diaspora éthiopienne avec des services fiables du pays d'origine",
+            "copyright": "© 2024 ELOS Services. Tous droits réservés.",
+            "contact": "Nous contacter",
+            "phoneHeader": "Téléphone",
+            "phone": "+1 (202) 492 3417",
+            "emailHeader": "Email",
+            "email": "info@eleosgroups.net",
+            "addressHeader": "Adresse",
+            "address1": "5622 Columbia Pike Ste 202",
+            "address2": "Falls Church VA 22041"
+        }
+    },
+    "propertyform": {
+        "title": "Formulaire d'intérêt immobilier",
+        "fields": {
+            "propertyType": "Type de propriété",
+            "propertyTypePlaceholder": "Sélectionner le type de propriété",
+            "purpose": "Objectif",
+            "purposePlaceholder": "Sélectionner l'objectif",
+            "location": "Préférences de localisation",
+            "locationPlaceholder": "ex. Addis-Abeba, zone Bole",
+            "budget": "Budget (USD)",
+            "budgetPlaceholder": "Entrez votre budget",
+            "financing": "Avez-vous besoin de financement ?",
+            "financingDetails": "Banque ou demande de support",
+            "financingDetailsPlaceholder": "Décrivez vos besoins de financement",
+            "timeline": "Délai",
+            "timelinePlaceholder": "Sélectionner le délai",
+            "existingProperty": "Avez-vous une propriété existante à gérer ?",
+            "existingPropertyLocation": "Localisation de la propriété existante",
+            "existingPropertyLocationPlaceholder": "Localisation de la propriété existante",
+            "additionalRequests": "Demandes supplémentaires / Commentaires",
+            "additionalRequestsPlaceholder": "Toute information supplémentaire ou demande spéciale"
+        },
+        "options": {
+            "propertyTypes": {
+                "land": "Terrain",
+                "house": "Maison",
+                "apartment": "Appartement",
+                "commercial": "Commercial"
+            },
+            "purposes": {
+                "buy": "Acheter",
+                "rent": "Louer",
+                "manage": "Gérer existant"
+            },
+            "timelines": {
+                "immediate": "Immédiat",
+                "short": "1–3 mois",
+                "long": "6+ mois"
+            }
+        },
+        "buttons": {
+            "submit": "Soumettre l'intérêt immobilier",
+            "submitting": "Soumission en cours..."
+        },
+        "status": {
+            "success": "Soumis avec succès !",
+            "error": "Échec de la soumission",
+            "notLoggedIn": "Vous devez être connecté pour soumettre ce formulaire."
+        },
+        "yourProperties": "Vos propriétés",
+        "noProperties": "Aucune propriété trouvée.",
+        "propertyCard": {
+            "price": "Prix",
+            "bedrooms": "Chambres",
+            "bathrooms": "Salles de bain"
+        }
+    },
+    "settings": {
+        "title": "Vos propriétés",
+        "add": "Ajouter une nouvelle propriété",
+        "status": {
+            "deleting": "Suppression de la propriété...",
+            "deleteFail": "Échec de la suppression de la propriété : ",
+            "error": "Erreur lors de la suppression de la propriété : ",
+            "uploadFail": "Échec du téléchargement de l'image :",
+            "saveFail": "Échec de la sauvegarde de la propriété :"
+        },
+        "empty": "Aucune propriété trouvée. Ajoutez-en une !",
+        "form": {
+            "title": "Ajouter une nouvelle propriété",
+            "labels": {
+                "name": "Nom",
+                "address": "Adresse",
+                "price": "Prix (USD)",
+                "bedrooms": "Chambres",
+                "bathrooms": "Salles de bain",
+                "image": "Télécharger une image (optionnel)"
+            },
+            "buttons": {
+                "cancel": "Annuler",
+                "submit": "Ajouter une propriété"
+            },
+            "status": {
+                "missing": "Veuillez remplir tous les champs requis.",
+                "uploadFail": "Échec du téléchargement de l'image :",
+                "saveFail": "Échec de la sauvegarde de la propriété :"
+            },
+            "details": "Chambres : {{bedrooms}} | Salles de bain : {{bathrooms}}",
+            "price": "Prix : {{price}} $",
+            "delete": "Supprimer"
+        }
+    },
+    "travelForm": {
+        "title": "Formulaire de voyage et relocalisation",
+        "purposeLabel": "Objectif du voyage",
+        "purposePlaceholder": "Sélectionner l'objectif",
+        "purposeOptions": {
+            "visit": "Visite",
+            "move": "Déménagement",
+            "vacation": "Vacances",
+            "work": "Travail"
+        },
+        "startCityLabel": "De (ville ou région spécifique) :",
+        "cityLabel": "Vers (ville ou région spécifique en Éthiopie) :",
+        "cityPlaceholder": "ex. Addis-Abeba, Lalibela",
+        "startCityPlaceholder": "ex. New York, Washington D.C",
+        "datesLabel": "Dates de voyage",
+        "datesPlaceholder": "ex. 10 juillet - 20 juillet 2024",
+        "numTravelersLabel": "Nombre de voyageurs",
+        "numTravelersPlaceholder": "1",
+        "accommodationLabel": "Hébergement nécessaire",
+        "accommodationPlaceholder": "Sélectionner le type d'hébergement",
+        "accommodationOptions": {
+            "hotel": "Hôtel",
+            "guesthouse": "Maison d'hôtes",
+            "longTerm": "Long terme"
+        },
+        "additionalServicesLabel": "Services supplémentaires",
+        "services": {
+            "airportPickup": "Transfert aéroport",
+            "carRental": "Location de voiture",
+            "documentSupport": "Support de documents (Visa, ID, etc.)",
+            "phoneBanking": "Configuration téléphone et banque",
+            "cityOrientation": "Orientation de la ville nécessaire"
+        },
+        "additionalNotesLabel": "Services supplémentaires ou notes",
+        "additionalNotesPlaceholder": "Toute exigence spéciale ou information supplémentaire...",
+        "submitButton": "Soumettre la demande de voyage",
+        "submitting": "Soumission en cours...",
+        "status": {
+            "success": "Soumis avec succès !",
+            "loginRequired": "Vous devez être connecté pour soumettre ce formulaire.",
+            "failurePrefix": "Échec de la soumission : "
+        }
+    },
+    "travelEstimator": {
+        "title": "Estimateur de coût de voyage",
+        "subtitle": "Obtenez une estimation de coût alimentée par l'IA pour vos besoins de voyage.",
+        "warning": "Nécessite le service d'estimation de voyage fonctionnant sur 127.0.0.1.8000",
+        "button": "Obtenir l'estimation de voyage",
+        "loading": "Obtention de l'estimation...",
+        "estimate": {
+            "title": "Estimation du coût de voyage",
+            "lowRange": "Plage d'estimation basse",
+            "highRange": "Plage d'estimation haute",
+            "showBreakdown": "Afficher la répartition des coûts",
+            "hideBreakdown": "Masquer la répartition",
+            "error": "Impossible d'analyser l'estimation.",
+            "errorFetch": "Erreur de contact avec l'estimateur de voyage.",
+            "missingFields": "Veuillez remplir le type d'hébergement, le nombre de voyageurs et les dates pour obtenir une estimation.",
+            "partialData": "Les plages n'ont pas pu être établies, veuillez consulter vos estimations dans la répartition."
+        }
+    },
+    "travelInfo": {
+        "title": "Informations de voyage en Éthiopie",
+        "visa": "Visa requis pour la plupart des voyageurs",
+        "season": "Meilleure période pour visiter : octobre à mars",
+        "currency": "Monnaie locale : Birr éthiopien (ETB)",
+        "timezone": "Fuseau horaire : EAT (UTC+3)",
+        "airport": "Aéroports principaux : ADD (Addis-Abeba)"
+    }
+}
