@@ -79,7 +79,7 @@ export default function RequestTableCard({
                       <TableCell>
                         {role === 'admin' ? (
                           <button
-                            className="text-blue-600 underline hover:text-blue-800"
+                          className="p-0 m-0 bg-transparent border-0 cursor-pointer text-gray-200 font-semibold hover:text-accent hover:font-bold focus:outline-none focus:ring-2 focus:ring-accent/40 rounded transition-colors duration-150"
                             onClick={() => openUserModal(req.user_id)}
                           >
                             {req.userName}
@@ -180,14 +180,15 @@ export default function RequestTableCard({
                           variant="ghost"
                           size="sm"
                           className="text-2xl text-gray-400 hover:text-white hover:bg-charcoal-800"
-                          onClick={() => toggleDetails(idx)}
+                          onClick={() => toggleDetails(req.id)} //changed from idx
                         >
-                          {expandedIdx === idx ? '▴' : '▾'}
+                          {/* changed from idx */}
+                          {expandedIdx === req.id ? '▴' : '▾'} 
                         </Button>
                       </TableCell>
                     </TableRow>
-
-                    {expandedIdx === idx && (
+                          {/* changed from idx */}
+                    {expandedIdx === req.id && (
                       <TableRow className="bg-charcoal-800/50 border-charcoal-700">
                         <TableCell colSpan={role === 'admin' && isEditing ? 7 : 6}>
                           <div className="p-4 space-y-2">

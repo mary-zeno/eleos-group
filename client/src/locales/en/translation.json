@@ -13,7 +13,9 @@
     "common": {
         "yes": "Yes",
         "no": "No",
-        "na": "N/A"
+        "na": "N/A",
+        "edit": "Edit",
+        "delete": "Delete"
     },
     "status": {
         "submitted": "Submitted",
@@ -55,12 +57,23 @@
         "passwordPlaceholder": "Password",
         "login": "Log In",
         "signup": "Sign Up",
+        "completeProfile": "Complete Profile",
+        "optionalInfo": "Optional: Complete your profile (you can skip this and add it later)",
+        "phonePlaceholder": "Phone Number (optional)",
+        "countryPlaceholder": "Country of Residence (optional)",
+        "languagePlaceholder": "Preferred Language (optional)",
+        "communicationPlaceholder": "Communication Preference (optional)",
+        "emergencyNamePlaceholder": "Emergency Contact Name (optional)",
+        "emergencyPhonePlaceholder": "Emergency Contact Phone (optional)",
+        "skipProfile": "Skip for now - Create account with basic info",
         "status": {
             "loginSuccess": "Login successful! Redirecting...",
             "signupSuccess": "Signup successful! Please check your email to verify your account.",
             "loginError": "Login Error: ",
             "signupError": "Signup Error: ",
-            "profileError": "Profile creation error: "
+            "profileError": "Profile creation error: ",
+            "missingBasic": " Missing name/email/password.",
+            "noUser": " Could not create user."
         }
     },
     "businessForm": {
@@ -153,8 +166,8 @@
         "loggedInAs": "Logged in as:",
         "role": "Role:",
         "editMode": "Edit Mode",
-        "saveChanges": "💾 Save Changes",
-        "cancel": "❌ Cancel",
+        "saveChanges": "Save Changes",
+        "cancel": "Cancel",
         "editActive": "Edit mode is active. You can update statuses and mark requests for deletion.",
         "loading": "Loading requests...",
         "noRequests": "No requests submitted yet.",
@@ -176,12 +189,21 @@
         "createInvoice": "Create Invoice",
         "requestDetails": "Request Details:",
         "close": "Close",
+        "makePayment": "Make Payment",
         "tables": {
             "travel": "Travel",
             "business": "Business",
             "property": "Property"
         },
-        "userInfoTitle": "User Info"
+        "userInfoTitle": "User Info",
+        "profile": {
+            "phone": "Phone",
+            "country": "Country",
+            "language": "Language",
+            "communicationPreference": "Communication Preference",
+            "emergencyContact": "Emergency Contact",
+            "emergencyPhone": "Emergency Phone"
+        }
     },
     "editProfile": {
         "back": "Back to Dashboard",
@@ -194,13 +216,29 @@
         "passwordLabel": "New Password",
         "passwordPlaceholder": "Leave blank to keep current password",
         "passwordNote": "Only enter a password if you want to change it",
-        "save": "💾 Save Changes",
+        "save": "Save Changes",
         "saving": "Saving...",
-        "cancel": "❌ Cancel",
+        "cancel": "Cancel",
         "userId": "User ID",
         "created": "Account Created",
         "emailVerified": "Email Verified",
         "currentInfo": "Current Information",
+        "phoneLabel": "Phone Number",
+        "phonePlaceholder": "Enter your phone number",
+        "countryLabel": "Country of Residence",
+        "countryPlaceholder": "Enter your country of residence",
+        "languageLabel": "Preferred Language",
+        "languagePlaceholder": "Enter your preferred language",
+        "communicationPlaceholder": "Enter communication preference: email / SMS / WhatsApp",
+        "emergencyNameLabel": "Emergency Contact Name",
+        "emergencyNamePlaceholder": "Enter emergency contact name",
+        "emergencyPhoneLabel": "Emergency Contact Phone",
+        "emergencyPhonePlaceholder": "Enter emergency contact phone",
+        "sections": {
+            "basicInfo": "Basic Information",
+            "contactInfo": "Contact Information",
+            "emergencyContact": "Emergency Contact"
+        },
         "status": {
             "userNotFound": "User not found. Please log in again.",
             "authUpdateError": "Error updating auth: ",
@@ -347,7 +385,9 @@
             "details": "Bedrooms: {{bedrooms}} | Bathrooms: {{bathrooms}}",
             "price": "Price: ${{price}}",
             "delete": "Delete"
-        }
+        },
+        "editTitle": "Edit Property",
+        "saveEdit": "Save Changes"
     },
     "travelForm": {
         "title": "Travel & Relocation Form",
@@ -393,7 +433,7 @@
         }
     },
     "travelEstimator": {
-        "title": "Travel Cost Estimator",
+        "title": "Cost Estimator",
         "subtitle": "Get an AI-powered cost estimate for your travel needs.",
         "warning": "Requires travel estimation service running on 127.0.0.1.8000",
         "button": "Get Travel Estimate",
