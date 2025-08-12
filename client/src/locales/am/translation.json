@@ -189,6 +189,7 @@
         "createInvoice": "ደረሰኝ ፍጠር",
         "requestDetails": "የጥያቄ ዝርዝሮች፡",
         "close": "ዝጋ",
+        "makePayment": "ክፍያ ይፈጽሙ",
         "tables": {
             "travel": "ጉዞ",
             "business": "ንግድ",

@@ -1,0 +1,459 @@
+{
+    "nav": {
+        "appName": "ELEOS Access",
+        "dashboard": "ዳሽቦርድ",
+        "propertyForm": "ቅዳሕ ንብረት",
+        "travelForm": "ቅዳሕ ጕዕዞ",
+        "businessForm": "ቅዳሕ ንግዲ",
+        "editProfile": "መገለጺ ኣመሓይሽ",
+        "settings": "ምቅናጻት",
+        "logout": "ወጻእ",
+        "login": "እተው"
+    },
+    "common": {
+        "yes": "እወ",
+        "no": "ኣይፋልን",
+        "na": "ኣይተፈልጠን",
+        "edit": "ኣመሓይሽ",
+        "delete": "ኣጥፍእ"
+    },
+    "status": {
+        "submitted": "ተቐሪቡ",
+        "inReview": "ይግምገም ኣሎ",
+        "pendingInfo": "ሓበሬታ ይጽበ ኣሎ",
+        "inProgress": "ይቕጽል ኣሎ",
+        "awaitingPayment": "ክፍሊት ይጽበ ኣሎ",
+        "completed": "ተዛዚሙ",
+        "onHold": "ተደጋጊፉ",
+        "cancelled": "ተሰሪዙ",
+        "archived": "ተኣኪቡ"
+    },
+    "fallback": {
+        "noName": "ስም የለን",
+        "unknown": "ኣይተፈልጠን"
+    },
+    "adminPayment": {
+        "title": "ሕሳብ ፍጠር",
+        "selectUser": "ተጠቃሚ ምረጽ",
+        "chooseUser": "-- ተጠቃሚ ምረጽ --",
+        "selectService": "ሕቶ ኣገልግሎት ምረጽ",
+        "chooseRequest": "-- ሕቶ ምረጽ --",
+        "amountOwed": "ክኽፈል ዘለዎ መጠን (USD)",
+        "uploadInvoice": "ሕሳብ ኣእቱ (PDF)",
+        "submit": "ሕሳብ ቐርብ",
+        "status": {
+            "uploading": "ይኣቱ ኣሎ...",
+            "success": "ሕሳብ ብዓወት ተፈጢሩ!",
+            "missing": "በጃኻ ኩሉ ቦታ ምላእ።",
+            "failUpload": "ሕሳብ ኣእታው ተሰዲዱ: ",
+            "failInsert": "ሕሳብ ምእታው ተሰዲዱ: "
+        }
+    },
+    "auth": {
+        "welcome": "እንቋዕ ደሓን መጻኻ",
+        "description": "እተው ወይ ሓዱሽ ሕሳብ ፍጠር",
+        "namePlaceholder": "ምሉእ ስም",
+        "emailPlaceholder": "ኢመይል",
+        "passwordPlaceholder": "መሕለፊ ቃል",
+        "login": "እተው",
+        "signup": "ተመዝገብ",
+        "completeProfile": "መገለጺ ዛዝም",
+        "optionalInfo": "ኣማራጺ: መገለጺ ካ ዛዝም (ንሕዚ ክትሓልፍ ትኽእል ድሕሪኡ ውን ክትውስኽ ትኽእል)",
+        "phonePlaceholder": "ቁጽሪ ተለፎን (ኣማራጺ)",
+        "countryPlaceholder": "ሃገር ምንባር (ኣማራጺ)",
+        "languagePlaceholder": "ዝመረጽካዮ ቋንቋ (ኣማራጺ)",
+        "communicationPlaceholder": "መርጽነት ርክብ (ኣማራጺ)",
+        "emergencyNamePlaceholder": "ስም ሰብ ህጹጽ (ኣማራጺ)",
+        "emergencyPhonePlaceholder": "ተለፎን ሰብ ህጹጽ (ኣማራጺ)",
+        "skipProfile": "ነዚ እዋን ሓልፍ - ሕሳብ ቀንዲ ሓበሬታ ጥራይ ፍጠር",
+        "status": {
+            "loginSuccess": "ምእታው ዓወተ! ይዕድለካ...",
+            "signupSuccess": "ምምዝጋብ ዓወተ! በጃኻ ኢመይልካ ርአ ሕሳብካ ንምርግጋጽ።",
+            "loginError": "ጌጋ ምእታው: ",
+            "signupError": "ጌጋ ምምዝጋብ: ",
+            "profileError": "ጌጋ መገለጺ ምፍጣር: ",
+            "missingBasic": " ስም/ኢመይል/መሕለፊ ቃል የለን።",
+            "noUser": " ተጠቃሚ ምፍጣር ኣይከኣለን።"
+        }
+    },
+    "businessForm": {
+        "title": "ቅዳሕ ምምስራት ንግዲ",
+        "typeLabel": "ዓይነት ንግዲ",
+        "typePlaceholder": "ዓይነት ንግዲ ምረጽ",
+        "sectorLabel": "ክፍሊ/ኢንዱስትሪ",
+        "sectorPlaceholder": "ኣብነት ቴክኖሎጂ፣ ምፍራይ፣ ንግዲ",
+        "legalStatusLabel": "ሕጋዊ ኩነታት",
+        "legalStatusPlaceholder": "ሕጋዊ ኩነታት ምረጽ",
+        "investmentLabel": "ዝተገምገመ ወፍሪ (USD/ETB)",
+        "investmentPlaceholder": "ኣብነት $50,000 ወይ 2,500,000 ETB",
+        "locationLabel": "ዝመረጽካዮ ቦታ",
+        "locationPlaceholder": "ኣብነት ኣዲስ ኣበባ፣ ቦሌ ከባቢ",
+        "timelineLabel": "እዋን ምምስራት",
+        "timelinePlaceholder": "እዋን ምረጽ",
+        "additionalRequirementsLabel": "ተወሳኺ ጠለባት",
+        "officeSetup": "ምጽራይ ቢሮ የድሊ",
+        "localStaff": "ሓባራይ ተሰሪዖም የድሊ",
+        "supportLabel": "ኣገልግሎታት ደገፍ ዘድልዩ",
+        "notesLabel": "ተወሳኺ መዘኻኸሪ",
+        "notesPlaceholder": "ፍሉይ ጠለባት፣ ሕቶታት፣ ወይ ተወሳኺ ሓበሬታ...",
+        "submit": "ሕቶ ምምስራት ንግዲ ቐርብ",
+        "submitting": "ይቐርብ ኣሎ...",
+        "status": {
+            "success": "ብዓወት ተቐሪቡ!",
+            "fail": "ምቕራብ ተሰዲዱ: ",
+            "auth": "ነዚ ቅዳሕ ንምቕራብ ክትእቶ ኣለካ።"
+        },
+        "options": {
+            "businessType": {
+                "sole": "ባለቤትነት ሓደ ሰብ",
+                "plc": "PLC (ውልቃዊ ማሕበር ደወል)",
+                "branch": "ቢሮ ደገ",
+                "partner": "ሽርክነት"
+            },
+            "legalStatus": {
+                "new": "ሓዱሽ ንግዲ",
+                "expand": "ዘሎ ንግዲ ምስፋሕ"
+            },
+            "timeline": {
+                "short": "ኣዋርሕ 1–3",
+                "medium": "ኣዋርሕ 3–6"
+            },
+            "support": {
+                "legal": "ሕጋዊ ምምዝጋብ",
+                "tax": "መንነት ግብሪ",
+                "license": "ፍቓድ",
+                "recruit": "ሰራሕተኛታት ምውፋር"
+            }
+        },
+        "sidebar": {
+            "typesTitle": "ዓይነታት ንግዲ ኣብ ኢትዮጵያ",
+            "sole": {
+                "title": "ባለቤትነት ሓደ ሰብ",
+                "desc": "ኣዝዩ ሓላል፣ ሓደ ወናኒ፣ ዘይተደወለ ሓላፍነት"
+            },
+            "plc": {
+                "title": "PLC",
+                "desc": "ውልቃዊ ማሕበር ደወል፣ ዝተደወለ ሓላፍነት፣ ቅድሚ ሓደ 2 ሻራኽ"
+            },
+            "branch": {
+                "title": "ቢሮ ደገ",
+                "desc": "ምስፋሕ ናይ ወጻኢ ኩባንያ፣ ሓደ ሕጋዊ ኣካል"
+            },
+            "partner": {
+                "title": "ሽርክነት",
+                "desc": "2+ ሻራኽ፣ ብሓባር ባለቤትነት ከምኡ ውን ሓላፍነት"
+            },
+            "investmentTitle": "ጠለባት ወፍሪ",
+            "invest": {
+                "manufacturing": "ምፍራይ: ኣነስተይቲ $200,000",
+                "service": "ኣገልግሎት: ኣነስተይቲ $150,000",
+                "trading": "ንግዲ: ኣነስተይቲ $50,000",
+                "joint": "ሓባራዊ ፕሮጀክትታት: ትሑት ጠለባት ከም ዝተፈተሹ",
+                "note": "*ጠለባት ንክፍሊ ከምኡ ውን ሕጋዊ ምትሕግጋዝ ከተመሰረት ይኽእል ይቕየር"
+            },
+            "timelineTitle": "ልሙድ እዋን ምምስራት",
+            "timeline": {
+                "name": "ስም ምሓዝ: ሰሙናት 1–2",
+                "legal": "ሕጋዊ ምምዝጋብ: ሰሙናት 2–4",
+                "license": "ፍቓድ: ሰሙናት 2–6",
+                "tax": "ምምዝጋብ ግብሪ: ሰሙናት 1–2",
+                "bank": "ሕሳብ ባንክ: ሰሙናት 1–2"
+            }
+        }
+    },
+    "dashboard": {
+        "title": "ናብ ዳሽቦርድካ እንቋዕ ደሓን መጻኻ",
+        "loggedInAs": "ከም ዝኣተወ:",
+        "role": "ተራ:",
+        "editMode": "ኩነታት ምምሕያሽ",
+        "saveChanges": "ለውጢ ዕቑብ",
+        "cancel": "ሰርዝ",
+        "editActive": "ኩነታት ምምሕያሽ ንሱር እዩ። ኩነታታት ክትመሓይሽ ከምኡውን ሕቶታት ንምጥፋእ ምልክት ክትገብር ትኽእል።",
+        "loading": "ሕቶታት ይጻዓን...",
+        "noRequests": "ክሳብ ሕጂ ዝቐረበ ሕቶ የለን።",
+        "submitFirst": "ናይ መጀመሪያ ሕቶትካ ቐርብ",
+        "requestsTitle": "ሕቶታት ኣገልግሎት",
+        "activeRequests": "ንቡር ሕቶታት",
+        "inactiveRequests": "ዘይንቡር ሕቶታት",
+        "delete": "ኣጥፍእ",
+        "service": "ኣገልግሎት",
+        "user": "ተጠቃሚ",
+        "date": "ዕለት",
+        "name": "ስም",
+        "email": "ኢመይል",
+        "status": "ኩነታት",
+        "payments": "ክፍሊታት",
+        "details": "ዝርዝራት",
+        "viewInvoice": "ሕሳብ ርኣይ",
+        "editInvoice": "ሕሳብ ኣመሓይሽ",
+        "createInvoice": "ሕሳብ ፍጠር",
+        "requestDetails": "ዝርዝር ሕቶ:",
+        "close": "ዓጽ",
+        "makePayment": "ክፍሊት ግበር",
+        "tables": {
+            "travel": "ጕዕዞ",
+            "business": "ንግዲ",
+            "property": "ንብረት"
+        },
+        "userInfoTitle": "ሓበሬታ ተጠቃሚ",
+        "profile": {
+            "phone": "ተለፎን",
+            "country": "ሃገር",
+            "language": "ቋንቋ",
+            "communicationPreference": "መርጽነት ርክብ",
+            "emergencyContact": "ርክብ ህጹጽ",
+            "emergencyPhone": "ተለፎን ህጹጽ"
+        }
+    },
+    "editProfile": {
+        "back": "ናብ ዳሽቦርድ ተመለስ",
+        "title": "መገለጺ ኣመሓይሽ",
+        "emailLabel": "ኣድራሻ ኢመይል",
+        "emailPlaceholder": "ኢመይልካ እተው",
+        "emailNote": "ኢመይልካ ምቕያር ምርግጋጽ የድሊ",
+        "nameLabel": "ስም ምርኣይ",
+        "namePlaceholder": "ምሉእ ስምካ እተው",
+        "passwordLabel": "ሓዱሽ መሕለፊ ቃል",
+        "passwordPlaceholder": "ሕጂ ዘሎ መሕለፊ ቃል ንምሕላው ባዶ ገድፍ",
+        "passwordNote": "መሕለፊ ቃል ክትቅይር እንተ ደሊኻ ጥራይ እተው",
+        "save": "ለውጢ ዕቑብ",
+        "saving": "ይዕቅብ ኣሎ...",
+        "cancel": "ሰርዝ",
+        "userId": "መንነት ተጠቃሚ",
+        "created": "ሕሳብ ተፈጢሩ",
+        "emailVerified": "ኢመይል ተረጋጊጹ",
+        "currentInfo": "ሕጂ ዘሎ ሓበሬታ",
+        "phoneLabel": "ቁጽሪ ተለፎን",
+        "phonePlaceholder": "ቁጽሪ ተለፎንካ እተው",
+        "countryLabel": "ሃገር ምንባር",
+        "countryPlaceholder": "ሃገር ምንባርካ እተው",
+        "languageLabel": "ዝመረጽካዮ ቋንቋ",
+        "languagePlaceholder": "ዝመረጽካዮ ቋንቋ እተው",
+        "communicationPlaceholder": "መርጽነት ርክብ እተው: ኢመይል / SMS / WhatsApp",
+        "emergencyNameLabel": "ስም ሰብ ህጹጽ",
+        "emergencyNamePlaceholder": "ስም ሰብ ህጹጽ እተው",
+        "emergencyPhoneLabel": "ተለፎን ሰብ ህጹጽ",
+        "emergencyPhonePlaceholder": "ተለፎን ሰብ ህጹጽ እተው",
+        "sections": {
+            "basicInfo": "ቀንዲ ሓበሬታ",
+            "contactInfo": "ሓበሬታ ርክብ",
+            "emergencyContact": "ርክብ ህጹጽ"
+        },
+        "status": {
+            "userNotFound": "ተጠቃሚ ኣይተረኽበን። በጃኻ ደጊምካ እተው።",
+            "authUpdateError": "ጌጋ ምሕያሽ auth: ",
+            "profileUpdateError": "ጌጋ ምሕያሽ መገለጺ: ",
+            "profileUpdateSuccess": "መገለጺ ብዓወት ተመሓይሹ!",
+            "unexpectedError": "ዘይተጸበዮ ጌጋ: "
+        }
+    },
+    "home": {
+        "hero": {
+            "title1": "ኣይዝ። ወፍሪ። ምስርት።",
+            "title2": "ብምትእምማን",
+            "title3": "",
+            "description": "ለውጢ ብቐሊል ተላመድ ከምኡውን ንግዲ ካ ስፋሕ ብናይ ምስላሌ ቅሳነት ኣማራጺ ሓደገኛታት፣ ንምዕባለ ንግዲ ካ ንምድጋፍ ዝተዳለወ።",
+            "cta": {
+                "auth": "ጀምር",
+                "user": "ናብ ዳሽቦርድ ኪድ"
+            }
+        },
+        "services": {
+            "title": "ኣገልግሎታትና",
+            "desc": {
+                "auth": "ንኹሉ ጠለባትካ ናይ ኢትዮጵያዊ ምትእስሳር ሙሉእ ደገፍ",
+                "user": "ኹሉ ኣገልግሎታትካ ካብ ዳሽቦርድካ ረክብ ወይ ሓዱሽ ሕቶ ኣብ ታሕቲ ጀምር"
+            },
+            "travel": {
+                "title": "ኣገልግሎታት ጕዕዞ",
+                "desc": "ሙሉእ ውጥን ጕዕዞ ከምኡውን ደገፍ ምሰጋገር ንብዓላት ኢትዮጵያ።"
+            },
+            "business": {
+                "title": "ምምስራት ንግዲ",
+                "desc": "ሞያዊ ሓገዝ ምምዝጋብ ንግዲ ከምኡውን ሕጋዊ ጠለባት።"
+            },
+            "property": {
+                "title": "ኣገልግሎታት ንብረት",
+                "desc": "ንብረት ኣብ ኢትዮጵያ ርከብ፣ ግዛእ፣ ኣኻርይ፣ ወይ ተቖጻጸር ብሞያዊ መምርሒ።"
+            },
+            "card": {
+                "auth": "ጀምር",
+                "user": "ቅዳሕ ረክብ"
+            }
+        },
+        "footer": {
+            "title": "ኣገልግሎታት ELOS",
+            "tagline": "ዲያስፖራ ኢትዮጵያ ምስ እተኣመነሉ ኣገልግሎታት ሃገር ኣመና ምትእስሳር",
+            "copyright": "© 2024 ኣገልግሎታት ELOS። ኩሉ መሰል ተሓሪዙ።",
+            "contact": "ርከብና",
+            "phoneHeader": "ተለፎን",
+            "phone": "+1 (202) 492 3417",
+            "emailHeader": "ኢመይል",
+            "email": "info@eleosgroups.net",
+            "addressHeader": "ኣድራሻ",
+            "address1": "5622 Columbia Pike Ste 202",
+            "address2": "Falls Church VA 22041"
+        }
+    },
+    "propertyform": {
+        "title": "ቅዳሕ ድሌት ንብረት",
+        "fields": {
+            "propertyType": "ዓይነት ንብረት",
+            "propertyTypePlaceholder": "ዓይነት ንብረት ምረጽ",
+            "purpose": "ዓላማ",
+            "purposePlaceholder": "ዓላማ ምረጽ",
+            "location": "መርጽነታት ቦታ",
+            "locationPlaceholder": "ኣብነት ኣዲስ ኣበባ፣ ቦሌ ከባቢ",
+            "budget": "በጀት (USD)",
+            "budgetPlaceholder": "በጀትካ እተው",
+            "financing": "ገንዘብ የድልየካዶ?",
+            "financingDetails": "ባንክ ወይ ሕቶ ደገፍ",
+            "financingDetailsPlaceholder": "ጠለባት ገንዘብካ ግለጽ",
+            "timeline": "እዋን",
+            "timelinePlaceholder": "እዋን ምረጽ",
+            "existingProperty": "ክትተቖጻጸሮ እትደሊ ንብረት ኣለካዶ?",
+            "existingPropertyLocation": "ቦታ ንብረት ዘሎ",
+            "existingPropertyLocationPlaceholder": "ቦታ ንብረት ዘሎ",
+            "additionalRequests": "ተወሳኺ ሕቶታት / ርእይቶታት",
+            "additionalRequestsPlaceholder": "ተወሳኺ ሓበሬታ ወይ ፍሉይ ሕቶታት"
+        },
+        "options": {
+            "propertyTypes": {
+                "land": "መሬት",
+                "house": "ገዛ",
+                "apartment": "ኣፓርትመንት",
+                "commercial": "ንግዲ"
+            },
+            "purposes": {
+                "buy": "ምግዛእ",
+                "rent": "ምኻራይ",
+                "manage": "ዘሎ ምተቖጻጸር"
+            },
+            "timelines": {
+                "immediate": "ብቕጽበት",
+                "short": "ኣዋርሕ 1–3",
+                "long": "ኣዋርሕ 6+"
+            }
+        },
+        "buttons": {
+            "submit": "ድሌት ንብረት ቐርብ",
+            "submitting": "ይቐርብ ኣሎ..."
+        },
+        "status": {
+            "success": "ብዓወት ተቐሪቡ!",
+            "error": "ምቕራብ ተሰዲዱ",
+            "notLoggedIn": "ነዚ ቅዳሕ ንምቕራብ ክትእቶ ኣለካ።"
+        },
+        "yourProperties": "ንብረትካ",
+        "noProperties": "ንብረት ኣይተረኽበን።",
+        "propertyCard": {
+            "price": "ዋጋ",
+            "bedrooms": "ክፍልታት ድቅስ",
+            "bathrooms": "ክፍልታት ስሓት"
+        }
+    },
+    "settings": {
+        "title": "ንብረትካ",
+        "add": "ሓዱሽ ንብረት ወስኽ",
+        "status": {
+            "deleting": "ንብረት ይጥፈእ ኣሎ...",
+            "deleteFail": "ንብረት ምጥፋእ ተሰዲዱ: ",
+            "error": "ጌጋ ንብረት ምጥፋእ: ",
+            "uploadFail": "ስእሊ ኣእታው ተሰዲዱ:",
+            "saveFail": "ንብረት ምዕቃብ ተሰዲዱ:"
+        },
+        "empty": "ንብረት ኣይተረኽበን። ሓደ ወስኽ!",
+        "form": {
+            "title": "ሓዱሽ ንብረት ወስኽ",
+            "labels": {
+                "name": "ስም",
+                "address": "ኣድራሻ",
+                "price": "ዋጋ (USD)",
+                "bedrooms": "ክፍልታት ድቅስ",
+                "bathrooms": "ክፍልታት ስሓት",
+                "image": "ስእሊ ኣእቱ (ኣማራጺ)"
+            },
+            "buttons": {
+                "cancel": "ሰርዝ",
+                "submit": "ንብረት ወስኽ"
+            },
+            "status": {
+                "missing": "በጃኻ ኩሎም ዘድልዩ ክፍልታት ምላእ።",
+                "uploadFail": "ስእሊ ኣእታው ተሰዲዱ:",
+                "saveFail": "ንብረት ምዕቃብ ተሰዲዱ:"
+            },
+            "details": "ክፍልታት ድቅስ: {{bedrooms}} | ክፍልታት ስሓት: {{bathrooms}}",
+            "price": "ዋጋ: ${{price}}",
+            "delete": "ኣጥፍእ"
+        }
+    },
+    "travelForm": {
+        "title": "ቅዳሕ ጕዕዞ ከምኡውን ምሰጋገር",
+        "purposeLabel": "ዓላማ ጕዕዞ",
+        "purposePlaceholder": "ዓላማ ምረጽ",
+        "purposeOptions": {
+            "visit": "ምብዓል",
+            "move": "ምሰጋገር",
+            "vacation": "ዕረፍቲ",
+            "work": "ስራሕ"
+        },
+        "startCityLabel": "ካብ (ፍሉይ ከተማ ወይ ከባቢ):",
+        "cityLabel": "ናብ (ፍሉይ ከተማ ወይ ከባቢ ኣብ ኢትዮጵያ):",
+        "cityPlaceholder": "ኣብነት ኣዲስ ኣበባ፣ ላሊበላ",
+        "startCityPlaceholder": "ኣብነት New York City, Washington D.C",
+        "datesLabel": "ዕለታት ጕዕዞ",
+        "datesPlaceholder": "ኣብነት ሓምለ 10 - ሓምለ 20, 2024",
+        "numTravelersLabel": "ቁጽሪ ተጓዓዝቲ",
+        "numTravelersPlaceholder": "1",
+        "accommodationLabel": "ቦታ ምንባር የድሊ",
+        "accommodationPlaceholder": "ዓይነት ቦታ ምንባር ምረጽ",
+        "accommodationOptions": {
+            "hotel": "ሆቴል",
+            "guesthouse": "ገዛ ኣዕሩኽ",
+            "longTerm": "ነዊሕ እዋን"
+        },
+        "additionalServicesLabel": "ተወሳኺ ኣገልግሎታት",
+        "services": {
+            "airportPickup": "ምውሳድ ኣብ መናፍስቲ",
+            "carRental": "ምኻራይ መኪና",
+            "documentSupport": "ደገፍ ወረቓቕቲ (ቪዛ፣ መንነት፣ ወዘተ.)",
+            "phoneBanking": "ምትካል ተለፎን ከምኡውን ባንክ",
+            "cityOrientation": "መምርሒ ከተማ የድሊ"
+        },
+        "additionalNotesLabel": "ተወሳኺ ኣገልግሎታት ወይ መዘኻኸሪ",
+        "additionalNotesPlaceholder": "ፍሉይ ጠለባት ወይ ተወሳኺ ሓበሬታ...",
+        "submitButton": "ሕቶ ጕዕዞ ቐርብ",
+        "submitting": "ይቐርብ ኣሎ...",
+        "status": {
+            "success": "ብዓወት ተቐሪቡ!",
+            "loginRequired": "ነዚ ቅዳሕ ንምቕራብ ክትእቶ ኣለካ።",
+            "failurePrefix": "ምቕራብ ተሰዲዱ: "
+        }
+    },
+    "travelEstimator": {
+        "title": "ተገምጋሚ ወጻኢታት ጕዕዞ",
+        "subtitle": "ብAI ዝተመርሐ ገምጋም ወጻኢታት ጕዕዞካ ረክብ።",
+        "warning": "ኣገልግሎት ገምጋም ጕዕዞ ኣብ 127.0.0.1.8000 ዝሰርሕ የድሊ",
+        "button": "ገምጋም ጕዕዞ ረክብ",
+        "loading": "ገምጋም ይረክብ ኣሎ...",
+        "estimate": {
+            "title": "ገምጋም ወጻኢታት ጕዕዞ",
+            "lowRange": "ትሑት ገምጋም ዓይነት",
+            "highRange": "ላዕሊ ገምጋም ዓይነት",
+            "showBreakdown": "ምክፍፋል ወጻኢታት ኣርእ",
+            "hideBreakdown": "ምክፍፋል ሕብእ",
+            "error": "ገምጋም ምትርጓም ኣይከኣለን።",
+            "errorFetch": "ጌጋ ምስ ተገምጋሚ ጕዕዞ ምርካብ።",
+            "missingFields": "በጃኻ ዓይነት ቦታ ምንባር፣ ቁጽሪ ተጓዓዝቲ፣ ከምኡውን ዕለታት ምላእ ገምጋም ንምርካብ።",
+            "partialData": "ዓይነታት ክፍጠሩ ኣይከኣሉን በጃኻ ገምጋምካ ኣብ ምክፍፋል ርአ።"
+        }
+    },
+    "travelInfo": {
+        "title": "ሓበሬታ ጕዕዞ ኢትዮጵያ",
+        "visa": "ቪዛ ንብዙሓት ተጓዓዝቲ የድሊ",
+        "season": "እዋን ምብዓል ዝበለጸ: ጥቅምቲ ክሳብ መጋቢት",
+        "currency": "ሃገራዊ ገንዘብ: Ethiopian Birr (ETB)",
+        "timezone": "ሰዓት ከባቢ: EAT (UTC+3)",
+        "airport": "ቀንዲ መናፍስቲ: ADD (ኣዲስ ኣበባ)"
+    }
+}

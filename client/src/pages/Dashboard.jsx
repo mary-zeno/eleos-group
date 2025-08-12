@@ -130,7 +130,7 @@ export default function Dashboard({ user }) {
           ...entry,
           service: table.service,
           tableName: table.name,
-          status: entry.status || 'status.submitted'
+          status: entry.status || t('status.submitted')
         }));
         allRequests = allRequests.concat(enriched);
       }
@@ -542,7 +542,7 @@ export default function Dashboard({ user }) {
                           className="border-green-500/50 text-green-400 hover:bg-green-500 hover:text-black"
                           onClick={() => window.open(currentInvoicePaypalLink, '_blank')}
                         >
-                          Make Payment
+                          {t('dashboard.makePayment')}
                         </Button>
                       )}
                     </div>

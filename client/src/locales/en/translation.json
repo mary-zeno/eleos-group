@@ -189,6 +189,7 @@
         "createInvoice": "Create Invoice",
         "requestDetails": "Request Details:",
         "close": "Close",
+        "makePayment": "Make Payment",
         "tables": {
             "travel": "Travel",
             "business": "Business",
@@ -430,7 +431,7 @@
         }
     },
     "travelEstimator": {
-        "title": "Travel Cost Estimator",
+        "title": "Cost Estimator",
         "subtitle": "Get an AI-powered cost estimate for your travel needs.",
         "warning": "Requires travel estimation service running on 127.0.0.1.8000",
         "button": "Get Travel Estimate",

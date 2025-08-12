@@ -1,0 +1,459 @@
+{
+    "nav": {
+        "appName": "ELEOS Access",
+        "dashboard": "Dashboard",
+        "propertyForm": "Unka Qabeenya",
+        "travelForm": "Unka Imala",
+        "businessForm": "Unka Daldala",
+        "editProfile": "Profile Sirreessi",
+        "settings": "Qindaa'ina",
+        "logout": "Ba'i",
+        "login": "Seeni"
+    },
+    "common": {
+        "yes": "Eeyyee",
+        "no": "Lakkii",
+        "na": "Hin Beekamu",
+        "edit": "Sirreessi",
+        "delete": "Balleessi"
+    },
+    "status": {
+        "submitted": "Dhiyaate",
+        "inReview": "Ilaalama Jira",
+        "pendingInfo": "Odeeffannoo Eegaa Jira",
+        "inProgress": "Adeemsa Keessa Jira",
+        "awaitingPayment": "Kaffaltii Eegaa Jira",
+        "completed": "Xumurameera",
+        "onHold": "Dhaabbateera",
+        "cancelled": "Haqameera",
+        "archived": "Kuufameera"
+    },
+    "fallback": {
+        "noName": "Maqaan Hin Jiru",
+        "unknown": "Hin Beekamu"
+    },
+    "adminPayment": {
+        "title": "Invoice Uumi",
+        "selectUser": "Fayyadamaa Filadhu",
+        "chooseUser": "-- Fayyadamaa Filadhu --",
+        "selectService": "Gaafannoo Tajaajila Filadhu",
+        "chooseRequest": "-- Gaafannoo Filadhu --",
+        "amountOwed": "Hanga Kaffalamuu Qabu (USD)",
+        "uploadInvoice": "Invoice Fe'i (PDF)",
+        "submit": "Invoice Dhiyeessi",
+        "status": {
+            "uploading": "Fe'aa jira...",
+            "success": "Invoice milkaa'inaan uumameera!",
+            "missing": "Mee bakka hunda guuti.",
+            "failUpload": "Invoice fe'uun dadhabe: ",
+            "failInsert": "Invoice galchuun dadhabe: "
+        }
+    },
+    "auth": {
+        "welcome": "Baga Nagaan Dhuftan",
+        "description": "Seenaa ykn account haaraa uumi",
+        "namePlaceholder": "Maqaa Guutuu",
+        "emailPlaceholder": "Email",
+        "passwordPlaceholder": "Password",
+        "login": "Seeni",
+        "signup": "Galmaa'i",
+        "completeProfile": "Profile Xumuri",
+        "optionalInfo": "Dirqama Miti: Profile keessan guutuu (kana darbuun dandeessu booda dabaluunis ni danda'ama)",
+        "phonePlaceholder": "Lakkoofsa Bilbilaa (dirqama miti)",
+        "countryPlaceholder": "Biyya Jireenyaa (dirqama miti)",
+        "languagePlaceholder": "Afaan Filattan (dirqama miti)",
+        "communicationPlaceholder": "Filannoo Walqunnamtii (dirqama miti)",
+        "emergencyNamePlaceholder": "Maqaa Nama Hatattamaa (dirqama miti)",
+        "emergencyPhonePlaceholder": "Bilbila Nama Hatattamaa (dirqama miti)",
+        "skipProfile": "Ammaan darbi - Account odeeffannoo bu'uuraadhaan uumi",
+        "status": {
+            "loginSuccess": "Seenuun milkaa'eera! Kallattii jijjiiramaa...",
+            "signupSuccess": "Galmaa'uun milkaa'eera! Mee email keessan ilaalaa account keessan mirkaneessuuf.",
+            "loginError": "Dogoggora Seensaa: ",
+            "signupError": "Dogoggora Galmaa'insaa: ",
+            "profileError": "Dogoggora profile uumuu: ",
+            "missingBasic": " Maqaan/email/password hin jiran.",
+            "noUser": " Fayyadamaa uumuun hin dandeenye."
+        }
+    },
+    "businessForm": {
+        "title": "Unka Hundeessuu Daldala",
+        "typeLabel": "Gosa Daldala",
+        "typePlaceholder": "Gosa daldala filadhu",
+        "sectorLabel": "Damee/Industirii",
+        "sectorPlaceholder": "f.k. Teknooloojii, Oomisha, Daldala",
+        "legalStatusLabel": "Haala Seeraa",
+        "legalStatusPlaceholder": "Haala seeraa filadhu",
+        "investmentLabel": "Investment Tilmaamame (USD/ETB)",
+        "investmentPlaceholder": "f.k. $50,000 ykn 2,500,000 ETB",
+        "locationLabel": "Bakka Filattan",
+        "locationPlaceholder": "f.k. Finfinnee, naannoo Bole",
+        "timelineLabel": "Yeroo Hundeessuuf",
+        "timelinePlaceholder": "Yeroo filadhu",
+        "additionalRequirementsLabel": "Barbaachisummaa Dabalataa",
+        "officeSetup": "Qophii Office Barbaada",
+        "localStaff": "Hojjettoota Naannoo Qacarruu Barbaada",
+        "supportLabel": "Tajaajiloota Deeggarsa Barbaadaman",
+        "notesLabel": "Yaadachiisa Dabalataa",
+        "notesPlaceholder": "Barbaachisummaa addaa, gaafii, ykn odeeffannoo dabalataa...",
+        "submit": "Gaafannoo Hundeessuu Daldala Dhiyeessi",
+        "submitting": "Dhiyeessaa jira...",
+        "status": {
+            "success": "Milkaa'inaan dhiyaate!",
+            "fail": "Dhiyeessuun dadhabe: ",
+            "auth": "Unka kana dhiyeessuuf seenuu qabda."
+        },
+        "options": {
+            "businessType": {
+                "sole": "Abbummaa Nama Tokkichaa",
+                "plc": "PLC (Dhaabbata Dhuunfaa Daangeffame)",
+                "branch": "Waajjira Damee",
+                "partner": "Tumsa"
+            },
+            "legalStatus": {
+                "new": "Daldala Haaraa",
+                "expand": "Daldala Jiru Babal'isuu"
+            },
+            "timeline": {
+                "short": "Ji'oota 1–3",
+                "medium": "Ji'oota 3–6"
+            },
+            "support": {
+                "legal": "Galmee seeraa",
+                "tax": "Eenyummaa Gibiraa",
+                "license": "Hayyama",
+                "recruit": "Qacarsaa"
+            }
+        },
+        "sidebar": {
+            "typesTitle": "Gosoota Daldala Itoophiyaa Keessaa",
+            "sole": {
+                "title": "Abbummaa Nama Tokkichaa",
+                "desc": "Bifa salphaa, abbaa tokko, itti gaafatamummaa hin daangeffamne"
+            },
+            "plc": {
+                "title": "PLC",
+                "desc": "Dhaabbata Dhuunfaa Daangeffame, itti gaafatamummaa daangeffame, yoo xinnaate qooddata 2"
+            },
+            "branch": {
+                "title": "Waajjira Damee",
+                "desc": "Babal'ina dhaabbata biyya alaa, miseensa seeraa tokko"
+            },
+            "partner": {
+                "title": "Tumsa",
+                "desc": "Tumsituu 2+, abbummaa waliinii fi itti gaafatamummaa"
+            },
+            "investmentTitle": "Barbaachisummaa Investment",
+            "invest": {
+                "manufacturing": "Oomisha: Yoo xinnaate $200,000",
+                "service": "Tajaajila: Yoo xinnaate $150,000",
+                "trading": "Daldala: Yoo xinnaate $50,000",
+                "joint": "Pirojektii waliinii: Barbaachisummaan gadi aanaa hojiirra ooluu danda'a",
+                "note": "*Barbaachisummoota damee fi seera ammaa irratti hundaa'uun garaagarummaa qabaachuu danda'u"
+            },
+            "timelineTitle": "Yeroo Hundeessuu Baratamaa",
+            "timeline": {
+                "name": "Maqaa ol kaa'uu: torban 1–2",
+                "legal": "Galmee seeraa: torban 2–4",
+                "license": "Hayyama: torban 2–6",
+                "tax": "Galmee gibiraa: torban 1–2",
+                "bank": "Account baankii: torban 1–2"
+            }
+        }
+    },
+    "dashboard": {
+        "title": "Gara Dashboard Keessaniitti Baga Nagaan Dhuftan",
+        "loggedInAs": "Akka seentan:",
+        "role": "Gahee:",
+        "editMode": "Haalata Sirreessuu",
+        "saveChanges": "Jijjiirama Olkaa'i",
+        "cancel": "Dhiisi",
+        "editActive": "Haalata sirreessuu hojii irra jira. Haalata haaromsuun fi gaafannoo balleessuuf mallattoo godhuun ni danda'ama.",
+        "loading": "Gaafannoowwan fe'aa jira...",
+        "noRequests": "Gaafannoon dhiyaate ammaallee hin jiru.",
+        "submitFirst": "Gaafannoo Keessan Jalqabaa Dhiyeessaa",
+        "requestsTitle": "Gaafannoowwan Tajaajila",
+        "activeRequests": "Gaafannoowwan Hojii Irra Jiran",
+        "inactiveRequests": "Gaafannoowwan Hojii Irraa Hin Jirre",
+        "delete": "Balleessi",
+        "service": "Tajaajila",
+        "user": "Fayyadamaa",
+        "date": "Guyyaa",
+        "name": "Maqaa",
+        "email": "Email",
+        "status": "Haala",
+        "payments": "Kaffaltii",
+        "details": "Bal'ina",
+        "viewInvoice": "Invoice Ilaali",
+        "editInvoice": "Invoice Sirreessi",
+        "createInvoice": "Invoice Uumi",
+        "requestDetails": "Bal'ina Gaafannoo:",
+        "close": "Cufii",
+        "makePayment": "Kaffaltii Godhi",
+        "tables": {
+            "travel": "Imala",
+            "business": "Daldala",
+            "property": "Qabeenya"
+        },
+        "userInfoTitle": "Odeeffannoo Fayyadamaa",
+        "profile": {
+            "phone": "Bilbila",
+            "country": "Biyya",
+            "language": "Afaan",
+            "communicationPreference": "Filannoo Walqunnamtii",
+            "emergencyContact": "Qunnamtii Hatattamaa",
+            "emergencyPhone": "Bilbila Hatattamaa"
+        }
+    },
+    "editProfile": {
+        "back": "Gara Dashboard Deebi'i",
+        "title": "Profile Sirreessi",
+        "emailLabel": "Teessoo Email",
+        "emailPlaceholder": "Email keessan galchaa",
+        "emailNote": "Email keessan jijjiiruun mirkaneessa barbaada",
+        "nameLabel": "Maqaa Mul'ataa",
+        "namePlaceholder": "Maqaa keessan guutuu galchaa",
+        "passwordLabel": "Password Haaraa",
+        "passwordPlaceholder": "Password ammaa tursisuuf duwwaa dhiisaa",
+        "passwordNote": "Password jijjiiruuf barbaaddan qofa galchaa",
+        "save": "Jijjiirama Olkaa'i",
+        "saving": "Olkaa'aa jira...",
+        "cancel": "Dhiisi",
+        "userId": "Eenyummaa Fayyadamaa",
+        "created": "Account Uumame",
+        "emailVerified": "Email Mirkanaa'e",
+        "currentInfo": "Odeeffannoo Ammaa",
+        "phoneLabel": "Lakkoofsa Bilbilaa",
+        "phonePlaceholder": "Lakkoofsa bilbila keessanii galchaa",
+        "countryLabel": "Biyya Jireenyaa",
+        "countryPlaceholder": "Biyya jireenyaa keessanii galchaa",
+        "languageLabel": "Afaan Filattan",
+        "languagePlaceholder": "Afaan filattan galchaa",
+        "communicationPlaceholder": "Filannoo walqunnamtii galchaa: email / SMS / WhatsApp",
+        "emergencyNameLabel": "Maqaa Nama Hatattamaa",
+        "emergencyNamePlaceholder": "Maqaa nama hatattamaa galchaa",
+        "emergencyPhoneLabel": "Bilbila Nama Hatattamaa",
+        "emergencyPhonePlaceholder": "Bilbila nama hatattamaa galchaa",
+        "sections": {
+            "basicInfo": "Odeeffannoo Bu'uuraa",
+            "contactInfo": "Odeeffannoo Qunnamtii",
+            "emergencyContact": "Qunnamtii Hatattamaa"
+        },
+        "status": {
+            "userNotFound": "Fayyadamaan hin argamne. Mee ammas seenaa.",
+            "authUpdateError": "Dogoggora auth haaromsuu: ",
+            "profileUpdateError": "Dogoggora profile haaromsuu: ",
+            "profileUpdateSuccess": "Profile milkaa'inaan haaromfameera!",
+            "unexpectedError": "Dogoggora hin eegamne: "
+        }
+    },
+    "home": {
+        "hero": {
+            "title1": "Qabadhaa. Investment Godhaa. Hundeessaa.",
+            "title2": "Amanamummaadhaan",
+            "title3": "",
+            "description": "Jijjiirama salphaatti madaqsaa fi hojii keessan bal'isaa bu'uuraalee keenyaan jijjiiramuu danda'aniin, guddinaa daldala keessanii deeggaru jedhee qophaa'e.",
+            "cta": {
+                "auth": "Jalqabi",
+                "user": "Gara Dashboard Deemi"
+            }
+        },
+        "services": {
+            "title": "Tajaajiloota Keenya",
+            "desc": {
+                "auth": "Deeggarsi guutuu barbaachisummaa walitti dhufeenya Itoophiyaa keessanii hundumaaf",
+                "user": "Tajaajiloota keessan hunda dashboard keessan irraa argadhaa ykn gaafannoo haaraa armaan gadiin jalqabaa"
+            },
+            "travel": {
+                "title": "Tajaajiloota Imala",
+                "desc": "Karoora imala guutuu fi deeggarsa godaansaa daawwannaa Itoophiyaaf."
+            },
+            "business": {
+                "title": "Hundeessuu Daldala",
+                "desc": "Gargaarsa ogummaa galmee daldala fi barbaachisummaa seeraadhaan."
+            },
+            "property": {
+                "title": "Tajaajiloota Qabeenya",
+                "desc": "Qabeenya Itoophiyaa keessatti argachuu, bitachuu, kireeffachuu, ykn bulchuu qajeelfama ogummaadhaan."
+            },
+            "card": {
+                "auth": "Jalqabi",
+                "user": "Unka Argadhu"
+            }
+        },
+        "footer": {
+            "title": "Tajaajiloota ELOS",
+            "tagline": "Diaspora Itoophiyaa tajaajiloota biyya dhaloota amanamoo waliin walqabsiisuu",
+            "copyright": "© 2024 Tajaajiloota ELOS. Mirgi hundi eegameera.",
+            "contact": "Nu Qunnamaa",
+            "phoneHeader": "Bilbila",
+            "phone": "+1 (202) 492 3417",
+            "emailHeader": "Email",
+            "email": "info@eleosgroups.net",
+            "addressHeader": "Teessoo",
+            "address1": "5622 Columbia Pike Ste 202",
+            "address2": "Falls Church VA 22041"
+        }
+    },
+    "propertyform": {
+        "title": "Unka Fedhii Qabeenya",
+        "fields": {
+            "propertyType": "Gosa Qabeenya",
+            "propertyTypePlaceholder": "Gosa qabeenya filadhu",
+            "purpose": "Kaayyoo",
+            "purposePlaceholder": "Kaayyoo filadhu",
+            "location": "Filannoo Bakka",
+            "locationPlaceholder": "f.k. Finfinnee, naannoo Bole",
+            "budget": "Budget (USD)",
+            "budgetPlaceholder": "Budget keessan galchaa",
+            "financing": "Maallaqni si barbaachisaa?",
+            "financingDetails": "Baankii ykn Gaafannoo Deeggarsa",
+            "financingDetailsPlaceholder": "Barbaachisummaa maallaqaa keessan ibsaa",
+            "timeline": "Yeroo",
+            "timelinePlaceholder": "Yeroo filadhu",
+            "existingProperty": "Qabeenya bulchuuf barbaaddan jiraaa?",
+            "existingPropertyLocation": "Bakka Qabeenya Jiru",
+            "existingPropertyLocationPlaceholder": "Bakka qabeenya jiru",
+            "additionalRequests": "Gaafannoowwan Dabalataa / Yaada",
+            "additionalRequestsPlaceholder": "Odeeffannoo dabalataa ykn gaafannoo addaa"
+        },
+        "options": {
+            "propertyTypes": {
+                "land": "Lafa",
+                "house": "Mana",
+                "apartment": "Apartment",
+                "commercial": "Daldala"
+            },
+            "purposes": {
+                "buy": "Bituu",
+                "rent": "Kireessuu",
+                "manage": "Kan Jiru Bulchuu"
+            },
+            "timelines": {
+                "immediate": "Ammuma",
+                "short": "Ji'oota 1–3",
+                "long": "Ji'oota 6+"
+            }
+        },
+        "buttons": {
+            "submit": "Fedhii Qabeenya Dhiyeessi",
+            "submitting": "Dhiyeessaa jira..."
+        },
+        "status": {
+            "success": "Milkaa'inaan dhiyaate!",
+            "error": "Dhiyeessuun dadhabe",
+            "notLoggedIn": "Unka kana dhiyeessuuf seenuu qabda."
+        },
+        "yourProperties": "Qabeenya Keessan",
+        "noProperties": "Qabeenya hin argamne.",
+        "propertyCard": {
+            "price": "Gatii",
+            "bedrooms": "Kutaa Hirriba",
+            "bathrooms": "Kutaa Dhiqannaa"
+        }
+    },
+    "settings": {
+        "title": "Qabeenya Keessan",
+        "add": "Qabeenya Haaraa Dabalaa",
+        "status": {
+            "deleting": "Qabeenya balleessaa jira...",
+            "deleteFail": "Qabeenya balleessuun dadhabe: ",
+            "error": "Dogoggora qabeenya balleessuu: ",
+            "uploadFail": "Suuraa fe'uun dadhabe:",
+            "saveFail": "Qabeenya olkaa'uun dadhabe:"
+        },
+        "empty": "Qabeenya hin argamne. Tokko dabalaa!",
+        "form": {
+            "title": "Qabeenya Haaraa Dabalaa",
+            "labels": {
+                "name": "Maqaa",
+                "address": "Teessoo",
+                "price": "Gatii (USD)",
+                "bedrooms": "Kutaa Hirriba",
+                "bathrooms": "Kutaa Dhiqannaa",
+                "image": "Suuraa Fe'aa (dirqama miti)"
+            },
+            "buttons": {
+                "cancel": "Dhiisi",
+                "submit": "Qabeenya Dabalaa"
+            },
+            "status": {
+                "missing": "Mee bakka barbaachisaa hunda guutaa.",
+                "uploadFail": "Suuraa fe'uun dadhabe:",
+                "saveFail": "Qabeenya olkaa'uun dadhabe:"
+            },
+            "details": "Kutaa hirriba: {{bedrooms}} | Kutaa dhiqannaa: {{bathrooms}}",
+            "price": "Gatii: ${{price}}",
+            "delete": "Balleessi"
+        }
+    },
+    "travelForm": {
+        "title": "Unka Imala fi Godaansaa",
+        "purposeLabel": "Kaayyoo Imala",
+        "purposePlaceholder": "Kaayyoo filadhu",
+        "purposeOptions": {
+            "visit": "Daawwachuu",
+            "move": "Godaansuu",
+            "vacation": "Boqonnaa",
+            "work": "Hojii"
+        },
+        "startCityLabel": "Irraa (Magaalaa ykn Naannoo Addaa):",
+        "cityLabel": "Gara (Magaalaa ykn Naannoo Addaa Itoophiyaa Keessatti):",
+        "cityPlaceholder": "f.k. Finfinnee, Lalibela",
+        "startCityPlaceholder": "f.k. New York City, Washington D.C",
+        "datesLabel": "Guyyoota Imala",
+        "datesPlaceholder": "f.k. Adoolessa 10 - Adoolessa 20, 2024",
+        "numTravelersLabel": "Lakkoofsa Imaltootaa",
+        "numTravelersPlaceholder": "1",
+        "accommodationLabel": "Bakki Turuu Barbaachisa",
+        "accommodationPlaceholder": "Gosa bakka turuu filadhu",
+        "accommodationOptions": {
+            "hotel": "Hotel",
+            "guesthouse": "Mana Keessummaa",
+            "longTerm": "Yeroo Dheeraa"
+        },
+        "additionalServicesLabel": "Tajaajiloota Dabalataa",
+        "services": {
+            "airportPickup": "Fudhachuu Buufata Xiyyaaraa",
+            "carRental": "Konkolaata Kireessuu",
+            "documentSupport": "Deeggarsa Ragaalee (Visa, Ragaa Eenyummaa, kkf.)",
+            "phoneBanking": "Qindoomina Bilbilaa fi Baankii",
+            "cityOrientation": "Qajeelfama Magaalaa Barbaachisa"
+        },
+        "additionalNotesLabel": "Tajaajiloota Dabalataa ykn Yaadachiisa",
+        "additionalNotesPlaceholder": "Barbaachisummaa addaa ykn odeeffannoo dabalataa...",
+        "submitButton": "Gaafannoo Imala Dhiyeessi",
+        "submitting": "Dhiyeessaa jira...",
+        "status": {
+            "success": "Milkaa'inaan dhiyaate!",
+            "loginRequired": "Unka kana dhiyeessuuf seenuu qabda.",
+            "failurePrefix": "Dhiyeessuun dadhabe: "
+        }
+    },
+    "travelEstimator": {
+        "title": "Tilmaama Baasii Imala",
+        "subtitle": "Tilmaama baasii imala keessanii AI tiin qajeelfame argadhaa.",
+        "warning": "Tajaajila tilmaama imala 127.0.0.1.8000 irratti hojjetu barbaada",
+        "button": "Tilmaama Imala Argadhaa",
+        "loading": "Tilmaama Argachaa...",
+        "estimate": {
+            "title": "Tilmaama Baasii Imala",
+            "lowRange": "Hangii Tilmaama Gadi Aanaa",
+            "highRange": "Hangii Tilmaama Ol Aanaa",
+            "showBreakdown": "Hiikkaa Baasii Mul'isi",
+            "hideBreakdown": "Hiikkaa Dhoksi",
+            "error": "Tilmaama hiikuun hin dandeenye.",
+            "errorFetch": "Dogoggora tilmaama imala waliin walqunnamuun.",
+            "missingFields": "Mee gosa bakka turuu, lakkoofsa imaltootaa, fi guyyoota guutaa tilmaama argachuuf.",
+            "partialData": "Hangiin uumumuun hin dandeenye mee tilmaama keessan hiikkaa keessatti ilaalaa."
+        }
+    },
+    "travelInfo": {
+        "title": "Odeeffannoo Imala Itoophiyaa",
+        "visa": "Visa imaltootaa hedduudhaaf barbaachisa",
+        "season": "Yeroon daawwannaa gaarii: Onkoloolessa hanga Adooleessaatti",
+        "currency": "Maallaqni biyya: Ethiopian Birr (ETB)",
+        "timezone": "Sa'aatii naannoo: EAT (UTC+3)",
+        "airport": "Buufatoota xiyyaaraa gurguddoo: ADD (Finfinnee)"
+    }
+}
