@@ -313,8 +313,8 @@ export default function Dashboard({ user }) {
     setStatusChanges({});
   };
 
-  const toggleDetails = (idx) => {
-    setExpandedIdx(expandedIdx === idx ? null : idx);
+  const toggleDetails = (id) => { 
+    setExpandedIdx(expandedIdx === id ? null : id);
   };
 
   const openUserModal = async (userId) => {
