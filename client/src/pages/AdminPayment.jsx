@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
 
 export default function AdminPayment() {
   const location = useLocation();
@@ -18,6 +19,7 @@ export default function AdminPayment() {
 
   const [billAmount, setBillAmount] = useState('');
   const [paypalLink, setPaypalLink] = useState('');
+  const [enableFlutterwave, setEnableFlutterwave] = useState(true);
   const [invoiceFile, setInvoiceFile] = useState(null);
   const [invoiceUrl, setInvoiceUrl] = useState('');
   const [invoiceId, setInvoiceId] = useState(null);
@@ -29,6 +31,7 @@ export default function AdminPayment() {
         // Prefill with passed invoice data
         setBillAmount(passedInvoice.amount_owed || '');
         setPaypalLink(passedInvoice.paypal_link || '');
+        setEnableFlutterwave(passedInvoice.flutterwave_enabled !== false);
         setInvoiceUrl(passedInvoice.invoice_url || '');
         setInvoiceId(passedInvoice.id);
         setStatus('');
@@ -36,7 +39,7 @@ export default function AdminPayment() {
         // Try loading from DB if invoice wasn't passed in
         const { data: existingInvoice, error } = await supabase
           .from('invoices')
-          .select('id, amount_owed, paypal_link, invoice_url')
+          .select('id, amount_owed, paypal_link, flutterwave_enabled, invoice_url')
           .eq('user_id', passedRequest.user_id)
           .eq('service_type', passedRequest.service)
           .eq('service_uuid', passedRequest.id)
@@ -45,9 +48,9 @@ export default function AdminPayment() {
         if (existingInvoice) {
           setBillAmount(existingInvoice.amount_owed || '');
           setPaypalLink(existingInvoice.paypal_link || '');
+          setEnableFlutterwave(existingInvoice.flutterwave_enabled !== false);
           setInvoiceUrl(existingInvoice.invoice_url || '');
           setInvoiceId(existingInvoice.id);
-          // setStatus('Editing existing invoice');
         }
       }
     };
@@ -92,6 +95,7 @@ export default function AdminPayment() {
       service_uuid: passedRequest.id,
       amount_owed: billAmount,
       paypal_link: paypalLink,
+      flutterwave_enabled: enableFlutterwave,
       invoice_url: uploadedInvoiceUrl,
     };
 
@@ -125,11 +129,13 @@ export default function AdminPayment() {
     // Reset
     setBillAmount('');
     setPaypalLink('');
+    setEnableFlutterwave(true);
     setInvoiceFile(null);
     setInvoiceId(null);
     setInvoiceUrl('');
   };
-// START OF CARDS
+
+// START OF CARDS (keeping your original comment)
   if (!passedRequest) {
     return (
       <div className="min-h-screen bg-charcoal-950 p-4">
@@ -166,12 +172,12 @@ export default function AdminPayment() {
         <Card className="bg-charcoal-900 border-charcoal-800">
           <CardHeader>
             <CardTitle className="text-white">
-              {/* {invoiceId ? 'Edit Invoice' : 'Create Invoice'} */}
+              {invoiceId ? 'Edit Invoice' : 'Create Invoice'}
             </CardTitle>
           </CardHeader>
           <CardContent>
 
-          {/* START FORM CAUTION */}
+          {/* START FORM CAUTION (keeping your original comment) */}
 
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* Amount */}
@@ -183,18 +189,44 @@ export default function AdminPayment() {
                   onChange={(e) => setBillAmount(e.target.value)}
                   required
                   className="bg-charcoal-800 border-charcoal-700 text-white"
+                  step="0.01"
+                  min="0"
                 />
               </div>
 
-              {/* PayPal Link */}
-              <div className="space-y-2">
-                <Label className="text-gray-300">PayPal Link</Label>
-                <Input
-                  type="url"
-                  value={paypalLink}
-                  onChange={(e) => setPaypalLink(e.target.value)}
-                  className="bg-charcoal-800 border-charcoal-700 text-white"
-                />
+              {/* Payment Options Section */}
+              <div className="space-y-4 border border-charcoal-700 rounded-lg p-4">
+                <h3 className="text-gray-300 font-medium">Payment Options</h3>
+                
+                {/* PayPal Link */}
+                <div className="space-y-2">
+                  <Label className="text-gray-300">PayPal Link</Label>
+                  <Input
+                    type="url"
+                    value={paypalLink}
+                    onChange={(e) => setPaypalLink(e.target.value)}
+                    className="bg-charcoal-800 border-charcoal-700 text-white"
+                    placeholder="https://paypal.me/..."
+                  />
+                  <p className="text-xs text-gray-400">
+                    Leave empty to only show Flutterwave option
+                  </p>
+                </div>
+
+                {/* Flutterwave Toggle */}
+                <div className="flex items-center space-x-2">
+                  <Checkbox 
+                    id="flutterwave"
+                    checked={enableFlutterwave}
+                    onCheckedChange={setEnableFlutterwave}
+                  />
+                  <Label htmlFor="flutterwave" className="text-gray-300">
+                    Enable Flutterwave Payment (Secure In-Site Popup)
+                  </Label>
+                </div>
+                <p className="text-xs text-gray-400">
+                  Flutterwave will automatically use the amount above and open in a secure popup
+                </p>
               </div>
 
               {/* Upload */}
@@ -218,7 +250,7 @@ export default function AdminPayment() {
                 )}
               </div>
               <Button type="submit" className="w-full bg-accent hover:bg-accent/90 text-black font-medium">
-                {invoiceId ? 'Save' : 'Save'}
+                {invoiceId ? 'Update Invoice' : 'Create Invoice'}
               </Button>
 
               {status && (
@@ -233,7 +265,7 @@ export default function AdminPayment() {
                 </p>
               )}
             </form>
-            {/* END FORM CAUTION */}
+            {/* END FORM CAUTION (keeping your original comment) */}
           </CardContent>
         </Card>
 

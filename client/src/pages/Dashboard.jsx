@@ -8,7 +8,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { ArrowLeft, User, Mail, Lock, CheckCircle, AlertCircle } from 'lucide-react';
+import { ArrowLeft, User, Mail, Lock, CheckCircle, AlertCircle, CreditCard, Wallet, X, Download, Trash2 } from 'lucide-react';
 import RequestTableCard from '@/components/RequestTableCard';
 
 export default function Dashboard({ user }) {
@@ -26,6 +26,11 @@ export default function Dashboard({ user }) {
   const [requestsToDelete, setRequestsToDelete] = useState(new Set());
   const [statusChanges, setStatusChanges] = useState({});
 
+  // For bulk operations on inactive requests
+  const [isExporting, setIsExporting] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+
   //for payment 
   const [invoiceUrl, setInvoiceUrl] = useState(null);
 
@@ -33,6 +38,26 @@ export default function Dashboard({ user }) {
   const [selectedUserProfile, setSelectedUserProfile] = useState(null);
   const [isUserModalOpen, setIsUserModalOpen] = useState(false);
   const [currentInvoicePaypalLink, setCurrentInvoicePaypalLink] = useState(null);
+  
+  // NEW: Flutterwave integration states
+  const [currentInvoiceData, setCurrentInvoiceData] = useState(null);
+
+  // Add Flutterwave script to head
+  useEffect(() => {
+    const script = document.createElement('script');
+    script.src = 'https://checkout.flutterwave.com/v3.js';
+    script.async = true;
+    document.head.appendChild(script);
+    
+    return () => {
+      // Clean up script when component unmounts
+      try {
+        document.head.removeChild(script);
+      } catch (error) {
+        // Script might already be removed
+      }
+    };
+  }, []);
 
   useEffect(() => {
     const fetchUserAndData = async () => {
@@ -129,9 +154,10 @@ export default function Dashboard({ user }) {
     }));
 
     // Now fetch invoices and match them to requests using service_uuid
+    // UPDATED: Now also fetch flutterwave_enabled, payment_status, etc.
     const { data: invoicesData, error: invoicesError } = await supabase
       .from('invoices')
-      .select('id, user_id, service_type, service_uuid, invoice_url, paypal_link, amount_owed');
+      .select('id, user_id, service_type, service_uuid, invoice_url, paypal_link, flutterwave_enabled, amount_owed, payment_status, flutterwave_tx_ref, paid_at');
 
     if (!invoicesError && invoicesData?.length) {
       const invoiceMap = {};
@@ -141,7 +167,11 @@ export default function Dashboard({ user }) {
           invoice_id: inv.id,
           invoice_url: inv.invoice_url,
           paypal_link: inv.paypal_link,
-          amount_owed: inv.amount_owed
+          flutterwave_enabled: inv.flutterwave_enabled,
+          amount_owed: inv.amount_owed,
+          payment_status: inv.payment_status,
+          flutterwave_tx_ref: inv.flutterwave_tx_ref,
+          paid_at: inv.paid_at
         };
       });
       
@@ -153,22 +183,227 @@ export default function Dashboard({ user }) {
           invoiceId: invoiceData?.invoice_id || null,
           invoiceUrl: invoiceData?.invoice_url || null,
           paypalLink: invoiceData?.paypal_link || null,
+          flutterwaveEnabled: invoiceData?.flutterwave_enabled || false,
           amount_owed: invoiceData?.amount_owed || null,
+          paymentStatus: invoiceData?.payment_status || 'pending',
+          flutterwaveTxRef: invoiceData?.flutterwave_tx_ref || null,
+          paidAt: invoiceData?.paid_at || null,
         };
       });
     }
 
     allRequests.sort((a, b) => new Date(b.inserted_at) - new Date(a.inserted_at));
-    setRequests(allRequests);
 
-    // Set all requests (not splitting into active/inactive for now)
-    setRequests(allRequests);
     //splitting active/inactive
     const inactiveStatuses = ['status.completed', 'status.cancelled', 'status.archived'];
     const activeRequests = allRequests.filter(req => !inactiveStatuses.includes(req.status));
     const inactiveRequests = allRequests.filter(req => inactiveStatuses.includes(req.status));
     setRequests({ active: activeRequests, inactive: inactiveRequests });
     setLoading(false);
+  };
+
+  // NEW: Export inactive requests to CSV
+  const exportInactiveRequestsToCSV = () => {
+    if (!requests.inactive || requests.inactive.length === 0) {
+      alert('No inactive requests to export.');
+      return;
+    }
+
+    setIsExporting(true);
+
+    try {
+      // Define CSV headers
+      const headers = [
+        'ID',
+        'Service Type',
+        'User Name',
+        'Status',
+        'Submitted Date',
+        'Payment Status',
+        'Amount Owed',
+        'Paid Date',
+        // Add more fields as needed based on your data structure
+      ];
+
+      // Create CSV rows
+      const csvRows = [
+        headers.join(','), // Header row
+        ...requests.inactive.map(req => [
+          req.id,
+          `"${req.service}"`,
+          `"${req.userName}"`,
+          `"${req.status}"`,
+          new Date(req.inserted_at).toLocaleDateString(),
+          req.paymentStatus || 'N/A',
+          req.amount_owed || 'N/A',
+          req.paidAt ? new Date(req.paidAt).toLocaleDateString() : 'N/A',
+        ].join(','))
+      ];
+
+      // Create and download CSV file
+      const csvContent = csvRows.join('\n');
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      
+      if (link.download !== undefined) {
+        const url = URL.createObjectURL(blob);
+        link.setAttribute('href', url);
+        link.setAttribute('download', `inactive_requests_${new Date().toISOString().split('T')[0]}.csv`);
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }
+
+      alert(`Successfully exported ${requests.inactive.length} inactive requests to CSV.`);
+    } catch (error) {
+      console.error('Error exporting CSV:', error);
+      alert('Failed to export CSV. Please try again.');
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
+  // NEW: Delete all inactive requests
+  const deleteAllInactiveRequests = async () => {
+    if (!requests.inactive || requests.inactive.length === 0) {
+      alert('No inactive requests to delete.');
+      return;
+    }
+
+    setIsDeleting(true);
+
+    try {
+      // Group requests by table name for bulk deletion
+      const requestsByTable = {};
+      requests.inactive.forEach(req => {
+        if (!requestsByTable[req.tableName]) {
+          requestsByTable[req.tableName] = [];
+        }
+        requestsByTable[req.tableName].push(req.id);
+      });
+
+      let totalDeleted = 0;
+      let errors = [];
+
+      // Delete from each table
+      for (const [tableName, ids] of Object.entries(requestsByTable)) {
+        const { error } = await supabase
+          .from(tableName)
+          .delete()
+          .in('id', ids);
+
+        if (error) {
+          console.error(`Error deleting from ${tableName}:`, error);
+          errors.push(`Failed to delete from ${tableName}: ${error.message}`);
+        } else {
+          totalDeleted += ids.length;
+        }
+      }
+
+      if (errors.length > 0) {
+        alert(`Partial deletion completed. ${totalDeleted} requests deleted successfully. Errors: ${errors.join('; ')}`);
+      } else {
+        alert(`Successfully deleted all ${totalDeleted} inactive requests.`);
+      }
+
+      // Refresh the dashboard
+      await fetchRequests(userData, role);
+      setShowDeleteConfirm(false);
+    } catch (error) {
+      console.error('Error during bulk deletion:', error);
+      alert('Failed to delete inactive requests. Please try again.');
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
+  // NEW: Flutterwave payment handler
+  const handleFlutterwavePayment = (invoiceData) => {
+    if (!window.FlutterwaveCheckout) {
+      alert('Flutterwave is loading, please try again in a moment.');
+      return;
+    }
+
+    window.FlutterwaveCheckout({
+      public_key: "994735bb-3bda-47ea-9a7c-3f4fb89a726e", // Replace with your actual public key
+      tx_ref: `invoice_${invoiceData.invoiceId}_${Date.now()}`,
+      amount: invoiceData.amount_owed,
+      currency: "USD", // or "NGN" for Naira
+      customer: {
+        email: user.email,
+        name: name,
+      },
+      meta: {
+        invoice_id: invoiceData.invoiceId,
+        service_type: invoiceData.service,
+        service_uuid: invoiceData.id,
+      },
+      customizations: {
+        title: "Invoice Payment",
+        description: `Payment for ${invoiceData.service}`,
+        logo: "", // Optional: Add your logo URL
+      },
+      callback: function (data) {
+        console.log("Payment successful:", data);
+        // Handle successful payment
+        handlePaymentSuccess(data, invoiceData);
+      },
+      onclose: function () {
+        console.log("Payment modal closed");
+      },
+    });
+  };
+
+  // NEW: Handle payment success
+  const handlePaymentSuccess = async (paymentData, invoiceData) => {
+    try {
+      // Update invoice status in database
+      const { error } = await supabase
+        .from('invoices')
+        .update({ 
+          payment_status: 'paid',
+          flutterwave_tx_ref: paymentData.tx_ref,
+          paid_at: new Date().toISOString()
+        })
+        .eq('id', invoiceData.invoiceId);
+
+      if (error) {
+        console.error('Error updating payment status:', error);
+        alert('Payment was successful, but there was an error updating our records. Please contact support.');
+        return;
+      }
+
+      // Update the service request status to completed
+      const serviceTable = getServiceTableName(invoiceData.service);
+      await supabase
+        .from(serviceTable)
+        .update({ status: 'status.completed' })
+        .eq('id', invoiceData.id);
+
+      // Refresh the dashboard
+      await fetchRequests(userData, role);
+      
+      // Close the invoice modal
+      setInvoiceUrl(null);
+      setCurrentInvoicePaypalLink(null);
+      setCurrentInvoiceData(null);
+      
+      alert('Payment successful! Your invoice has been marked as paid.');
+    } catch (error) {
+      console.error('Error processing payment success:', error);
+      alert('Payment was successful, but there was an error updating our records. Please contact support.');
+    }
+  };
+
+  // Helper function to get service table name
+  const getServiceTableName = (serviceType) => {
+    const serviceMap = {
+      [t('dashboard.tables.travel')]: 'travel_forms',
+      [t('dashboard.tables.business')]: 'business_setup_forms',
+      [t('dashboard.tables.property')]: 'property_interest_forms',
+    };
+    return serviceMap[serviceType] || 'travel_forms';
   };
 
   const toggleDeleteRequest = (id) => {
@@ -189,7 +424,7 @@ export default function Dashboard({ user }) {
     
     // Delete marked requests
     for (const id of requestsToDelete) {
-      const req = requests.find((r) => r.id === id);
+      const req = [...requests.active, ...requests.inactive].find((r) => r.id === id);
       if (!req) continue;
       const { error } = await supabase.from(req.tableName).delete().eq('id', id);
       if (error) console.error('Delete error for id:', id, error.message);
@@ -199,7 +434,7 @@ export default function Dashboard({ user }) {
     for (const [id, newStatus] of Object.entries(statusChanges)) {
       if (requestsToDelete.has(id)) continue;
 
-      const req = requests.find((r) => r.id === id);
+      const req = [...requests.active, ...requests.inactive].find((r) => r.id === id);
       if (!req) continue;
 
       if (req.status === newStatus) continue;
@@ -271,7 +506,6 @@ export default function Dashboard({ user }) {
     setExpandedIdx(expandedIdx === idx ? null : idx);
   };
 
-
   const openUserModal = async (userId) => {
     const { data: profile, error } = await supabase
       .from('profiles')
@@ -286,6 +520,13 @@ export default function Dashboard({ user }) {
 
     setSelectedUserProfile(profile);
     setIsUserModalOpen(true);
+  };
+
+  // UPDATED: New function signature to include invoice data for Flutterwave
+  const openInvoiceModal = (invoiceUrl, paypalLink, invoiceData) => {
+    setInvoiceUrl(invoiceUrl);
+    setCurrentInvoicePaypalLink(paypalLink);
+    setCurrentInvoiceData(invoiceData);
   };
 
   return (
@@ -314,7 +555,7 @@ export default function Dashboard({ user }) {
         {role === 'admin' && (
           <Card className="bg-charcoal-900 border-charcoal-800">
             <CardContent className="pt-6">
-              <div className="flex gap-2">
+              <div className="flex flex-wrap gap-2">
                 {!isEditing ? (
                   <Button 
                     onClick={() => setIsEditing(true)} 
@@ -341,6 +582,29 @@ export default function Dashboard({ user }) {
                     </Button>
                   </>
                 )}
+                
+                {/* NEW: Inactive Requests Management Buttons */}
+                <div className="flex gap-2 ml-auto">
+                  <Button
+                    onClick={exportInactiveRequestsToCSV}
+                    disabled={isExporting || !requests.inactive?.length}
+                    variant="outline"
+                    className="border-green-600 text-green-400 hover:bg-green-600 hover:text-white flex items-center gap-2"
+                  >
+                    <Download className="h-4 w-4" />
+                    {isExporting ? 'Exporting...' : `Export Inactive (${requests.inactive?.length || 0})`}
+                  </Button>
+                  
+                  <Button
+                    onClick={() => setShowDeleteConfirm(true)}
+                    disabled={isDeleting || !requests.inactive?.length}
+                    variant="outline"
+                    className="border-red-600 text-red-400 hover:bg-red-600 hover:text-white flex items-center gap-2"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                    {isDeleting ? 'Deleting...' : `Delete All Inactive (${requests.inactive?.length || 0})`}
+                  </Button>
+                </div>
               </div>
               {isEditing && (
                 <Alert className="mt-4 bg-accent/10 border-accent/30">
@@ -363,7 +627,7 @@ export default function Dashboard({ user }) {
               <div className="text-center py-8">
                 <p className="text-gray-300">{t('dashboard.loading')}</p>
               </div>
-            ) : (!requests || requests.length === 0) ? (
+            ) : (!requests || (requests.active?.length === 0 && requests.inactive?.length === 0)) ? (
               <div className="text-center py-8">
                 <p className="text-gray-400">{t('dashboard.noRequests')}</p>
                 <Button 
@@ -387,8 +651,7 @@ export default function Dashboard({ user }) {
                   toggleDetails={toggleDetails}
                   expandedIdx={expandedIdx}
                   openUserModal={openUserModal}
-                  setInvoiceUrl={setInvoiceUrl}
-                  setCurrentInvoicePaypalLink={setCurrentInvoicePaypalLink}
+                  openInvoiceModal={openInvoiceModal}
                   navigate={navigate}
                   isInactiveTable={false}
                 />
@@ -405,42 +668,170 @@ export default function Dashboard({ user }) {
                   toggleDetails={toggleDetails}
                   expandedIdx={expandedIdx}
                   openUserModal={openUserModal}
-                  setInvoiceUrl={setInvoiceUrl}
-                  setCurrentInvoicePaypalLink={setCurrentInvoicePaypalLink}
+                  openInvoiceModal={openInvoiceModal}
                   navigate={navigate}
                   isInactiveTable={true}
                 />
               </>
             )}
-            {invoiceUrl && (
+
+            {/* NEW: Delete Confirmation Modal */}
+            {showDeleteConfirm && (
               <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-                <div className="bg-charcoal-900 border border-charcoal-700 p-4 rounded-lg max-w-3xl w-full relative">
-                  <div className="flex justify-between items-center mb-4">
-                    <div className="flex gap-2">
-                      {currentInvoicePaypalLink  && (
-                        <Button
-                          variant="outline"
-                          className="border-green-500/50 text-green-400 hover:bg-green-500 hover:text-black"
-                          onClick={() => window.open(currentInvoicePaypalLink, '_blank')}
-                        >
-                          Make Payment
-                        </Button>
-                      )}
-                    </div>
-                    <button
-                      className="text-white bg-red-600 hover:bg-red-700 px-2 py-1 rounded"
-                      onClick={() => {
-                        setInvoiceUrl(null);
-                        setCurrentInvoicePaypalLink(null);
-                      }}
-                    >
-                      {t('dashboard.close')}
-                    </button>
+                <div className="bg-charcoal-900 border border-charcoal-700 p-6 rounded-lg max-w-md w-full mx-4">
+                  <h3 className="text-xl font-semibold text-white mb-4">Confirm Bulk Deletion</h3>
+                  <div className="text-gray-300 mb-6">
+                    <p className="mb-2">
+                      Are you sure you want to delete <strong className="text-red-400">{requests.inactive?.length || 0}</strong> inactive requests?
+                    </p>
+                    <p className="text-sm text-gray-400">
+                      This action cannot be undone. All inactive requests (completed, cancelled, archived) will be permanently removed from the database.
+                    </p>
                   </div>
-                  <iframe src={invoiceUrl} width="100%" height="600px" title="Invoice PDF" className="rounded" />
+                  <div className="flex gap-3 justify-end">
+                    <Button
+                      onClick={() => setShowDeleteConfirm(false)}
+                      variant="outline"
+                      className="border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white"
+                      disabled={isDeleting}
+                    >
+                      Cancel
+                    </Button>
+                    <Button
+                      onClick={deleteAllInactiveRequests}
+                      className="bg-red-600 hover:bg-red-700 text-white"
+                      disabled={isDeleting}
+                    >
+                      {isDeleting ? 'Deleting...' : 'Delete All'}
+                    </Button>
+                  </div>
                 </div>
               </div>
             )}
+
+            {/* ENHANCED Invoice Modal with Full Flutterwave Integration */}
+            {invoiceUrl && (
+              <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+                <div className="bg-charcoal-900 border border-charcoal-700 p-4 rounded-lg max-w-4xl w-full relative mx-4">
+                  <div className="flex justify-between items-center mb-4">
+                    <div className="flex gap-2">
+                      {/* PayPal Payment Button */}
+                      {currentInvoicePaypalLink && (
+                        <Button
+                          variant="outline"
+                          className="border-blue-500/50 text-blue-400 hover:bg-blue-500 hover:text-white flex items-center gap-2"
+                          onClick={() => window.open(currentInvoicePaypalLink, '_blank')}
+                        >
+                          <CreditCard className="h-4 w-4" />
+                          Pay with PayPal
+                        </Button>
+                      )}
+                      
+                      {/* Flutterwave Payment Button - In-site popup */}
+                      {currentInvoiceData?.flutterwaveEnabled && currentInvoiceData?.amount_owed && (
+                        <Button
+                          variant="outline"
+                          className="border-green-500/50 text-green-400 hover:bg-green-500 hover:text-black flex items-center gap-2"
+                          onClick={() => handleFlutterwavePayment(currentInvoiceData)}
+                        >
+                          <Wallet className="h-4 w-4" />
+                          Pay with Flutterwave
+                        </Button>
+                      )}
+
+                      {/* Show payment status if already paid */}
+                      {currentInvoiceData?.paymentStatus === 'paid' && (
+                        <div className="flex items-center gap-2 text-green-400">
+                          <CheckCircle className="h-4 w-4" />
+                          <span className="text-sm font-medium">Payment Completed</span>
+                          {currentInvoiceData?.paidAt && (
+                            <span className="text-xs text-gray-400">
+                              ({new Date(currentInvoiceData.paidAt).toLocaleDateString()})
+                            </span>
+                          )}
+                        </div>
+                      )}
+
+                      {/* Show message if no payment options available */}
+                      {!currentInvoicePaypalLink && !currentInvoiceData?.flutterwaveEnabled && currentInvoiceData?.paymentStatus !== 'paid' && (
+                        <div className="text-yellow-400 text-sm flex items-center gap-2">
+                          <AlertCircle className="h-4 w-4" />
+                          No payment options configured for this invoice
+                        </div>
+                      )}
+                    </div>
+                    <button
+                      className="text-white bg-red-600 hover:bg-red-700 px-3 py-1 rounded flex items-center gap-1"
+                      onClick={() => {
+                        setInvoiceUrl(null);
+                        setCurrentInvoicePaypalLink(null);
+                        setCurrentInvoiceData(null);
+                      }}
+                    >
+                      <X className="h-4 w-4" />
+                      {t('dashboard.close')}
+                    </button>
+                  </div>
+                  
+                  {/* Payment Methods Info */}
+                  {(currentInvoicePaypalLink || currentInvoiceData?.flutterwaveEnabled) && currentInvoiceData?.paymentStatus !== 'paid' && (
+                    <div className="mb-4 p-3 bg-charcoal-800 rounded-lg">
+                      <h3 className="text-white font-medium mb-2">Available Payment Methods:</h3>
+                      <div className="flex flex-wrap gap-2 items-center">
+                        {currentInvoicePaypalLink && (
+                          <Badge variant="outline" className="border-blue-500/50 text-blue-400">
+                            PayPal (External)
+                          </Badge>
+                        )}
+                        {currentInvoiceData?.flutterwaveEnabled && (
+                          <Badge variant="outline" className="border-green-500/50 text-green-400">
+                            Flutterwave (Secure Popup)
+                          </Badge>
+                        )}
+                        {currentInvoiceData?.amount_owed && (
+                          <div className="text-sm text-gray-300">
+                            Amount: <span className="font-medium text-white">${currentInvoiceData.amount_owed}</span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Payment Status Info */}
+                  {currentInvoiceData?.paymentStatus === 'paid' && (
+                    <div className="mb-4 p-3 bg-green-900/20 border border-green-500/30 rounded-lg">
+                      <div className="flex items-center gap-2 text-green-400">
+                        <CheckCircle className="h-5 w-5" />
+                        <h3 className="font-medium">Payment Completed</h3>
+                      </div>
+                      <div className="mt-2 text-sm text-gray-300">
+                        <p>This invoice has been paid successfully.</p>
+                        {currentInvoiceData?.flutterwaveTxRef && (
+                          <p className="text-xs text-gray-400 mt-1">
+                            Transaction Reference: {currentInvoiceData.flutterwaveTxRef}
+                          </p>
+                        )}
+                        {currentInvoiceData?.paidAt && (
+                          <p className="text-xs text-gray-400">
+                            Paid on: {new Date(currentInvoiceData.paidAt).toLocaleString()}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                  
+                  <iframe 
+                    src={invoiceUrl} 
+                    width="100%" 
+                    height="600px" 
+                    title="Invoice PDF" 
+                    className="rounded border border-charcoal-600" 
+                  />
+                </div>
+              </div>
+            )}
+
+            {/* User Contact Modal */}
             {isUserModalOpen && selectedUserProfile && (
               <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
                 <div className="bg-charcoal-900 border border-charcoal-800 p-6 rounded-lg shadow-lg max-w-sm w-full relative">

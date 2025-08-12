@@ -19,6 +19,7 @@ export default function RequestTableCard({
   expandedIdx,
   openUserModal,
   setInvoiceUrl,
+  openInvoiceModal, // Added this prop
   setCurrentInvoicePaypalLink,
   navigate,
   isInactiveTable = false,
@@ -37,7 +38,6 @@ export default function RequestTableCard({
                 {t('dashboard.submitFirst')}
             </Button>
           )}
-            
         </div>
       ) : (
         <div className="overflow-x-auto border border-charcoal-800 rounded-lg">
@@ -113,7 +113,7 @@ export default function RequestTableCard({
                       {/* ADMIN PAYMENT FORMS */}
                       <TableCell className="py-2 px-4">
                         {req.invoiceUrl ? (
-                          <div className="flex gap-2">
+                          <div className="flex gap-2 flex-wrap">
                             <Button
                               variant="outline"
                               className="text-xs border-accent/50 text-accent hover:bg-accent hover:text-black"
@@ -132,15 +132,35 @@ export default function RequestTableCard({
                                     } 
                                   });
                                 } else {
-                                  // View invoice in modal
-                                  setInvoiceUrl(req.invoiceUrl);
-                                  setCurrentInvoicePaypalLink(req.paypalLink);
+                                  // View invoice in modal using the updated function
+                                  openInvoiceModal(
+                                    req.invoiceUrl, 
+                                    req.paypalLink, 
+                                    {
+                                      invoiceId: req.invoiceId,
+                                      amount_owed: req.amount_owed,
+                                      flutterwaveEnabled: req.flutterwaveEnabled,
+                                      paymentStatus: req.paymentStatus,
+                                      flutterwaveTxRef: req.flutterwaveTxRef,
+                                      paidAt: req.paidAt,
+                                      service: req.service,
+                                      id: req.id,
+                                      user_id: req.user_id
+                                    }
+                                  );
                                 }
                               }}
                             >
-                              {role === 'admin' && isEditing ? t('dashboard.editInvoice') : t('dashboard.viewInvoice')}
+                              {role === 'admin' && isEditing ? t('dashboard.editInvoice') : 
+                               req.paymentStatus === 'paid' ? 'View Paid Invoice' : t('dashboard.viewInvoice')}
                             </Button>
                             
+                            {/* Show payment status badge */}
+                            {req.paymentStatus === 'paid' && (
+                              <Badge variant="outline" className="border-green-500/50 text-green-400 text-xs">
+                                Paid
+                              </Badge>
+                            )}
                           </div>
                         ) : (
                           role === 'admin' && isEditing && (
