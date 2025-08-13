@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
+import { Search } from "lucide-react";
 
 export default function PropertyForm({ user }) {
   const [formData, setFormData] = useState({
@@ -32,6 +33,8 @@ export default function PropertyForm({ user }) {
   const [status, setStatus] = useState("");
   const [loading, setLoading] = useState(false);
   const [properties, setProperties] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filteredProperties, setFilteredProperties] = useState([]);
   const { t } = useTranslation();
 
   const handleChange = (name, value) => {
@@ -110,12 +113,39 @@ export default function PropertyForm({ user }) {
       console.error("Error fetching properties:", error.message);
     } else {
       setProperties(data);
+      setFilteredProperties(data);
     }
+  };
+
+  const handleSearch = (searchValue) => {
+    setSearchTerm(searchValue);
+    
+    if (!searchValue.trim()) {
+      setFilteredProperties(properties);
+      return;
+    }
+
+    const filtered = properties.filter((property) => {
+      const searchLower = searchValue.toLowerCase();
+      return (
+        property.name?.toLowerCase().includes(searchLower) ||
+        property.address?.toLowerCase().includes(searchLower) ||
+        property.price?.toString().includes(searchValue) ||
+        property.bedrooms?.toString().includes(searchValue) ||
+        property.bathrooms?.toString().includes(searchValue)
+      );
+    });
+
+    setFilteredProperties(filtered);
   };
 
   useEffect(() => {
     fetchProperties();
   }, []); // ← Run only on mount
+
+  useEffect(() => {
+    handleSearch(searchTerm);
+  }, [properties]);
 
   return (
     <div className="min-h-screen bg-charcoal-950 p-4 sm:p-6 lg:p-8">
@@ -284,33 +314,72 @@ export default function PropertyForm({ user }) {
           </CardContent>
         </Card>
 
-        {/* Right: Display Properties */}
+        {/* Right: Display Properties with Search */}
         <div className="space-y-4">
-          <h2 className="text-xl font-semibold text-white">{t("propertyform.yourProperties")}</h2>
-          {properties.length === 0 ? (
-            <p className="text-gray-400">{t("propertyform.noProperties")}</p>
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <h2 className="text-xl font-semibold text-white">{t("propertyform.yourProperties")}</h2>
+            
+            {/* Search Bar */}
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+              <Input
+                type="text"
+                placeholder={t("Search") || "Search properties..."}
+                value={searchTerm}
+                onChange={(e) => handleSearch(e.target.value)}
+                className="pl-10 bg-charcoal-800 border-charcoal-700 text-white placeholder:text-gray-400 w-full sm:w-64"
+              />
+            </div>
+          </div>
+
+          {filteredProperties.length === 0 ? (
+            <div className="text-center py-8">
+              {searchTerm ? (
+                <div>
+                  <p className="text-gray-400 mb-2">{t("propertyform.noSearchResults") || "No properties found matching your search."}</p>
+                  <Button
+                    variant="outline"
+                    onClick={() => handleSearch("")}
+                    className="text-sm text-gray-300 border-charcoal-600 hover:bg-charcoal-800"
+                  >
+                    {t("propertyform.clearSearch") || "Clear search"}
+                  </Button>
+                </div>
+              ) : (
+                <p className="text-gray-400">{t("propertyform.noProperties")}</p>
+              )}
+            </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {properties.map((prop) => (
-                <Card key={prop.id} className="bg-charcoal-900 border-charcoal-800">
-                  <CardContent className="p-4">
-                    {prop.image_url && (
-                      <img
-                        src={prop.image_url}
-                        alt={prop.name}
-                        className="w-full h-40 object-cover rounded-md mb-3"
-                      />
-                    )}
-                    <h4 className="text-lg font-semibold text-white">{prop.name}</h4>
-                    <p className="text-sm text-gray-300">{prop.address}</p>
-                    <p className="text-sm text-gray-300">{t("propertyform.propertyCard.price")}: ${prop.price}</p>
-                    <p className="text-sm text-gray-300">
-                      {t("propertyform.propertyCard.bedrooms")}: {prop.bedrooms} |{" "}
-                      {t("propertyform.propertyCard.bathrooms")}: {prop.bathrooms}
-                    </p>
-                  </CardContent>
-                </Card>
-              ))}
+            <div>
+              {searchTerm && (
+                <p className="text-sm text-gray-400 mb-4">
+                  {t("propertyform.searchResults", { count: filteredProperties.length }) || 
+                   `Showing ${filteredProperties.length} result${filteredProperties.length !== 1 ? 's' : ''}`}
+                </p>
+              )}
+              
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {filteredProperties.map((prop) => (
+                  <Card key={prop.id} className="bg-charcoal-900 border-charcoal-800">
+                    <CardContent className="p-4">
+                      {prop.image_url && (
+                        <img
+                          src={prop.image_url}
+                          alt={prop.name}
+                          className="w-full h-40 object-cover rounded-md mb-3"
+                        />
+                      )}
+                      <h4 className="text-lg font-semibold text-white">{prop.name}</h4>
+                      <p className="text-sm text-gray-300">{prop.address}</p>
+                      <p className="text-sm text-gray-300">{t("propertyform.propertyCard.price")}: ${prop.price}</p>
+                      <p className="text-sm text-gray-300">
+                        {t("propertyform.propertyCard.bedrooms")}: {prop.bedrooms} |{" "}
+                        {t("propertyform.propertyCard.bathrooms")}: {prop.bathrooms}
+                      </p>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
             </div>
           )}
         </div>

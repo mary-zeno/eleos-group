@@ -4,10 +4,11 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Trash2, AlertTriangle } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 export default function AdminPayment() {
   const location = useLocation();
@@ -24,6 +25,10 @@ export default function AdminPayment() {
   const [invoiceUrl, setInvoiceUrl] = useState('');
   const [invoiceId, setInvoiceId] = useState(null);
   const [status, setStatus] = useState('');
+  
+  // NEW: Delete confirmation states
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
     const fetchExistingInvoice = async () => {
@@ -135,6 +140,62 @@ export default function AdminPayment() {
     setInvoiceUrl('');
   };
 
+  // NEW: Handle invoice deletion
+  const handleDeleteInvoice = async () => {
+    if (!invoiceId) return;
+
+    setIsDeleting(true);
+    setStatus('Deleting invoice...');
+
+    try {
+      // First, try to delete the file from storage if it exists
+      if (invoiceUrl) {
+        // Extract file path from the public URL
+        const urlParts = invoiceUrl.split('/');
+        const fileName = urlParts[urlParts.length - 1];
+        const filePath = `invoices/${fileName}`;
+
+        // Delete from storage (don't fail if file doesn't exist)
+        await supabase.storage
+          .from('invoices')
+          .remove([filePath]);
+      }
+
+      // Delete the invoice record from database
+      const { error } = await supabase
+        .from('invoices')
+        .delete()
+        .eq('id', invoiceId);
+
+      if (error) {
+        setStatus('Failed to delete invoice: ' + error.message);
+        setIsDeleting(false);
+        return;
+      }
+
+      // Success - reset form and show success message
+      setStatus('Invoice deleted successfully!');
+      setBillAmount('');
+      setPaypalLink('');
+      setEnableFlutterwave(true);
+      setInvoiceFile(null);
+      setInvoiceId(null);
+      setInvoiceUrl('');
+      setShowDeleteConfirm(false);
+      
+      // Navigate back to dashboard after a short delay
+      setTimeout(() => {
+        navigate('/dashboard');
+      }, 1500);
+
+    } catch (error) {
+      console.error('Error deleting invoice:', error);
+      setStatus('An error occurred while deleting the invoice.');
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
 // START OF CARDS (keeping your original comment)
   if (!passedRequest) {
     return (
@@ -171,9 +232,37 @@ export default function AdminPayment() {
       <div className="max-w-2xl mx-auto">
         <Card className="bg-charcoal-900 border-charcoal-800">
           <CardHeader>
-            <CardTitle className="text-white">
-              {invoiceId ? 'Edit Invoice' : 'Create Invoice'}
-            </CardTitle>
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-white">
+                {invoiceId ? 'Edit Invoice' : 'Create Invoice'}
+              </CardTitle>
+              
+              {/* NEW: Delete button - only show in edit mode */}
+              {invoiceId && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setShowDeleteConfirm(true)}
+                  className="border-red-600 text-red-400 hover:bg-red-600 hover:text-white flex items-center gap-2"
+                  disabled={isDeleting}
+                >
+                  <Trash2 className="h-4 w-4" />
+                  Delete Invoice
+                </Button>
+              )}
+            </div>
+
+            {/* NEW: Show invoice info when editing */}
+            {invoiceId && (
+              <div className="mt-4 p-3 bg-charcoal-800 rounded-lg">
+                <p className="text-sm text-gray-300">
+                  <strong>Editing Invoice for:</strong> {passedRequest.userName || 'Unknown User'}
+                </p>
+                <p className="text-sm text-gray-400">
+                  Service: {passedRequest.service} | Request ID: {passedRequest.id}
+                </p>
+              </div>
+            )}
           </CardHeader>
           <CardContent>
 
@@ -268,6 +357,58 @@ export default function AdminPayment() {
             {/* END FORM CAUTION (keeping your original comment) */}
           </CardContent>
         </Card>
+
+        {/* NEW: Delete Confirmation Modal */}
+        {showDeleteConfirm && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+            <Card className="bg-charcoal-900 border-charcoal-700 max-w-md w-full mx-4">
+              <CardHeader>
+                <CardTitle className="text-white flex items-center gap-2">
+                  <AlertTriangle className="h-5 w-5 text-red-400" />
+                  Confirm Deletion
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <Alert className="border-red-600/50 bg-red-900/20">
+                  <AlertTriangle className="h-4 w-4 text-red-400" />
+                  <AlertDescription className="text-red-300">
+                    <strong>Warning:</strong> This action cannot be undone!
+                  </AlertDescription>
+                </Alert>
+                
+                <div className="text-gray-300 space-y-2">
+                  <p>Are you sure you want to delete this invoice?</p>
+                  <div className="text-sm text-gray-400 bg-charcoal-800 p-3 rounded">
+                    <p><strong>User:</strong> {passedRequest.userName || 'Unknown'}</p>
+                    <p><strong>Service:</strong> {passedRequest.service}</p>
+                    <p><strong>Amount:</strong> ${billAmount}</p>
+                  </div>
+                  <p className="text-sm text-gray-400">
+                    This will permanently remove the invoice from the database and delete any uploaded PDF file.
+                  </p>
+                </div>
+
+                <div className="flex gap-3 justify-end">
+                  <Button
+                    variant="outline"
+                    onClick={() => setShowDeleteConfirm(false)}
+                    disabled={isDeleting}
+                    className="border-gray-600 text-gray-300 hover:bg-gray-700"
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    onClick={handleDeleteInvoice}
+                    disabled={isDeleting}
+                    className="bg-red-600 hover:bg-red-700 text-white"
+                  >
+                    {isDeleting ? 'Deleting...' : 'Delete Invoice'}
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        )}
 
       </div>
     </div>

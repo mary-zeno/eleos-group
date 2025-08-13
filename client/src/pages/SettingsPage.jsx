@@ -2,13 +2,17 @@ import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { supabase } from "../supabaseClient";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Search } from "lucide-react";
 
 export default function SettingsPage({ user }) {
   const [isAdmin, setIsAdmin] = useState(false);
   const [properties, setProperties] = useState([]);
+  const [filteredProperties, setFilteredProperties] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
   const [showForm, setShowForm] = useState(false);
-  const [editingProperty, setEditingProperty] = useState(null); // NEW
+  const [editingProperty, setEditingProperty] = useState(null);
   const [status, setStatus] = useState("");
   const { t } = useTranslation();
 
@@ -53,9 +57,36 @@ export default function SettingsPage({ user }) {
       setStatus(t("settings.status.fetchFail") + error.message);
     } else {
       setProperties(data);
+      setFilteredProperties(data);
       setStatus("");
     }
   };
+
+  const handleSearch = (searchValue) => {
+    setSearchTerm(searchValue);
+    
+    if (!searchValue.trim()) {
+      setFilteredProperties(properties);
+      return;
+    }
+
+    const filtered = properties.filter((property) => {
+      const searchLower = searchValue.toLowerCase();
+      return (
+        property.name?.toLowerCase().includes(searchLower) ||
+        property.address?.toLowerCase().includes(searchLower) ||
+        property.price?.toString().includes(searchValue) ||
+        property.bedrooms?.toString().includes(searchValue) ||
+        property.bathrooms?.toString().includes(searchValue)
+      );
+    });
+
+    setFilteredProperties(filtered);
+  };
+
+  useEffect(() => {
+    handleSearch(searchTerm);
+  }, [properties]);
 
   const handleDeleteProperty = async (property) => {
     if (!window.confirm(`Are you sure you want to delete "${property.name}"?`)) return;
@@ -110,7 +141,7 @@ export default function SettingsPage({ user }) {
             <CardTitle className="text-2xl text-white">{t("settings.title")}</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="flex items-center justify-between mb-4">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
               <Button
                 onClick={() => {
                   setEditingProperty(null);
@@ -120,53 +151,94 @@ export default function SettingsPage({ user }) {
               >
                 {t("settings.add")}
               </Button>
-              {status && <span className="text-sm text-gray-600">{status}</span>}
+              
+              {/* Search Bar */}
+              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+                {status && <span className="text-sm text-gray-600">{status}</span>}
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                  <Input
+                    type="text"
+                    placeholder={t("Search") || "Search properties..."}
+                    value={searchTerm}
+                    onChange={(e) => handleSearch(e.target.value)}
+                    className="pl-10 bg-charcoal-800 border-charcoal-700 text-white placeholder:text-gray-400 w-full sm:w-64"
+                  />
+                </div>
+              </div>
             </div>
-            {properties.length > 0 ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-                {properties.map((prop) => (
-                  <Card key={prop.id} className="flex flex-col bg-charcoal-800 border-charcoal-700">
-                    {prop.image_url && (
-                      <img
-                        src={prop.image_url}
-                        alt={prop.name}
-                        className="w-full h-48 object-cover rounded-t-lg"
-                      />
-                    )}
-                    <CardContent className="flex flex-col gap-2 flex-grow">
-                      <h4 className="text-lg font-semibold text-white">{prop.name}</h4>
-                      <p className="text-sm text-gray-400">{prop.address}</p>
-                      <p className="text-sm text-gray-300">
-                        {t("settings.form.price", {
-                          price: prop.price,
-                        })}
-                      </p>
-                      <p className="text-sm text-gray-300">
-                        {t("settings.form.details", {
-                          bedrooms: prop.bedrooms,
-                          bathrooms: prop.bathrooms,
-                        })}
-                      </p>
-                      <div className="mt-auto flex gap-2">
-                        <Button
-                          onClick={() => openEditForm(prop)}
-                          className="bg-blue-600 hover:bg-blue-700 text-white"
-                        >
-                          {t("Edit") || "Edit"}
-                        </Button>
-                        <Button
-                          onClick={() => handleDeleteProperty(prop)}
-                          className="bg-red-600 hover:bg-red-700 text-white"
-                        >
-                          {t("settings.form.delete")}
-                        </Button>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
+
+            {filteredProperties.length === 0 ? (
+              <div className="text-center py-8">
+                {searchTerm ? (
+                  <div>
+                    <p className="text-gray-400 mb-2">
+                      {t("settings.noSearchResults") || "No properties found matching your search."}
+                    </p>
+                    <Button
+                      variant="outline"
+                      onClick={() => handleSearch("")}
+                      className="text-sm text-gray-300 border-charcoal-600 hover:bg-charcoal-800"
+                    >
+                      {t("settings.clearSearch") || "Clear search"}
+                    </Button>
+                  </div>
+                ) : (
+                  <p className="text-gray-400">{t("settings.empty")}</p>
+                )}
               </div>
             ) : (
-              <p className="text-gray-400">{t("settings.empty")}</p>
+              <div>
+                {searchTerm && (
+                  <p className="text-sm text-gray-400 mb-4">
+                    {t("settings.searchResults", { count: filteredProperties.length }) || 
+                     `Showing ${filteredProperties.length} result${filteredProperties.length !== 1 ? 's' : ''}`}
+                  </p>
+                )}
+                
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+                  {filteredProperties.map((prop) => (
+                    <Card key={prop.id} className="flex flex-col bg-charcoal-800 border-charcoal-700">
+                      {prop.image_url && (
+                        <img
+                          src={prop.image_url}
+                          alt={prop.name}
+                          className="w-full h-48 object-cover rounded-t-lg"
+                        />
+                      )}
+                      <CardContent className="flex flex-col gap-2 flex-grow">
+                        <h4 className="text-lg font-semibold text-white">{prop.name}</h4>
+                        <p className="text-sm text-gray-400">{prop.address}</p>
+                        <p className="text-sm text-gray-300">
+                          {t("settings.form.price", {
+                            price: prop.price,
+                          })}
+                        </p>
+                        <p className="text-sm text-gray-300">
+                          {t("settings.form.details", {
+                            bedrooms: prop.bedrooms,
+                            bathrooms: prop.bathrooms,
+                          })}
+                        </p>
+                        <div className="mt-auto flex gap-2">
+                          <Button
+                            onClick={() => openEditForm(prop)}
+                            className="bg-blue-600 hover:bg-blue-700 text-white"
+                          >
+                            {t("Edit") || "Edit"}
+                          </Button>
+                          <Button
+                            onClick={() => handleDeleteProperty(prop)}
+                            className="bg-red-600 hover:bg-red-700 text-white"
+                          >
+                            {t("settings.form.delete")}
+                          </Button>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              </div>
             )}
           </CardContent>
         </Card>
@@ -185,7 +257,7 @@ export default function SettingsPage({ user }) {
                 user={user}
                 onPropertyAdded={refreshProperties}
                 setStatus={setStatus}
-                property={editingProperty} // Pass property if editing
+                property={editingProperty}
               />
             </div>
           </div>
@@ -350,33 +422,7 @@ function PropertyForm({ onClose, user, onPropertyAdded, setStatus, property }) {
         onChange={(e) => setImageFile(e.target.files[0])}
       />
 
-      {/* <div className="flex justify-end gap-3">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => onEdit(property.id)}
-          className="bg-transparent border-charcoal-600 text-gray-300 hover:bg-charcoal-700 hover:text-white hover:border-charcoal-500 transition-all duration-200"
-        >
-          {t('common.edit')}
-        </Button>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => onDelete(property.id)}
-          className="bg-transparent border-red-800 text-red-400 hover:bg-red-900/20 hover:text-red-300 hover:border-red-600 transition-all duration-200"
-        >
-          {t('common.delete')}
-        </Button>
-      </div> */}
       <div className="flex justify-end gap-3">
-        {/* <Button
-          variant="outline"
-          size="sm"
-          onClick={onClose}
-          className="bg-transparent border-charcoal-600 text-gray-300 hover:bg-charcoal-700 hover:text-white hover:border-charcoal-500 transition-all duration-200"
-        >
-          ×
-        </Button> */}
         <Button
           type="submit"
           size="sm"
@@ -385,7 +431,6 @@ function PropertyForm({ onClose, user, onPropertyAdded, setStatus, property }) {
           {t('settings.saveEdit')}
         </Button>
       </div>
-
 
       {localStatus && <p className="text-sm text-red-400">{localStatus}</p>}
     </form>
