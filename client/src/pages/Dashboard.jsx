@@ -8,7 +8,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { ArrowLeft, User, Mail, Lock, CheckCircle, AlertCircle, Phone, Globe, MessageSquare, UserCheck, CreditCard, Wallet, X, Download, Trash2 } from 'lucide-react';
+import { ArrowLeft, User, Mail, Lock, CheckCircle, AlertCircle, Phone, Globe, MessageSquare, UserCheck, CreditCard, Wallet, X, Download, Trash2, Filter, Search } from 'lucide-react';
 import RequestTableCard from '@/components/RequestTableCard';
 
 export default function Dashboard({ user }) {
@@ -25,6 +25,7 @@ export default function Dashboard({ user }) {
     communication_reference: ''
   });
   const [requests, setRequests] = useState({ active: [], inactive: [] });
+  const [filteredRequests, setFilteredRequests] = useState({ active: [], inactive: [] });
   const [loading, setLoading] = useState(true);
   const [expandedIdx, setExpandedIdx] = useState(null);
   const { t } = useTranslation();
@@ -38,6 +39,13 @@ export default function Dashboard({ user }) {
   const [isExporting, setIsExporting] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+
+  // NEW: Filter states
+  const [serviceFilter, setServiceFilter] = useState('all');
+  
+  // NEW: Search functionality
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState({ active: [], inactive: [] });
 
   //for payment 
   const [invoiceUrl, setInvoiceUrl] = useState(null);
@@ -66,6 +74,101 @@ export default function Dashboard({ user }) {
       }
     };
   }, []);
+
+  // NEW: Filter requests based on service type and search query
+  useEffect(() => {
+    let activeRequests = requests.active || [];
+    let inactiveRequests = requests.inactive || [];
+    
+    // First apply service filter
+    if (serviceFilter !== 'all') {
+      activeRequests = activeRequests.filter(req => req.service === serviceFilter);
+      inactiveRequests = inactiveRequests.filter(req => req.service === serviceFilter);
+    }
+    
+    // Then apply search filter
+    if (searchQuery.trim()) {
+      const searchTerm = searchQuery.toLowerCase().trim();
+      
+      const searchInRequest = (req) => {
+        // Search in basic fields
+        const searchableFields = [
+          req.userName,
+          req.service,
+          req.status,
+          req.id?.toString(),
+          req.paymentStatus,
+          req.amount_owed?.toString(),
+          // Search in user profile data
+          req.userProfile?.email,
+          req.userProfile?.phone_number,
+          req.userProfile?.country_residence,
+          req.userProfile?.language,
+          req.userProfile?.emergency_contact_member1,
+          req.userProfile?.emergency_contact1,
+          req.userProfile?.communication_reference,
+          // Search in dates
+          new Date(req.inserted_at).toLocaleDateString(),
+          req.paidAt ? new Date(req.paidAt).toLocaleDateString() : null,
+        ];
+        
+        // Add form-specific fields based on service type
+        if (req.service === t('dashboard.tables.travel')) {
+          searchableFields.push(
+            req.destination,
+            req.departure_date,
+            req.return_date,
+            req.traveler_count?.toString(),
+            req.travel_purpose,
+            req.accommodation_preference,
+            req.budget_range,
+            req.special_requirements
+          );
+        } else if (req.service === t('dashboard.tables.business')) {
+          searchableFields.push(
+            req.business_name,
+            req.business_type,
+            req.industry,
+            req.business_structure,
+            req.estimated_revenue?.toString(),
+            req.employee_count?.toString(),
+            req.business_location,
+            req.services_description,
+            req.target_market,
+            req.funding_requirements?.toString(),
+            req.timeline
+          );
+        } else if (req.service === t('dashboard.tables.property')) {
+          searchableFields.push(
+            req.property_type,
+            req.location_preference,
+            req.budget_min?.toString(),
+            req.budget_max?.toString(),
+            req.bedrooms?.toString(),
+            req.bathrooms?.toString(),
+            req.square_footage?.toString(),
+            req.property_features,
+            req.investment_timeline,
+            req.financing_needed,
+            req.additional_requirements
+          );
+        }
+        
+        // Check if any field contains the search term
+        return searchableFields.some(field => 
+          field && field.toString().toLowerCase().includes(searchTerm)
+        );
+      };
+      
+      activeRequests = activeRequests.filter(searchInRequest);
+      inactiveRequests = inactiveRequests.filter(searchInRequest);
+    }
+    
+    setSearchResults({
+      active: activeRequests,
+      inactive: inactiveRequests
+    });
+  }, [serviceFilter, searchQuery, requests, t]);
 
   useEffect(() => {
     const fetchUserAndData = async () => {
@@ -248,9 +351,32 @@ export default function Dashboard({ user }) {
     setLoading(false);
   };
 
+  // NEW: Get unique service types for filter dropdown
+  const getUniqueServiceTypes = () => {
+    const allRequestsList = [...requests.active, ...requests.inactive];
+    const uniqueServices = [...new Set(allRequestsList.map(req => req.service))];
+    return uniqueServices.filter(Boolean); // Remove any undefined/null values
+  };
+
+  // NEW: Get counts for each service type
+  const getServiceTypeCounts = () => {
+    const allRequestsList = [...requests.active, ...requests.inactive];
+    const counts = {};
+    
+    allRequestsList.forEach(req => {
+      if (req.service) {
+        counts[req.service] = (counts[req.service] || 0) + 1;
+      }
+    });
+    
+    return counts;
+  };
+
   // NEW: Export inactive requests to CSV
   const exportInactiveRequestsToCSV = () => {
-    if (!requests.inactive || requests.inactive.length === 0) {
+    const requestsToExport = searchResults.inactive;
+    
+    if (!requestsToExport || requestsToExport.length === 0) {
       alert('No inactive requests to export.');
       return;
     }
@@ -274,7 +400,7 @@ export default function Dashboard({ user }) {
       // Create CSV rows
       const csvRows = [
         headers.join(','), // Header row
-        ...requests.inactive.map(req => [
+        ...requestsToExport.map(req => [
           req.id,
           `"${req.service}"`,
           `"${req.userName}"`,
@@ -294,14 +420,16 @@ export default function Dashboard({ user }) {
       if (link.download !== undefined) {
         const url = URL.createObjectURL(blob);
         link.setAttribute('href', url);
-        link.setAttribute('download', `inactive_requests_${new Date().toISOString().split('T')[0]}.csv`);
+        const filterSuffix = serviceFilter === 'all' ? 'all' : serviceFilter.toLowerCase().replace(/\s+/g, '_');
+        const searchSuffix = searchQuery.trim() ? `_search_${searchQuery.trim().replace(/\s+/g, '_').substring(0, 20)}` : '';
+        link.setAttribute('download', `inactive_requests_${filterSuffix}${searchSuffix}_${new Date().toISOString().split('T')[0]}.csv`);
         link.style.visibility = 'hidden';
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
       }
 
-      alert(`Successfully exported ${requests.inactive.length} inactive requests to CSV.`);
+      alert(`Successfully exported ${requestsToExport.length} inactive requests to CSV.`);
     } catch (error) {
       console.error('Error exporting CSV:', error);
       alert('Failed to export CSV. Please try again.');
@@ -310,9 +438,11 @@ export default function Dashboard({ user }) {
     }
   };
 
-  // NEW: Delete all inactive requests
+  // NEW: Delete all filtered inactive requests
   const deleteAllInactiveRequests = async () => {
-    if (!requests.inactive || requests.inactive.length === 0) {
+    const requestsToDeleteList = searchResults.inactive;
+    
+    if (!requestsToDeleteList || requestsToDeleteList.length === 0) {
       alert('No inactive requests to delete.');
       return;
     }
@@ -322,7 +452,7 @@ export default function Dashboard({ user }) {
     try {
       // Group requests by table name for bulk deletion
       const requestsByTable = {};
-      requests.inactive.forEach(req => {
+      requestsToDeleteList.forEach(req => {
         if (!requestsByTable[req.tableName]) {
           requestsByTable[req.tableName] = [];
         }
@@ -675,57 +805,150 @@ export default function Dashboard({ user }) {
         {role === 'admin' && (
           <Card className="bg-charcoal-900 border-charcoal-800">
             <CardContent className="pt-6">
-              <div className="flex flex-wrap gap-2">
-                {!isEditing ? (
-                  <Button 
-                    onClick={() => setIsEditing(true)} 
-                    variant="outline"
-                    className="border-accent text-accent hover:bg-accent hover:text-black"
-                  >
-                    {t('dashboard.editMode')}
-                  </Button>
-                ) : (
-                  <>
-                    <Button 
-                      onClick={handleSaveChanges} 
-                      disabled={loading}
-                      className="bg-accent hover:bg-accent/90 text-black"
-                    >
-                      {t('dashboard.saveChanges')}
-                    </Button>
-                    <Button 
-                      onClick={cancelEditing} 
-                      variant="outline"
-                      className="border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white"
-                    >
-                      {t('dashboard.cancel')}
-                    </Button>
-                  </>
-                )}
-                
-                {/* NEW: Inactive Requests Management Buttons */}
-                <div className="flex gap-2 ml-auto">
+              <div className="flex flex-col gap-4">
+                {/* First Row: Edit Controls and Filters */}
+                <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+                  <div className="flex flex-wrap gap-2">
+                    {!isEditing ? (
+                      <Button 
+                        onClick={() => setIsEditing(true)} 
+                        variant="outline"
+                        className="border-accent text-accent hover:bg-accent hover:text-black"
+                      >
+                        {t('dashboard.editMode')}
+                      </Button>
+                    ) : (
+                      <>
+                        <Button 
+                          onClick={handleSaveChanges} 
+                          disabled={loading}
+                          className="bg-accent hover:bg-accent/90 text-black"
+                        >
+                          {t('dashboard.saveChanges')}
+                        </Button>
+                        <Button 
+                          onClick={cancelEditing} 
+                          variant="outline"
+                          className="border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white"
+                        >
+                          {t('dashboard.cancel')}
+                        </Button>
+                      </>
+                    )}
+                  </div>
+
+                  {/* NEW: Search and Filter Controls */}
+                  <div className="flex flex-col sm:flex-row gap-3">
+                    {/* Search Input */}
+                    <div className="relative">
+                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <Search className="h-4 w-4 text-gray-400" />
+                      </div>
+                      <input
+                        type="text"
+                        placeholder="Search requests..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        className="pl-10 pr-4 py-2 w-full sm:w-64 bg-charcoal-800 border border-charcoal-600 rounded-md text-white placeholder-gray-400 focus:ring-2 focus:ring-accent focus:border-transparent"
+                      />
+                      {searchQuery && (
+                        <button
+                          onClick={() => setSearchQuery('')}
+                          className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-white"
+                        >
+                          <X className="h-4 w-4" />
+                        </button>
+                      )}
+                    </div>
+
+                    {/* Service Type Filter */}
+                    <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-2">
+                        <Filter className="h-4 w-4 text-gray-400" />
+                        <span className="text-sm text-gray-300 whitespace-nowrap hidden sm:inline">Service:</span>
+                      </div>
+                      <Select value={serviceFilter} onValueChange={setServiceFilter}>
+                        <SelectTrigger className="w-[180px] bg-charcoal-800 border-charcoal-600 text-white">
+                          <SelectValue placeholder="All Services" />
+                        </SelectTrigger>
+                        <SelectContent className="bg-charcoal-800 border-charcoal-600">
+                          <SelectItem value="all" className="text-white hover:bg-charcoal-700">
+                            All ({requests.active?.length + requests.inactive?.length || 0})
+                          </SelectItem>
+                          {getUniqueServiceTypes().map((service) => {
+                            const count = getServiceTypeCounts()[service] || 0;
+                            return (
+                              <SelectItem key={service} value={service} className="text-white hover:bg-charcoal-700">
+                                {service} ({count})
+                              </SelectItem>
+                            );
+                          })}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Second Row: Bulk Actions */}
+                <div className="flex flex-wrap gap-2 justify-end">
                   <Button
                     onClick={exportInactiveRequestsToCSV}
-                    disabled={isExporting || !requests.inactive?.length}
+                    disabled={isExporting || !searchResults.inactive?.length}
                     variant="outline"
                     className="border-green-600 text-green-400 hover:bg-green-600 hover:text-white flex items-center gap-2"
                   >
                     <Download className="h-4 w-4" />
-                    {isExporting ? 'Exporting...' : `Export Inactive (${requests.inactive?.length || 0})`}
+                    {isExporting ? 'Exporting...' : `Export Results (${searchResults.inactive?.length || 0})`}
                   </Button>
                   
                   <Button
                     onClick={() => setShowDeleteConfirm(true)}
-                    disabled={isDeleting || !requests.inactive?.length}
+                    disabled={isDeleting || !searchResults.inactive?.length}
                     variant="outline"
                     className="border-red-600 text-red-400 hover:bg-red-600 hover:text-white flex items-center gap-2"
                   >
                     <Trash2 className="h-4 w-4" />
-                    {isDeleting ? 'Deleting...' : `Delete All Inactive (${requests.inactive?.length || 0})`}
+                    {isDeleting ? 'Deleting...' : `Delete Results (${searchResults.inactive?.length || 0})`}
                   </Button>
                 </div>
               </div>
+              
+              {/* Filter and Search Summary */}
+              {(serviceFilter !== 'all' || searchQuery.trim()) && (
+                <Alert className="mt-4 bg-blue-500/10 border-blue-500/30">
+                  <div className="flex items-start gap-2">
+                    <div className="flex items-center gap-1 mt-0.5">
+                      {serviceFilter !== 'all' && <Filter className="h-4 w-4" />}
+                      {searchQuery.trim() && <Search className="h-4 w-4" />}
+                    </div>
+                    <AlertDescription className="text-blue-400">
+                      <div className="space-y-1">
+                        {serviceFilter !== 'all' && (
+                          <div>Service filter: <strong>{serviceFilter}</strong></div>
+                        )}
+                        {searchQuery.trim() && (
+                          <div>Search: <strong>"{searchQuery.trim()}"</strong></div>
+                        )}
+                        <div className="text-sm">
+                          Results: {searchResults.active?.length || 0} active, {searchResults.inactive?.length || 0} inactive
+                          {(serviceFilter !== 'all' || searchQuery.trim()) && (
+                            <button
+                              onClick={() => {
+                                setServiceFilter('all');
+                                setSearchQuery('');
+                              }}
+                              className="ml-2 text-blue-300 hover:text-white underline"
+                            >
+                              Clear filters
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    </AlertDescription>
+                  </div>
+                </Alert>
+              )}
+              
               {isEditing && (
                 <Alert className="mt-4 bg-accent/10 border-accent/30">
                   <AlertDescription className="text-accent">
@@ -747,21 +970,55 @@ export default function Dashboard({ user }) {
               <div className="text-center py-8">
                 <p className="text-gray-300">{t('dashboard.loading')}</p>
               </div>
-            ) : (!requests || (requests.active?.length === 0 && requests.inactive?.length === 0)) ? (
+            ) : (!searchResults || (searchResults.active?.length === 0 && searchResults.inactive?.length === 0)) ? (
               <div className="text-center py-8">
-                <p className="text-gray-400">{t('dashboard.noRequests')}</p>
-                <Button 
-                  className="mt-4 bg-accent hover:bg-accent/90 text-black" 
-                  onClick={() => navigate('/property-form')}
-                >
-                  {t('dashboard.submitFirst')}
-                </Button>
+                {serviceFilter === 'all' && !searchQuery.trim() ? (
+                  <>
+                    <p className="text-gray-400">{t('dashboard.noRequests')}</p>
+                    <Button 
+                      className="mt-4 bg-accent hover:bg-accent/90 text-black" 
+                      onClick={() => navigate('/property-form')}
+                    >
+                      {t('dashboard.submitFirst')}
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <p className="text-gray-400">
+                      No requests found
+                      {serviceFilter !== 'all' && ` for service type: ${serviceFilter}`}
+                      {searchQuery.trim() && ` matching: "${searchQuery.trim()}"`}
+                    </p>
+                    <div className="flex gap-2 justify-center mt-4">
+                      <Button 
+                        className="bg-accent hover:bg-accent/90 text-black" 
+                        onClick={() => {
+                          setServiceFilter('all');
+                          setSearchQuery('');
+                        }}
+                      >
+                        Clear Filters
+                      </Button>
+                      <Button 
+                        variant="outline"
+                        className="border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white" 
+                        onClick={() => navigate('/property-form')}
+                      >
+                        Create New Request
+                      </Button>
+                    </div>
+                  </>
+                )}
               </div>
             ) : (
               <>
                 <RequestTableCard
-                  title={t("dashboard.activeRequests")}
-                  requests={requests.active}
+                  title={
+                    serviceFilter === 'all' && !searchQuery.trim() 
+                      ? t("dashboard.activeRequests") 
+                      : `Active Results${serviceFilter !== 'all' ? ` - ${serviceFilter}` : ''}${searchQuery.trim() ? ` - "${searchQuery.trim()}"` : ''}`
+                  }
+                  requests={searchResults.active}
                   role={role}
                   isEditing={isEditing}
                   requestsToDelete={requestsToDelete}
@@ -777,8 +1034,12 @@ export default function Dashboard({ user }) {
                 />
 
                 <RequestTableCard
-                  title={t("dashboard.inactiveRequests")}
-                  requests={requests.inactive}
+                  title={
+                    serviceFilter === 'all' && !searchQuery.trim() 
+                      ? t("dashboard.inactiveRequests") 
+                      : `Inactive Results${serviceFilter !== 'all' ? ` - ${serviceFilter}` : ''}${searchQuery.trim() ? ` - "${searchQuery.trim()}"` : ''}`
+                  }
+                  requests={searchResults.inactive}
                   role={role}
                   isEditing={isEditing}
                   requestsToDelete={requestsToDelete}
@@ -802,10 +1063,18 @@ export default function Dashboard({ user }) {
                   <h3 className="text-xl font-semibold text-white mb-4">Confirm Bulk Deletion</h3>
                   <div className="text-gray-300 mb-6">
                     <p className="mb-2">
-                      Are you sure you want to delete <strong className="text-red-400">{requests.inactive?.length || 0}</strong> inactive requests?
+                      Are you sure you want to delete <strong className="text-red-400">{searchResults.inactive?.length || 0}</strong> 
+                      {(serviceFilter !== 'all' || searchQuery.trim()) ? ' matching' : ''} inactive requests?
                     </p>
                     <p className="text-sm text-gray-400">
-                      This action cannot be undone. All inactive requests (completed, cancelled, archived) will be permanently removed from the database.
+                      This action cannot be undone. All matching inactive requests 
+                      (completed, cancelled, archived) will be permanently removed from the database.
+                      {serviceFilter !== 'all' && (
+                        <span className="block mt-1">Service filter: <strong>{serviceFilter}</strong></span>
+                      )}
+                      {searchQuery.trim() && (
+                        <span className="block mt-1">Search: <strong>"{searchQuery.trim()}"</strong></span>
+                      )}
                     </p>
                   </div>
                   <div className="flex gap-3 justify-end">
