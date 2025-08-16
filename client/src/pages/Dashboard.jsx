@@ -35,15 +35,15 @@ export default function Dashboard({ user }) {
   const [requestsToDelete, setRequestsToDelete] = useState(new Set());
   const [statusChanges, setStatusChanges] = useState({});
 
-  // For bulk operations on inactive requests
+  
   const [isExporting, setIsExporting] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
-  // NEW: Filter states
+ 
   const [serviceFilter, setServiceFilter] = useState('all');
   
-  // NEW: Search functionality
+  
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState({ active: [], inactive: [] });
 
@@ -55,10 +55,10 @@ export default function Dashboard({ user }) {
   const [isUserModalOpen, setIsUserModalOpen] = useState(false);
   const [currentInvoicePaypalLink, setCurrentInvoicePaypalLink] = useState(null);
   
-  // NEW: Flutterwave integration states
+  
   const [currentInvoiceData, setCurrentInvoiceData] = useState(null);
 
-  // Add Flutterwave script to head
+  
   useEffect(() => {
     const script = document.createElement('script');
     script.src = 'https://checkout.flutterwave.com/v3.js';
@@ -66,32 +66,32 @@ export default function Dashboard({ user }) {
     document.head.appendChild(script);
     
     return () => {
-      // Clean up script when component unmounts
+      
       try {
         document.head.removeChild(script);
       } catch (error) {
-        // Script might already be removed
+        
       }
     };
   }, []);
 
-  // NEW: Filter requests based on service type and search query
+  
   useEffect(() => {
     let activeRequests = requests.active || [];
     let inactiveRequests = requests.inactive || [];
     
-    // First apply service filter
+    
     if (serviceFilter !== 'all') {
       activeRequests = activeRequests.filter(req => req.service === serviceFilter);
       inactiveRequests = inactiveRequests.filter(req => req.service === serviceFilter);
     }
     
-    // Then apply search filter
+    
     if (searchQuery.trim()) {
       const searchTerm = searchQuery.toLowerCase().trim();
       
       const searchInRequest = (req) => {
-        // Search in basic fields
+      
         const searchableFields = [
           req.userName,
           req.service,
@@ -99,7 +99,7 @@ export default function Dashboard({ user }) {
           req.id?.toString(),
           req.paymentStatus,
           req.amount_owed?.toString(),
-          // Search in user profile data
+       
           req.userProfile?.email,
           req.userProfile?.phone_number,
           req.userProfile?.country_residence,
@@ -107,12 +107,12 @@ export default function Dashboard({ user }) {
           req.userProfile?.emergency_contact_member1,
           req.userProfile?.emergency_contact1,
           req.userProfile?.communication_reference,
-          // Search in dates
+          
           new Date(req.inserted_at).toLocaleDateString(),
           req.paidAt ? new Date(req.paidAt).toLocaleDateString() : null,
         ];
         
-        // Add form-specific fields based on service type
+        
         if (req.service === t('dashboard.tables.travel')) {
           searchableFields.push(
             req.destination,
@@ -154,7 +154,7 @@ export default function Dashboard({ user }) {
           );
         }
         
-        // Check if any field contains the search term
+       
         return searchableFields.some(field => 
           field && field.toString().toLowerCase().includes(searchTerm)
         );
@@ -230,7 +230,7 @@ export default function Dashboard({ user }) {
 
     setLoading(true);
 
-    // First, get all service requests from the service tables
+    
     const tables = [
       { name: 'travel_forms', service: t('dashboard.tables.travel') },
       { name: 'business_setup_forms', service: t('dashboard.tables.business') },
@@ -264,10 +264,10 @@ export default function Dashboard({ user }) {
       }
     }
 
-    // Collect unique user_ids from allRequests
+    
     const uniqueUserIds = [...new Set(allRequests.map((r) => r.user_id))];
 
-    // Fetch profiles for these user ids with all fields
+    
     const { data: profiles, error: profilesError } = await supabase
       .from('profiles')
       .select(`
@@ -287,7 +287,7 @@ export default function Dashboard({ user }) {
       console.error('Error fetching profiles:', profilesError.message);
     }
 
-    // Map user_id to user name
+    
     const userIdToName = {};
     const userIdToProfile = {};
     profiles?.forEach((p) => {
@@ -295,15 +295,14 @@ export default function Dashboard({ user }) {
       userIdToProfile[p.id] = p;
     });
 
-    // Add userName field to each request
+   
     allRequests = allRequests.map((req) => ({
       ...req,
       userName: userIdToName[req.user_id] || t('fallback.unknown'),
       userProfile: userIdToProfile[req.user_id] || null
     }));
 
-    // Now fetch invoices and match them to requests using service_uuid
-    // UPDATED: Now also fetch flutterwave_enabled, payment_status, etc.
+  
     const { data: invoicesData, error: invoicesError } = await supabase
       .from('invoices')
       .select('id, user_id, service_type, service_uuid, invoice_url, paypal_link, flutterwave_enabled, amount_owed, payment_status, flutterwave_tx_ref, paid_at');
@@ -343,7 +342,7 @@ export default function Dashboard({ user }) {
 
     allRequests.sort((a, b) => new Date(b.inserted_at) - new Date(a.inserted_at));
 
-    //splitting active/inactive
+   
     const inactiveStatuses = ['status.completed', 'status.cancelled', 'status.archived'];
     const activeRequests = allRequests.filter(req => !inactiveStatuses.includes(req.status));
     const inactiveRequests = allRequests.filter(req => inactiveStatuses.includes(req.status));
@@ -351,14 +350,14 @@ export default function Dashboard({ user }) {
     setLoading(false);
   };
 
-  // NEW: Get unique service types for filter dropdown
+  
   const getUniqueServiceTypes = () => {
     const allRequestsList = [...requests.active, ...requests.inactive];
     const uniqueServices = [...new Set(allRequestsList.map(req => req.service))];
-    return uniqueServices.filter(Boolean); // Remove any undefined/null values
+    return uniqueServices.filter(Boolean); 
   };
 
-  // NEW: Get counts for each service type
+
   const getServiceTypeCounts = () => {
     const allRequestsList = [...requests.active, ...requests.inactive];
     const counts = {};
@@ -372,7 +371,7 @@ export default function Dashboard({ user }) {
     return counts;
   };
 
-  // NEW: Export inactive requests to CSV
+  
   const exportInactiveRequestsToCSV = () => {
     const requestsToExport = searchResults.inactive;
     
@@ -384,7 +383,7 @@ export default function Dashboard({ user }) {
     setIsExporting(true);
 
     try {
-      // Define CSV headers
+      
       const headers = [
         'ID',
         'Service Type',
@@ -394,12 +393,12 @@ export default function Dashboard({ user }) {
         'Payment Status',
         'Amount Owed',
         'Paid Date',
-        // Add more fields as needed based on your data structure
+        
       ];
 
-      // Create CSV rows
+    
       const csvRows = [
-        headers.join(','), // Header row
+        headers.join(','),
         ...requestsToExport.map(req => [
           req.id,
           `"${req.service}"`,
@@ -412,7 +411,7 @@ export default function Dashboard({ user }) {
         ].join(','))
       ];
 
-      // Create and download CSV file
+      
       const csvContent = csvRows.join('\n');
       const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
       const link = document.createElement('a');
@@ -438,7 +437,7 @@ export default function Dashboard({ user }) {
     }
   };
 
-  // NEW: Delete all filtered inactive requests
+  
   const deleteAllInactiveRequests = async () => {
     const requestsToDeleteList = searchResults.inactive;
     
@@ -450,7 +449,7 @@ export default function Dashboard({ user }) {
     setIsDeleting(true);
 
     try {
-      // Group requests by table name for bulk deletion
+      
       const requestsByTable = {};
       requestsToDeleteList.forEach(req => {
         if (!requestsByTable[req.tableName]) {
@@ -462,7 +461,7 @@ export default function Dashboard({ user }) {
       let totalDeleted = 0;
       let errors = [];
 
-      // Delete from each table
+      
       for (const [tableName, ids] of Object.entries(requestsByTable)) {
         const { error } = await supabase
           .from(tableName)
@@ -483,7 +482,7 @@ export default function Dashboard({ user }) {
         alert(`Successfully deleted all ${totalDeleted} inactive requests.`);
       }
 
-      // Refresh the dashboard
+     
       await fetchRequests(userData, role);
       setShowDeleteConfirm(false);
     } catch (error) {
@@ -494,7 +493,7 @@ export default function Dashboard({ user }) {
     }
   };
 
-  // NEW: Flutterwave payment handler
+  
   const handleFlutterwavePayment = (invoiceData) => {
     if (!window.FlutterwaveCheckout) {
       alert('Flutterwave is loading, please try again in a moment.');
@@ -502,10 +501,10 @@ export default function Dashboard({ user }) {
     }
 
     window.FlutterwaveCheckout({
-      public_key: "994735bb-3bda-47ea-9a7c-3f4fb89a726e", // Replace with your actual public key
+      public_key: "994735bb-3bda-47ea-9a7c-3f4fb89a726e", 
       tx_ref: `invoice_${invoiceData.invoiceId}_${Date.now()}`,
       amount: invoiceData.amount_owed,
-      currency: "USD", // or "NGN" for Naira
+      currency: "USD", 
       customer: {
         email: user.email,
         name: name,
@@ -518,11 +517,11 @@ export default function Dashboard({ user }) {
       customizations: {
         title: "Invoice Payment",
         description: `Payment for ${invoiceData.service}`,
-        logo: "", // Optional: Add your logo URL
+        logo: "", 
       },
       callback: function (data) {
         console.log("Payment successful:", data);
-        // Handle successful payment
+        
         handlePaymentSuccess(data, invoiceData);
       },
       onclose: function () {
@@ -531,10 +530,10 @@ export default function Dashboard({ user }) {
     });
   };
 
-  // NEW: Handle payment success
+ 
   const handlePaymentSuccess = async (paymentData, invoiceData) => {
     try {
-      // Update invoice status in database
+      
       const { error } = await supabase
         .from('invoices')
         .update({ 
@@ -550,17 +549,16 @@ export default function Dashboard({ user }) {
         return;
       }
 
-      // Update the service request status to completed
+      
       const serviceTable = getServiceTableName(invoiceData.service);
       await supabase
         .from(serviceTable)
         .update({ status: 'status.completed' })
         .eq('id', invoiceData.id);
 
-      // Refresh the dashboard
       await fetchRequests(userData, role);
       
-      // Close the invoice modal
+      
       setInvoiceUrl(null);
       setCurrentInvoicePaypalLink(null);
       setCurrentInvoiceData(null);
@@ -572,7 +570,7 @@ export default function Dashboard({ user }) {
     }
   };
 
-  // Helper function to get service table name
+  
   const getServiceTableName = (serviceType) => {
     const serviceMap = {
       [t('dashboard.tables.travel')]: 'travel_forms',
@@ -598,7 +596,7 @@ export default function Dashboard({ user }) {
   const handleSaveChanges = async () => {
     setLoading(true);
     const allRequests = [...requests.active, ...requests.inactive];
-    // Delete marked requests
+   
     for (const id of requestsToDelete) {
       const req = [...requests.active, ...requests.inactive].find((r) => r.id === id);
       if (!req) continue;
@@ -625,7 +623,7 @@ export default function Dashboard({ user }) {
         continue;
       } 
 
-      // Send email for "Awaiting Payment"
+      // Send email
       if (newStatus === 'status.awaitingPayment') {
         const { data: profile, error: profileError } = await supabase
           .from('profiles')
@@ -662,10 +660,10 @@ export default function Dashboard({ user }) {
       }
     }
 
-    // Refresh the requests from DB
+   
     await fetchRequests(userData, role);
 
-    // Reset editing state
+   
     setIsEditing(false);
     setRequestsToDelete(new Set());
     setStatusChanges({});
@@ -683,7 +681,7 @@ export default function Dashboard({ user }) {
   };
 
   const openUserModal = async (userId) => {
-    // Try to get profile from already fetched data first
+    
     const allRequestsList = [...requests.active, ...requests.inactive];
     const existingProfile = allRequestsList.find(r => r.user_id === userId)?.userProfile;
     
@@ -693,7 +691,6 @@ export default function Dashboard({ user }) {
       return;
     }
 
-    // Fallback to fetch from database
     const { data: profile, error } = await supabase
       .from('profiles')
       .select(`
@@ -718,7 +715,6 @@ export default function Dashboard({ user }) {
     setIsUserModalOpen(true);
   };
 
-  // UPDATED: New function signature to include invoice data for Flutterwave
   const openInvoiceModal = (invoiceUrl, paypalLink, invoiceData) => {
     setInvoiceUrl(invoiceUrl);
     setCurrentInvoicePaypalLink(paypalLink);
@@ -728,7 +724,6 @@ export default function Dashboard({ user }) {
   return (
     <div className="min-h-screen bg-charcoal-950 py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto space-y-6">
-        {/* Header Card */}
         <Card className="bg-charcoal-900 border-charcoal-800">
           <CardHeader>
             <CardTitle className="text-2xl text-white">{t('dashboard.title')}</CardTitle>
@@ -736,7 +731,6 @@ export default function Dashboard({ user }) {
           <CardContent className="space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-6">
               <div className="space-y-4">
-                {/* Basic Info */}
                 <div>
                   <p className="text-sm text-gray-300">
                     <strong>{t('dashboard.loggedInAs')}</strong> {name || user?.email}
@@ -746,9 +740,7 @@ export default function Dashboard({ user }) {
                   </p>
                 </div>
 
-                {/* Extended Profile Info */}
                 <div className="space-y-4">
-                  {/* Basic Contact Information */}
                   {(profileData.phone_number || profileData.country_residence || profileData.language || profileData.communication_reference) && (
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2 border-t border-charcoal-700">
                       {profileData.phone_number && (
@@ -778,7 +770,6 @@ export default function Dashboard({ user }) {
                     </div>
                   )}
 
-                  {/* Emergency Contact Information */}
                   {(profileData.emergency_contact_member1 || profileData.emergency_contact1) && (
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2 border-t border-charcoal-700">
                       {profileData.emergency_contact_member1 && (
@@ -806,7 +797,6 @@ export default function Dashboard({ user }) {
           <Card className="bg-charcoal-900 border-charcoal-800">
             <CardContent className="pt-6">
               <div className="flex flex-col gap-4">
-                {/* First Row: Edit Controls and Filters */}
                 <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
                   <div className="flex flex-wrap gap-2">
                     {!isEditing ? (
@@ -837,9 +827,7 @@ export default function Dashboard({ user }) {
                     )}
                   </div>
 
-                  {/* NEW: Search and Filter Controls */}
                   <div className="flex flex-col sm:flex-row gap-3">
-                    {/* Search Input */}
                     <div className="relative">
                       <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                         <Search className="h-4 w-4 text-gray-400" />
@@ -861,7 +849,6 @@ export default function Dashboard({ user }) {
                       )}
                     </div>
 
-                    {/* Service Type Filter */}
                     <div className="flex items-center gap-2">
                       <div className="flex items-center gap-2">
                         <Filter className="h-4 w-4 text-gray-400" />
@@ -889,7 +876,6 @@ export default function Dashboard({ user }) {
                   </div>
                 </div>
 
-                {/* Second Row: Bulk Actions */}
                 <div className="flex flex-wrap gap-2 justify-end">
                   <Button
                     onClick={exportInactiveRequestsToCSV}
@@ -913,7 +899,6 @@ export default function Dashboard({ user }) {
                 </div>
               </div>
               
-              {/* Filter and Search Summary */}
               {(serviceFilter !== 'all' || searchQuery.trim()) && (
                 <Alert className="mt-4 bg-blue-500/10 border-blue-500/30">
                   <div className="flex items-start gap-2">
@@ -1056,7 +1041,6 @@ export default function Dashboard({ user }) {
               </>
             )}
 
-            {/* NEW: Delete Confirmation Modal */}
             {showDeleteConfirm && (
               <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
                 <div className="bg-charcoal-900 border border-charcoal-700 p-6 rounded-lg max-w-md w-full mx-4">
@@ -1098,13 +1082,11 @@ export default function Dashboard({ user }) {
               </div>
             )}
 
-            {/* ENHANCED Invoice Modal with Full Flutterwave Integration */}
             {invoiceUrl && (
               <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
                 <div className="bg-charcoal-900 border border-charcoal-700 p-4 rounded-lg max-w-4xl w-full relative mx-4">
                   <div className="flex justify-between items-center mb-4">
                     <div className="flex gap-2">
-                      {/* PayPal Payment Button */}
                       {currentInvoicePaypalLink && (
                         <Button
                           variant="outline"
@@ -1116,7 +1098,6 @@ export default function Dashboard({ user }) {
                         </Button>
                       )}
                       
-                      {/* Flutterwave Payment Button - In-site popup */}
                       {currentInvoiceData?.flutterwaveEnabled && currentInvoiceData?.amount_owed && (
                         <Button
                           variant="outline"
@@ -1128,7 +1109,6 @@ export default function Dashboard({ user }) {
                         </Button>
                       )}
 
-                      {/* Show payment status if already paid */}
                       {currentInvoiceData?.paymentStatus === 'paid' && (
                         <div className="flex items-center gap-2 text-green-400">
                           <CheckCircle className="h-4 w-4" />
@@ -1141,7 +1121,6 @@ export default function Dashboard({ user }) {
                         </div>
                       )}
 
-                      {/* Show message if no payment options available */}
                       {!currentInvoicePaypalLink && !currentInvoiceData?.flutterwaveEnabled && currentInvoiceData?.paymentStatus !== 'paid' && (
                         <div className="text-yellow-400 text-sm flex items-center gap-2">
                           <AlertCircle className="h-4 w-4" />
@@ -1162,7 +1141,6 @@ export default function Dashboard({ user }) {
                     </button>
                   </div>
                   
-                  {/* Payment Methods Info */}
                   {(currentInvoicePaypalLink || currentInvoiceData?.flutterwaveEnabled) && currentInvoiceData?.paymentStatus !== 'paid' && (
                     <div className="mb-4 p-3 bg-charcoal-800 rounded-lg">
                       <h3 className="text-white font-medium mb-2">Available Payment Methods:</h3>
@@ -1186,7 +1164,6 @@ export default function Dashboard({ user }) {
                     </div>
                   )}
 
-                  {/* Payment Status Info */}
                   {currentInvoiceData?.paymentStatus === 'paid' && (
                     <div className="mb-4 p-3 bg-green-900/20 border border-green-500/30 rounded-lg">
                       <div className="flex items-center gap-2 text-green-400">
@@ -1220,7 +1197,6 @@ export default function Dashboard({ user }) {
               </div>
             )}
 
-            {/* User Contact Modal */}
             {isUserModalOpen && selectedUserProfile && (
               <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
                 <div className="bg-charcoal-900 border border-charcoal-800 p-6 rounded-lg shadow-lg max-w-lg w-full relative">

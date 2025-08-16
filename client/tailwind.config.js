@@ -31,7 +31,7 @@ export default {
         'bold': '700',
       },
       colors: {
-        // Dark theme inspired by the images
+        // Dark theme 
         charcoal: {
           50: '#f6f7f8',
           100: '#e1e4e7',
@@ -43,13 +43,13 @@ export default {
           700: '#3d434e',
           800: '#363a42',
           900: '#1a1a1a', // Main dark background
-          950: '#0f0f0f', // Deeper black
+          950: '#0f0f0f', 
         },
         
-        // Orange accent color from the images
+        // Orange accent 
         
         accent: {
-          DEFAULT: '#ff8c00', // Orange accent
+          DEFAULT: '#ff8c00', 
           50: '#fff7ed',
           100: '#ffeed4',
           200: '#ffd9a8',
@@ -62,37 +62,37 @@ export default {
           900: '#7c2f0b',
         },
 
-        // Override default colors for dark theme
-        background: '#0f0f0f', // Deep black
-        foreground: '#ffffff', // White text
+        
+        background: '#0f0f0f', 
+        foreground: '#ffffff', 
         
         primary: {
-          DEFAULT: '#ff8c00', // Orange
-          foreground: '#0f0f0f', // Black text on orange
+          DEFAULT: '#ff8c00', 
+          foreground: '#0f0f0f', 
         },
         
         secondary: {
-          DEFAULT: '#1a1a1a', // Dark charcoal
-          foreground: '#ffffff', // White text
+          DEFAULT: '#1a1a1a', 
+          foreground: '#ffffff', 
         },
         
         muted: {
-          DEFAULT: '#2a2a2a', // Lighter dark
-          foreground: '#a1a1aa', // Light gray text
+          DEFAULT: '#2a2a2a', 
+          foreground: '#a1a1aa', 
         },
         
         border: '#2a2a2a', // Dark border
-        input: '#1a1a1a', // Dark input background
-        ring: '#ff8c00', // Orange focus ring
+        input: '#1a1a1a', 
+        ring: '#ff8c00', 
         
         card: {
-          DEFAULT: '#1a1a1a', // Dark card background
-          foreground: '#ffffff', // White text on cards
+          DEFAULT: '#1a1a1a', 
+          foreground: '#ffffff', 
         },
         
         popover: {
-          DEFAULT: '#1a1a1a', // Dark popover
-          foreground: '#ffffff', // White text
+          DEFAULT: '#1a1a1a', 
+          foreground: '#ffffff', 
         },
       },
       
@@ -106,10 +106,10 @@ export default {
         'slide-up': 'slideUp 0.5s ease-out',
         'glow': 'glow 2s ease-in-out infinite alternate',
         'glow-pulse': 'glowPulse 5s ease-in-out infinite',
-        // Hexagon animations
+       
         "float": "float 6s ease-in-out infinite",
         "rotate-slow": "rotate-slow 20s linear infinite",
-        // Digital rain animation
+        // Digital rain 
         "fall": "fall 8s linear infinite",
         "fall-slow": "fall 10s linear infinite",
         "fall-fast": "fall 6s linear infinite",
@@ -154,7 +154,7 @@ export default {
           from: { height: "var(--radix-accordion-content-height)" },
           to: { height: "0" },
         },
-        // Hexagon animations
+        
         "float": {
           "0%, 100%": { transform: "translateY(0px)" },
           "50%": { transform: "translateY(-10px)" },
@@ -163,7 +163,7 @@ export default {
           "0%": { transform: "rotate(0deg)" },
           "100%": { transform: "rotate(360deg)" },
         },
-        // Digital rain keyframe (FIXED - was nested incorrectly)
+        // Digital rain 
         fall: {
           '0%': { 
             transform: 'translateY(-100px)', 

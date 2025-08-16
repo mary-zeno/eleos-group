@@ -82,7 +82,7 @@ export default function EditProfile({ user }) {
         }
       }
 
-      // Update profile information in profiles table
+      
       const profileUpdates = {
         name: name.trim(),
         phone_number: phoneNumber.trim() || null,
@@ -105,7 +105,7 @@ export default function EditProfile({ user }) {
       }
 
       setStatus(t('editProfile.status.profileUpdateSuccess'));
-      setPassword(''); // Clear password field after successful update
+      setPassword(''); 
     } catch (error) {
       setStatus(t('editProfile.status.unexpectedError') + error.message)
     }
@@ -118,7 +118,7 @@ export default function EditProfile({ user }) {
   return (
     <div className="min-h-screen bg-charcoal-950 p-4">
       <div className="max-w-2xl mx-auto space-y-6">
-        {/* Header */}
+     
         <div className="flex items-center gap-4">
           <Button
             variant="ghost"
@@ -131,7 +131,6 @@ export default function EditProfile({ user }) {
           </Button>
         </div>
 
-        {/* Profile Card */}
         <Card className="bg-charcoal-900 border-charcoal-800">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-white">
@@ -141,11 +140,9 @@ export default function EditProfile({ user }) {
           </CardHeader>
           <CardContent className="space-y-6">
 
-            {/* Basic Information Section */}
             <div className="space-y-4">
               <h3 className="text-lg font-medium text-white">{t('editProfile.sections.basicInfo')}</h3>
 
-              {/* Email Field */}
               <div className="space-y-2">
                 <Label htmlFor="email" className="flex items-center gap-2 text-gray-300">
                   <Mail className="h-4 w-4" />
@@ -165,7 +162,6 @@ export default function EditProfile({ user }) {
                 </p>
               </div>
 
-              {/* Name Field */}
               <div className="space-y-2">
                 <Label htmlFor="name" className="flex items-center gap-2 text-gray-300">
                   <User className="h-4 w-4" />
@@ -182,7 +178,6 @@ export default function EditProfile({ user }) {
                 />
               </div>
 
-              {/* Password Field */}
               <div className="space-y-2">
                 <Label htmlFor="password" className="flex items-center gap-2 text-gray-300">
                   <Lock className="h-4 w-4" />
@@ -205,11 +200,9 @@ export default function EditProfile({ user }) {
 
             <Separator className="bg-charcoal-700" />
 
-            {/* Contact Information Section */}
             <div className="space-y-4">
               <h3 className="text-lg font-medium text-white">{t('editProfile.sections.contactInfo')}</h3>
 
-              {/* Phone Number */}
               <div className="space-y-2">
                 <Label htmlFor="phoneNumber" className="flex items-center gap-2 text-gray-300">
                   <Phone className="h-4 w-4" />
@@ -226,7 +219,6 @@ export default function EditProfile({ user }) {
                 />
               </div>
 
-              {/* Country of Residence */}
               <div className="space-y-2">
                 <Label htmlFor="countryResidence" className="flex items-center gap-2 text-gray-300">
                   <Globe className="h-4 w-4" />
@@ -243,7 +235,6 @@ export default function EditProfile({ user }) {
                 />
               </div>
 
-              {/* Language */}
               <div className="space-y-2">
                 <Label htmlFor="language" className="flex items-center gap-2 text-gray-300">
                   <MessageSquare className="h-4 w-4" />
@@ -260,7 +251,6 @@ export default function EditProfile({ user }) {
                 />
               </div>
 
-              {/* Communication Preference */}
               <div className="space-y-2">
                 <Label htmlFor="communicationPreference" className="flex items-center gap-2 text-gray-300">
                   <Mail className="h-4 w-4" />
@@ -281,11 +271,9 @@ export default function EditProfile({ user }) {
 
             <Separator className="bg-charcoal-700" />
 
-            {/* Emergency Contact Section */}
             <div className="space-y-4">
               <h3 className="text-lg font-medium text-white">{t('editProfile.sections.emergencyContact')}</h3>
 
-              {/* Emergency Contact Name */}
               <div className="space-y-2">
                 <Label htmlFor="emergencyContactMember1" className="flex items-center gap-2 text-gray-300">
                   <UserCheck className="h-4 w-4" />
@@ -302,7 +290,6 @@ export default function EditProfile({ user }) {
                 />
               </div>
 
-              {/* Emergency Contact Phone */}
               <div className="space-y-2">
                 <Label htmlFor="emergencyContact1" className="flex items-center gap-2 text-gray-300">
                   <Phone className="h-4 w-4" />
@@ -320,7 +307,6 @@ export default function EditProfile({ user }) {
               </div>
             </div>
 
-            {/* Status Message */}
             {status && (
               <Alert className={
                 status.includes('successfully')
@@ -342,7 +328,6 @@ export default function EditProfile({ user }) {
               </Alert>
             )}
 
-            {/* Action Buttons */}
             <div className="flex gap-3 pt-4">
               <Button
                 onClick={handleUpdate}
@@ -361,7 +346,6 @@ export default function EditProfile({ user }) {
               </Button>
             </div>
 
-            {/* User Info Display */}
             <div className="pt-4 border-t border-charcoal-700">
               <h3 className="text-sm font-medium text-white mb-2">{t('editProfile.currentInfo')}</h3>
               <div className="text-sm text-gray-400 space-y-1">

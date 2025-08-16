@@ -55,7 +55,6 @@ function LanguageToggle() {
         </div>
       )}
       
-      {/* Backdrop to close dropdown when clicking outside */}
       {isOpen && (
         <div 
           className="fixed inset-0 z-40" 

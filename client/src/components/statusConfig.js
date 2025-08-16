@@ -1,4 +1,4 @@
-// Request status keys & colors
+
 export const STATUS_KEYS = [
   'status.submitted',
   'status.inReview',

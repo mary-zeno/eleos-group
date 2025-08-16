@@ -23,7 +23,7 @@ import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { Resend } from "npm:resend";
 
-// Get API key from .env -- temporary, change to set secret on supabase
+// api key
 const resend = new Resend(Deno.env.get("RESEND_API_KEY")!);
 
 Deno.serve(async (req) => {
@@ -38,7 +38,7 @@ Deno.serve(async (req) => {
       },
     });
   }
-  // Ensure only POST requests are processed
+  //  only POST requests 
   if (req.method !== 'POST') {
     return new Response(JSON.stringify({ error: 'Method not allowed' }), {
       status: 405,

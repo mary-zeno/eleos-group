@@ -60,7 +60,7 @@ export default function Navigation({ user }) {
     <header className="bg-gradient-to-r from-charcoal-900 via-black to-charcoal-900 border-b border-gray-800 sticky top-0 z-50 shadow-lg backdrop-blur-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
-          {/* Logo */}
+          {/* logo */}
           <div className="flex items-center">
             <Button
               variant="ghost"
@@ -72,7 +72,7 @@ export default function Navigation({ user }) {
             </Button>
           </div>
           
-          {/* Desktop Navigation */}
+          {/* Navigation */}
           {user && (
             <nav className="hidden md:flex items-center space-x-4">
               {navItems.map((item) => (
@@ -91,13 +91,12 @@ export default function Navigation({ user }) {
             </nav>
           )}
           
-          {/* Right side */}
+          
           <div className="flex items-center gap-4">
             <div className="hidden md:block">
               <LanguageToggle />
             </div>
             {user ? (
-              /* Desktop User Dropdown */
               <div className="hidden md:block">
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
@@ -146,7 +145,6 @@ export default function Navigation({ user }) {
               </div>
             )}
 
-            {/* Mobile Menu */}
             <div className="md:hidden">
               <Sheet open={isOpen} onOpenChange={setIsOpen}>
                 <SheetTrigger asChild>
