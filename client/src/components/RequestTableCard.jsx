@@ -19,7 +19,7 @@ export default function RequestTableCard({
   expandedIdx,
   openUserModal,
   setInvoiceUrl,
-  openInvoiceModal, // Added this prop
+  openInvoiceModal, 
   setCurrentInvoicePaypalLink,
   navigate,
   isInactiveTable = false,
@@ -110,7 +110,7 @@ export default function RequestTableCard({
                           <Badge className={getStatusColor(currentStatus)}>{t(currentStatus)}</Badge>
                         )}
                       </TableCell>
-                      {/* ADMIN PAYMENT FORMS */}
+                      {/* admin payment */}
                       <TableCell className="py-2 px-4">
                         {req.invoiceUrl ? (
                           <div className="flex gap-2 flex-wrap">
@@ -119,12 +119,12 @@ export default function RequestTableCard({
                               className="text-xs border-accent/50 text-accent hover:bg-accent hover:text-black"
                               onClick={() => {
                                 if (role === 'admin' && isEditing) {
-                                  // Navigate to edit invoice page
+                                  // edit invoice page
                                   navigate('/admin/payment', { 
                                     state: { 
                                       request: req,
                                       invoice: {
-                                        id: req.invoiceId, // Use the actual invoice ID
+                                        id: req.invoiceId, 
                                         amount_owed: req.amount_owed,
                                         paypal_link: req.paypalLink,
                                         invoice_url: req.invoiceUrl
@@ -132,7 +132,7 @@ export default function RequestTableCard({
                                     } 
                                   });
                                 } else {
-                                  // View invoice in modal using the updated function
+                                  // View invoice in modal 
                                   openInvoiceModal(
                                     req.invoiceUrl, 
                                     req.paypalLink, 
@@ -155,7 +155,7 @@ export default function RequestTableCard({
                                req.paymentStatus === 'paid' ? 'View Paid Invoice' : t('dashboard.viewInvoice')}
                             </Button>
                             
-                            {/* Show payment status badge */}
+                            
                             {req.paymentStatus === 'paid' && (
                               <Badge variant="outline" className="border-green-500/50 text-green-400 text-xs">
                                 Paid
@@ -174,20 +174,20 @@ export default function RequestTableCard({
                           )
                         )}
                       </TableCell>
-                      {/* END ADMIN PAYMENT FORMS */}
+                      
                       <TableCell>
                         <Button
                           variant="ghost"
                           size="sm"
                           className="text-2xl text-gray-400 hover:text-white hover:bg-charcoal-800"
-                          onClick={() => toggleDetails(req.id)} //changed from idx
+                          onClick={() => toggleDetails(req.id)}
                         >
-                          {/* changed from idx */}
+                          
                           {expandedIdx === req.id ? '▴' : '▾'} 
                         </Button>
                       </TableCell>
                     </TableRow>
-                          {/* changed from idx */}
+                
                     {expandedIdx === req.id && (
                       <TableRow className="bg-charcoal-800/50 border-charcoal-700">
                         <TableCell colSpan={role === 'admin' && isEditing ? 7 : 6}>

@@ -10,7 +10,7 @@ import EditProfile from "./pages/EditProfile";
 import TravelForm from "./pages/TravelForm";
 import BusinessForm from "./pages/BusinessForm";
 import AdminPayment from './pages/AdminPayment';
-import SettingsPage from './pages/SettingsPage'; // ✅ Add this import
+import SettingsPage from './pages/SettingsPage'; 
 
 function App() {
   const [user, setUser] = useState(null);
@@ -108,7 +108,7 @@ function App() {
               element={<EditProfile user={user} />}
             />
             <Route
-              path="/settings" // ✅ New Settings route
+              path="/settings" 
               element={
                 <Layout user={user}>
                   <SettingsPage user={user} />

@@ -66,7 +66,7 @@ export default function BusinessSetupForm({ user }) {
       user_id: user.id,
     };
 
-    // Insert into business_setup_forms table first
+    
     const { data: businessFormData, error: businessFormError } = await supabase
       .from('business_setup_forms')
       .insert([insertData])
@@ -79,7 +79,7 @@ export default function BusinessSetupForm({ user }) {
       return;
     }
 
-    // Insert into requests table with the generated business_setup_forms id
+    
     const requestData = {
       user_id: user.id,
       service_type: 'Business',
@@ -130,7 +130,7 @@ export default function BusinessSetupForm({ user }) {
               <CardContent>
                 <form onSubmit={handleSubmit} className="space-y-6">
 
-                  {/* Business Type */}
+                  
                   <div className="space-y-2">
                     <Label className="text-gray-300">{t('businessForm.typeLabel')}</Label>
                     <Select value={formData.business_type} onValueChange={(value) => handleChange('business_type', value)}>
@@ -146,7 +146,6 @@ export default function BusinessSetupForm({ user }) {
                     </Select>
                   </div>
 
-                  {/* Sector */}
                   <div className="space-y-2">
                     <Label className="text-gray-300">{t('businessForm.sectorLabel')}</Label>
                     <Input
@@ -158,7 +157,7 @@ export default function BusinessSetupForm({ user }) {
                     />
                   </div>
 
-                  {/* Legal Status */}
+                  
                   <div className="space-y-2">
                     <Label className="text-gray-300">{t('businessForm.legalStatusLabel')}</Label>
                     <Select value={formData.legal_status} onValueChange={(value) => handleChange('legal_status', value)}>
@@ -172,7 +171,7 @@ export default function BusinessSetupForm({ user }) {
                     </Select>
                   </div>
 
-                  {/* Investment Amount */}
+                  
                   <div className="space-y-2">
                     <Label className="flex items-center gap-2 text-gray-300">
                       <DollarSign className="h-4 w-4" />
@@ -187,7 +186,7 @@ export default function BusinessSetupForm({ user }) {
                     />
                   </div>
 
-                  {/* Location */}
+                  
                   <div className="space-y-2">
                     <Label className="flex items-center gap-2 text-gray-300">
                       <MapPin className="h-4 w-4" />
@@ -202,7 +201,7 @@ export default function BusinessSetupForm({ user }) {
                     />
                   </div>
 
-                  {/* Timeline */}
+                  
                   <div className="space-y-2">
                     <Label className="text-gray-300">{t('businessForm.timelineLabel')}</Label>
                     <Select value={formData.timeline} onValueChange={(value) => handleChange('timeline', value)}>
@@ -216,7 +215,7 @@ export default function BusinessSetupForm({ user }) {
                     </Select>
                   </div>
 
-                  {/* Checkboxes */}
+                  
                   <div className="space-y-4">
                     <Label className="text-base font-medium text-gray-300">{t('businessForm.additionalRequirementsLabel')}</Label>
 
@@ -246,7 +245,7 @@ export default function BusinessSetupForm({ user }) {
                     </div>
                   </div>
 
-                  {/* Support Needed */}
+                  
                   <div className="space-y-4">
                     <Label className="text-base font-medium text-gray-300">{t('businessForm.supportLabel')}</Label>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -264,7 +263,7 @@ export default function BusinessSetupForm({ user }) {
                     </div>
                   </div>
 
-                  {/* Additional Notes */}
+                  
                   <div className="space-y-2">
                     <Label className="flex items-center gap-2 text-gray-300">
                       <FileText className="h-4 w-4" />
@@ -279,12 +278,12 @@ export default function BusinessSetupForm({ user }) {
                     />
                   </div>
 
-                  {/* Submit Button */}
+                  
                   <Button type="submit" disabled={loading} className="w-full bg-accent hover:bg-accent/90 text-black font-medium">
                     {loading ? t('businessForm.submitting') : t('businessForm.submit')}
                   </Button>
 
-                  {/* Status Message */}
+                  
                   {status && (
                     <Alert className={
                       status.includes('successfully')
@@ -308,7 +307,7 @@ export default function BusinessSetupForm({ user }) {
           {/* Information Sidebar */}
           <div className="space-y-6">
 
-            {/* Business Types Info */}
+            
             <Card className="bg-charcoal-900 border-charcoal-800">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-white">
@@ -336,7 +335,7 @@ export default function BusinessSetupForm({ user }) {
               </CardContent>
             </Card>
 
-            {/* Investment Requirements */}
+            
             <Card className="bg-charcoal-900 border-charcoal-800">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-white">
@@ -353,7 +352,7 @@ export default function BusinessSetupForm({ user }) {
               </CardContent>
             </Card>
 
-            {/* Process Timeline */}
+           
             <Card className="bg-charcoal-900 border-charcoal-800">
               <CardHeader>
                 <CardTitle className="text-white">{t('businessForm.sidebar.timelineTitle')}</CardTitle>

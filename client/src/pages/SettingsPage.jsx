@@ -152,7 +152,7 @@ export default function SettingsPage({ user }) {
                 {t("settings.add")}
               </Button>
               
-              {/* Search Bar */}
+
               <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
                 {status && <span className="text-sm text-gray-600">{status}</span>}
                 <div className="relative">
@@ -277,7 +277,9 @@ function PropertyForm({ onClose, user, onPropertyAdded, setStatus, property }) {
   const [localStatus, setLocalStatus] = useState("");
   const { t } = useTranslation();
 
-  // When property changes (like when opening the form for editing), update states
+  
+  
+  
   React.useEffect(() => {
     setName(property?.name || "");
     setAddress(property?.address || "");
@@ -317,7 +319,8 @@ function PropertyForm({ onClose, user, onPropertyAdded, setStatus, property }) {
     }
 
     if (property) {
-      // UPDATE existing property
+     
+      
       const { error: updateError } = await supabase
         .from("properties")
         .update({
@@ -336,7 +339,8 @@ function PropertyForm({ onClose, user, onPropertyAdded, setStatus, property }) {
         return;
       }
     } else {
-      // INSERT new property
+     
+      
       const { error: insertError } = await supabase.from("properties").insert([
         {
           user_id: user.id,

@@ -10,10 +10,10 @@ load_dotenv()
 
 app = FastAPI()
 
-# Allow frontend access
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Replace with your frontend URL in production
+    allow_origins=["*"],  
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -50,11 +50,11 @@ def get_estimate(data: EstimateRequest):
 
     headers = {
         "Authorization": f"Bearer {api_key}",
-        "HTTP-Referer": "http://localhost:3000",  # or your actual frontend URL
+        "HTTP-Referer": "http://localhost:3000",  
         "Content-Type": "application/json"
     }
 
-    # 🔁 Reliable, fast, low-cost model
+   
     payload = {
         "model": "mistralai/mistral-7b-instruct",
         "messages": [{"role": "user", "content": prompt}]
@@ -72,7 +72,7 @@ def get_estimate(data: EstimateRequest):
 
     content = result["choices"][0]["message"]["content"]
 
-    # Regex to extract ranges
+    # Regex to get ranges
     low_match = re.search(r"Low Estimate Range:?\s*\$?(\d+(?:,\d+)?)\s*-\s*\$?(\d+(?:,\d+)?)", content, re.IGNORECASE)
     high_match = re.search(r"High Estimate Range:?\s*\$?(\d+(?:,\d+)?)\s*-\s*\$?(\d+(?:,\d+)?)", content, re.IGNORECASE)
 
@@ -82,10 +82,10 @@ def get_estimate(data: EstimateRequest):
             "low_estimate_end": int(low_match.group(2).replace(",", "")),
             "high_estimate_start": int(high_match.group(1).replace(",", "")),
             "high_estimate_end": int(high_match.group(2).replace(",", "")),
-            "notes": content  # used for "Show Breakdown"
+            "notes": content  
         }
     else:
         return {
-            "notes": content  # no parsing success, but raw response still shown
+            "notes": content 
         }
 

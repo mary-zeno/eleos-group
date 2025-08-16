@@ -26,14 +26,14 @@ export default function AdminPayment() {
   const [invoiceId, setInvoiceId] = useState(null);
   const [status, setStatus] = useState('');
   
-  // NEW: Delete confirmation states
+
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
     const fetchExistingInvoice = async () => {
       if (passedInvoice) {
-        // Prefill with passed invoice data
+       
         setBillAmount(passedInvoice.amount_owed || '');
         setPaypalLink(passedInvoice.paypal_link || '');
         setEnableFlutterwave(passedInvoice.flutterwave_enabled !== false);
@@ -41,7 +41,7 @@ export default function AdminPayment() {
         setInvoiceId(passedInvoice.id);
         setStatus('');
       } else if (passedRequest) {
-        // Try loading from DB if invoice wasn't passed in
+        
         const { data: existingInvoice, error } = await supabase
           .from('invoices')
           .select('id, amount_owed, paypal_link, flutterwave_enabled, invoice_url')
@@ -140,7 +140,7 @@ export default function AdminPayment() {
     setInvoiceUrl('');
   };
 
-  // NEW: Handle invoice deletion
+  
   const handleDeleteInvoice = async () => {
     if (!invoiceId) return;
 
@@ -148,20 +148,20 @@ export default function AdminPayment() {
     setStatus('Deleting invoice...');
 
     try {
-      // First, try to delete the file from storage if it exists
+      
       if (invoiceUrl) {
-        // Extract file path from the public URL
+       
         const urlParts = invoiceUrl.split('/');
         const fileName = urlParts[urlParts.length - 1];
         const filePath = `invoices/${fileName}`;
 
-        // Delete from storage (don't fail if file doesn't exist)
+       
         await supabase.storage
           .from('invoices')
           .remove([filePath]);
       }
 
-      // Delete the invoice record from database
+      // Delete 
       const { error } = await supabase
         .from('invoices')
         .delete()
@@ -173,7 +173,7 @@ export default function AdminPayment() {
         return;
       }
 
-      // Success - reset form and show success message
+      
       setStatus('Invoice deleted successfully!');
       setBillAmount('');
       setPaypalLink('');
@@ -183,7 +183,7 @@ export default function AdminPayment() {
       setInvoiceUrl('');
       setShowDeleteConfirm(false);
       
-      // Navigate back to dashboard after a short delay
+      
       setTimeout(() => {
         navigate('/dashboard');
       }, 1500);
@@ -196,7 +196,7 @@ export default function AdminPayment() {
     }
   };
 
-// START OF CARDS (keeping your original comment)
+// cards
   if (!passedRequest) {
     return (
       <div className="min-h-screen bg-charcoal-950 p-4">
@@ -237,7 +237,7 @@ export default function AdminPayment() {
                 {invoiceId ? 'Edit Invoice' : 'Create Invoice'}
               </CardTitle>
               
-              {/* NEW: Delete button - only show in edit mode */}
+            
               {invoiceId && (
                 <Button
                   variant="outline"
@@ -252,7 +252,7 @@ export default function AdminPayment() {
               )}
             </div>
 
-            {/* NEW: Show invoice info when editing */}
+           
             {invoiceId && (
               <div className="mt-4 p-3 bg-charcoal-800 rounded-lg">
                 <p className="text-sm text-gray-300">
@@ -266,10 +266,10 @@ export default function AdminPayment() {
           </CardHeader>
           <CardContent>
 
-          {/* START FORM CAUTION (keeping your original comment) */}
+          
 
             <form onSubmit={handleSubmit} className="space-y-6">
-              {/* Amount */}
+              
               <div className="space-y-2">
                 <Label className="text-gray-300">Amount Owed (USD)</Label>
                 <Input
@@ -283,11 +283,11 @@ export default function AdminPayment() {
                 />
               </div>
 
-              {/* Payment Options Section */}
+              
               <div className="space-y-4 border border-charcoal-700 rounded-lg p-4">
                 <h3 className="text-gray-300 font-medium">Payment Options</h3>
                 
-                {/* PayPal Link */}
+                
                 <div className="space-y-2">
                   <Label className="text-gray-300">PayPal Link</Label>
                   <Input
@@ -354,11 +354,11 @@ export default function AdminPayment() {
                 </p>
               )}
             </form>
-            {/* END FORM CAUTION (keeping your original comment) */}
+            
           </CardContent>
         </Card>
 
-        {/* NEW: Delete Confirmation Modal */}
+        
         {showDeleteConfirm && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
             <Card className="bg-charcoal-900 border-charcoal-700 max-w-md w-full mx-4">

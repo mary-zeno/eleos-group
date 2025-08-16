@@ -56,7 +56,7 @@ export default function TravelForm({ user }) {
       user_id: user.id,
     };
 
-    // Insert into travel_forms table first
+    // Insert into travel_forms 
     const { data: travelFormData, error: travelFormError } = await supabase
       .from('travel_forms')
       .insert([insertData])
@@ -69,7 +69,7 @@ export default function TravelForm({ user }) {
       return;
     }
 
-    // Insert into invoices table with the generated travel_forms id
+    // Insert into invoices table 
     const invoiceData = {
       user_id: user.id,
       service_type: 'Travel',
@@ -87,7 +87,6 @@ export default function TravelForm({ user }) {
     }
 
     setStatus(t("travelForm.status.success"));
-    // Reset form
     setFormData({
       purpose: '',
       start_city: '',
@@ -102,7 +101,7 @@ export default function TravelForm({ user }) {
       city_orientation: false,
       additional_notes: '',
     });
-    setEstimate(''); // Clear estimate
+    setEstimate(''); 
     setLoading(false);
   };
 
@@ -112,7 +111,7 @@ export default function TravelForm({ user }) {
       return;
     }
 
-    const season = formData.dates.toLowerCase(); // pass full month or string
+    const season = formData.dates.toLowerCase(); 
 
     setLoadingEstimate(true);
     setEstimate(null);
@@ -123,7 +122,7 @@ export default function TravelForm({ user }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           starting: formData.start_city,
-          location: formData.city || "Ethiopia", // Add location field to formData if not there
+          location: formData.city || "Ethiopia", 
           accommodation: formData.accommodation,
           people: Number(formData.num_travelers),
           season: season
@@ -169,7 +168,6 @@ export default function TravelForm({ user }) {
               <CardContent>
                 <form onSubmit={handleSubmit} className="space-y-6">
 
-                  {/* Purpose */}
                   <div className="space-y-2">
                     <Label className="text-gray-300">{t("travelForm.purposeLabel")}</Label>
                     <Select value={formData.purpose} onValueChange={(value) => handleChange('purpose', value)}>
@@ -184,7 +182,6 @@ export default function TravelForm({ user }) {
                       </SelectContent>
                     </Select>
                   </div>
-                  {/* Start City */}
                   <div className="space-y-2">
                     <Label className="text-gray-300">{t("travelForm.startCityLabel")}</Label>
                     <Input
@@ -195,7 +192,6 @@ export default function TravelForm({ user }) {
                       className="bg-charcoal-800 border-charcoal-700 text-white placeholder:text-gray-400"
                     />
                   </div>
-                  {/* City */}
                   <div className="space-y-2">
                     <Label className="text-gray-300">{t("travelForm.cityLabel")}</Label>
                     <Input
@@ -207,7 +203,7 @@ export default function TravelForm({ user }) {
                     />
                   </div>
 
-                  {/* Dates */}
+                  
                   <div className="space-y-2">
                     <Label className="text-gray-300">{t("travelForm.datesLabel")}</Label>
                     <Input
@@ -219,7 +215,6 @@ export default function TravelForm({ user }) {
                     />
                   </div>
 
-                  {/* Number of Travelers */}
                   <div className="space-y-2">
                     <Label className="text-gray-300">{t("travelForm.numTravelersLabel")}</Label>
                     <Input
@@ -234,7 +229,6 @@ export default function TravelForm({ user }) {
                     />
                   </div>
 
-                  {/* Accommodation */}
                   <div className="space-y-2">
                     <Label className="text-gray-300">{t("travelForm.accommodationLabel")}</Label>
                     <Select value={formData.accommodation} onValueChange={(value) => handleChange('accommodation', value)}>
@@ -249,7 +243,6 @@ export default function TravelForm({ user }) {
                     </Select>
                   </div>
 
-                  {/* Services Checkboxes */}
                   <div className="space-y-4">
                     <Label className="text-base font-medium text-gray-300">{t("travelForm.additionalServicesLabel")}</Label>
 
@@ -306,7 +299,6 @@ export default function TravelForm({ user }) {
                     </div>
                   </div>
 
-                  {/* Additional Notes */}
                   <div className="space-y-2">
                     <Label className="text-gray-300">{t("travelForm.additionalNotesLabel")}</Label>
                     <Textarea
@@ -318,12 +310,10 @@ export default function TravelForm({ user }) {
                     />
                   </div>
 
-                  {/* Submit Button */}
                   <Button type="submit" disabled={loading} className="w-full bg-accent hover:bg-accent/90 text-black font-medium">
                     {loading ? t("travelForm.submitting") : t("travelForm.submitButton")}
                   </Button>
 
-                  {/* Status Message */}
                   {status && (
                     <Alert className={
                       status.includes('successfully')
@@ -344,7 +334,7 @@ export default function TravelForm({ user }) {
             </Card>
           </div>
 
-          {/* Cost Estimator Sidebar */}
+          {/* Cost Estimator */}
           <div className="space-y-6">
             <Card className="bg-charcoal-900 border-charcoal-800">
               <CardHeader>
@@ -422,7 +412,6 @@ export default function TravelForm({ user }) {
               </CardContent>
             </Card>
 
-            {/* Info Card */}
             <Card className="bg-charcoal-900 border-charcoal-800">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-white">

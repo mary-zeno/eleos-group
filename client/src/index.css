@@ -1,4 +1,4 @@
-/* Import fonts at the very top */
+
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700&display=swap');
 @tailwind base;
 @tailwind components;
@@ -57,9 +57,9 @@
   }
   
   body {
-    /* FIXED: Removed bg-gray-100 to allow component backgrounds to work */
+    
     @apply text-foreground;
     font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    font-weight: 300; /* This ensures light weight is the default */
+    font-weight: 300; 
   }
 }

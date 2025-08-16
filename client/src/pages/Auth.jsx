@@ -11,7 +11,7 @@ export default function Auth() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  // extra profile fields for signup
+  
   const [phoneNumber, setPhoneNumber] = useState('');
   const [countryResidence, setCountryResidence] = useState('');
   const [language, setLanguage] = useState('');
@@ -23,7 +23,7 @@ export default function Auth() {
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
 
-  // when true, show the full profile fields (2nd step of signup)
+  // when true, show the full profile fields 
   const [showSignupFields, setShowSignupFields] = useState(false);
 
   const navigate = useNavigate();
@@ -60,8 +60,7 @@ export default function Auth() {
       if (error) {
         setStatus(t('auth.status.googleError') || 'Google login failed: ' + error.message);
       }
-      // Note: For OAuth, the actual redirect happens automatically on success
-      // so we won't reach the success state in this function
+     
     } catch (err) {
       setStatus(t('auth.status.googleError') || 'Google login failed: ' + err.message);
     } finally {
@@ -72,7 +71,7 @@ export default function Auth() {
   const handleQuickSignup = async () => {
     setStatus('');
 
-    // basic client-side validation
+    //  client-side validation
     if (!email.trim() || !password.trim() || !name.trim()) {
       setStatus(t('auth.status.signupError') + (t('auth.status.missingBasic') || ' Missing name/email/password.'));
       return;
@@ -80,7 +79,6 @@ export default function Auth() {
 
     setLoading(true);
 
-    // 1) create auth user
     const { data, error } = await supabase.auth.signUp({
       email: email.trim(),
       password: password.trim(),
@@ -99,14 +97,14 @@ export default function Auth() {
       return;
     }
 
-    // 2) insert basic profile row (only required fields)
+    
     const { error: insertError } = await supabase
       .from('profiles')
       .insert([{
         id: user.id,
         email: user.email,
         name: name.trim(),
-        // Optional fields are left as null - user can fill them later
+        
         phone_number: null,
         country_residence: null,
         language: null,
@@ -124,14 +122,14 @@ export default function Auth() {
     setStatus(t('auth.status.signupSuccess'));
     setLoading(false);
 
-    // Navigate to dashboard
+   
     navigate('/dashboard');
   };
 
   const handleFullSignup = async () => {
     setStatus('');
 
-    // basic client-side validation
+    
     if (!email.trim() || !password.trim() || !name.trim()) {
       setStatus(t('auth.status.signupError') + (t('auth.status.missingBasic') || ' Missing name/email/password.'));
       return;
@@ -139,7 +137,7 @@ export default function Auth() {
 
     setLoading(true);
 
-    // 1) create auth user
+  
     const { data, error } = await supabase.auth.signUp({
       email: email.trim(),
       password: password.trim(),
@@ -158,7 +156,7 @@ export default function Auth() {
       return;
     }
 
-    // 2) insert complete profile row with all provided information
+    
     const { error: insertError } = await supabase
       .from('profiles')
       .insert([{
@@ -188,10 +186,10 @@ export default function Auth() {
 
   const handleSignupClick = () => {
     if (!showSignupFields) {
-      // first click: reveal profile fields
+      
       setShowSignupFields(true);
     } else {
-      // second click: complete signup with full profile
+      
       handleFullSignup();
     }
   };
@@ -204,7 +202,7 @@ export default function Auth() {
           <CardDescription className="text-gray-300">{t('auth.description')}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          {/* Google Sign In Button */}
+         
           <Button
             onClick={handleGoogleLogin}
             disabled={googleLoading || loading}
@@ -239,7 +237,7 @@ export default function Auth() {
             }
           </Button>
 
-          {/* Divider */}
+          
           <div className="relative">
             <div className="absolute inset-0 flex items-center">
               <span className="w-full border-t border-charcoal-700" />
@@ -251,7 +249,7 @@ export default function Auth() {
             </div>
           </div>
 
-          {/* Basic fields (always visible) */}
+          
           <Input
             type="email"
             placeholder={t('auth.emailPlaceholder')}
@@ -277,7 +275,7 @@ export default function Auth() {
             className="bg-charcoal-800 border-charcoal-700 text-white placeholder:text-gray-400"
           />
 
-          {/* Signup-only fields (step 2) - Optional */}
+          
           {showSignupFields && (
             <div className="space-y-3 pt-2 border-t border-charcoal-800">
               <div className="text-sm text-gray-400 mb-3">
@@ -358,7 +356,7 @@ export default function Auth() {
             </Button>
           </div>
 
-          {/* Quick signup option when extended form is visible */}
+          {/* Quick signup option */}
           {showSignupFields && (
             <Button
               onClick={handleQuickSignup}
