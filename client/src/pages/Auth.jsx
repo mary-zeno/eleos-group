@@ -235,7 +235,7 @@ export default function Auth() {
             )}
             {googleLoading 
               ? (t('auth.googleSigning') || 'Signing in...') 
-              : (t('auth.googleLogin') || 'Continue with Google')
+              : "Sign in with Google"
             }
           </Button>
 

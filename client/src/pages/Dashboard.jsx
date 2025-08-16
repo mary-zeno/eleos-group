@@ -626,40 +626,40 @@ export default function Dashboard({ user }) {
       } 
 
       // Send email for "Awaiting Payment"
-      if (newStatus === 'status.awaitingPayment') {
-        const { data: profile, error: profileError } = await supabase
-          .from('profiles')
-          .select('email, name')
-          .eq('id', req.user_id)
-          .single();
+      // if (newStatus === 'status.awaitingPayment') {
+      //   const { data: profile, error: profileError } = await supabase
+      //     .from('profiles')
+      //     .select('email, name')
+      //     .eq('id', req.user_id)
+      //     .single();
 
-        const email = profile?.email;
-        const name = profile?.name;
+      //   const email = profile?.email;
+      //   const name = profile?.name;
 
-        if (email && name) {
-          try {
-            const response = await fetch('https://tykawjmgbuuywiddcrxw.supabase.co/functions/v1/send-payment-email', {
-              method: 'POST',
-              headers: { 
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`
-              },
-              body: JSON.stringify({
-                to: email,
-                userName: name,
-                serviceType: req.service
-              })
-            });
+      //   if (email && name) {
+      //     try {
+      //       const response = await fetch('https://tykawjmgbuuywiddcrxw.supabase.co/functions/v1/send-payment-email', {
+      //         method: 'POST',
+      //         headers: { 
+      //           'Content-Type': 'application/json',
+      //           'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`
+      //         },
+      //         body: JSON.stringify({
+      //           to: email,
+      //           userName: name,
+      //           serviceType: req.service
+      //         })
+      //       });
 
-            if (!response.ok) {
-              const errorText = await response.text();
-              console.error('Failed to send email:', errorText);
-            }
-          } catch (err) {
-            console.error('Error sending email:', err);
-          }
-        }
-      }
+      //       if (!response.ok) {
+      //         const errorText = await response.text();
+      //         console.error('Failed to send email:', errorText);
+      //       }
+      //     } catch (err) {
+      //       console.error('Error sending email:', err);
+      //     }
+      //   }
+      // }
     }
 
     // Refresh the requests from DB
