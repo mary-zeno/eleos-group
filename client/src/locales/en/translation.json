@@ -66,6 +66,8 @@
         "emergencyNamePlaceholder": "Emergency Contact Name (optional)",
         "emergencyPhonePlaceholder": "Emergency Contact Phone (optional)",
         "skipProfile": "Skip for now - Create account with basic info",
+        "googleSigning": "Sign in with Google",
+        "signingIn": "Signing in...",
         "status": {
             "loginSuccess": "Login successful! Redirecting...",
             "signupSuccess": "Signup successful! Please check your email to verify your account.",

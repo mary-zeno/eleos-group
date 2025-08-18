@@ -232,8 +232,8 @@ export default function Auth() {
               </svg>
             )}
             {googleLoading 
-              ? (t('auth.googleSigning') || 'Signing in...') 
-              : "Sign in with Google"
+              ? (t('auth.googleSigning') || t('auth.signingIn')) 
+              : t('auth.googleSigning')
             }
           </Button>
 

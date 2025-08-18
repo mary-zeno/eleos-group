@@ -66,6 +66,8 @@
         "emergencyNamePlaceholder": "Maqaa Nama Hatattamaa (dirqama miti)",
         "emergencyPhonePlaceholder": "Bilbila Nama Hatattamaa (dirqama miti)",
         "skipProfile": "Ammaan darbi - Account odeeffannoo bu'uuraadhaan uumi",
+        "googleSigning": "Google waliin seeni",
+        "signingIn": "Nan seena jira...",
         "status": {
             "loginSuccess": "Seenuun milkaa'eera! Kallattii jijjiiramaa...",
             "signupSuccess": "Galmaa'uun milkaa'eera! Mee email keessan ilaalaa account keessan mirkaneessuuf.",

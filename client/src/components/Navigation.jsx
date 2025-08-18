@@ -113,13 +113,15 @@ export default function Navigation({ user }) {
                       <User className="mr-2 h-4 w-4" />
                       {t("nav.editProfile")}
                     </DropdownMenuItem>
-                    <DropdownMenuItem 
-                      onClick={() => navigate("/settings")}
-                      className="hover:bg-gray-700 focus:bg-gray-700 text-white"
-                    >
-                      <SettingsIcon className="mr-2 h-4 w-4" />
-                      {t("nav.settings")}
-                    </DropdownMenuItem>
+                    {isAdmin && (
+                      <DropdownMenuItem 
+                        onClick={() => navigate("/settings")}
+                        className="hover:bg-gray-700 focus:bg-gray-700 text-white"
+                      >
+                        <SettingsIcon className="mr-2 h-4 w-4" />
+                        {t("nav.settings")}
+                      </DropdownMenuItem>
+                    )}
                     <DropdownMenuSeparator className="bg-gray-700" />
                     <DropdownMenuItem
                       onClick={handleLogout}
@@ -194,17 +196,19 @@ export default function Navigation({ user }) {
                             <User className="mr-2 h-4 w-4" />
                             {t("nav.editProfile")}
                           </Button>
-                          <Button
-                            variant="outline"
-                            className="w-full justify-start bg-transparent border-gray-700 text-white hover:bg-gray-800 hover:text-white font-light"
-                            onClick={() => {
-                              navigate("/settings");
-                              setIsOpen(false);
-                            }}
-                          >
-                            <SettingsIcon className="mr-2 h-4 w-4" />
-                            {t("nav.settings")}
-                          </Button>
+                          {isAdmin && (
+                            <Button
+                              variant="outline"
+                              className="w-full justify-start bg-transparent border-gray-700 text-white hover:bg-gray-800 hover:text-white font-light"
+                              onClick={() => {
+                                navigate("/settings");
+                                setIsOpen(false);
+                              }}
+                            >
+                              <SettingsIcon className="mr-2 h-4 w-4" />
+                              {t("nav.settings")}
+                            </Button>
+                          )}
                           <Button
                             variant="outline"
                             className="w-full justify-start bg-transparent border-gray-700 text-red-400 hover:bg-gray-800 hover:text-red-300 font-light"
