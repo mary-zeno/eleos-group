@@ -23,40 +23,36 @@ Supabase Edge Functions with Resend for notifications
 
 ### 1. Clone the Repository
 
-Use the command git clone < web-URL-from-the-github> to clone the repo. 
+Use the command git clone < web-URL-from-the-github> to clone the repo and cd eleos-capstone to go into the project folder. 
 
-### 2. Install Dependencies
+### 2. Frontend Setup
 
-Navigate to the client folder and run npm install to install the dependences. 
+- Navigate to the client folder and install dependencies:
+    - bashcd client
+    - npm install
+- Create a .env file in the client directory:
+    - envVITE_SUPABASE_URL=your_supabase_project_url
+    - VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
 
-### 3. Frontend Setup
+### 3. Backend Setup 
 
-Navigate to the client folder and install dependencies:
-bashcd client
-npm install
-Create a .env file in the client directory:
-envVITE_SUPABASE_URL=your_supabase_project_url
-VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+- Navigate to the server folder and set up the Python environment:
+    - bashcd server
+    - python -m venv venv
+    - source venv/bin/activate  # On Windows: venv\Scripts\activate
+- pip install -r requirements.txt
+- Create a .env file in the server directory:
+    - envOPENROUTER_API_KEY=your_openrouter_api_key
 
-### 4. Backend Setup 
+### 4. Run the Developer Server
 
-Navigate to the server folder and set up the Python environment:
-bashcd server
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-pip install -r requirements.txt
-Create a .env file in the server directory:
-envOPENROUTER_API_KEY=your_openrouter_api_key
-
-### 3. Run the Developer Server
-
-Start the frontend server:
-bashcd client
-npm run dev
-Start the backend server:
-bashcd server
-uvicorn main:app --reload
-The application will be available at http://localhost:5173 with the API at http://localhost:8000.
+- Start the frontend server:
+    - bashcd client
+    - npm run dev
+- Start the backend server:
+    - bashcd server
+    - uvicorn main:app --reload
+- The application will be available at http://localhost:5173 with the API at http://localhost:8000.
 
 ## Features
 
