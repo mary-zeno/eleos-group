@@ -60,15 +60,15 @@ The application will be available at http://localhost:5173 with the API at http:
 
 ## Features
 
-Multilingual interface (English/Amharic)
-User registration and authentication
-Service request forms for travel, property, and business needs
-AI-powered travel cost estimation
-Secure payment processing via PayPal and Flutterwave
-User dashboard for managing requests
-Admin portal for service and request management
-Email notifications for invoice updates
-Export functionality for reports
+- Multilingual interface (English/Amharic)
+- User registration and authentication
+- Service request forms for travel, property, and business needs
+- AI-powered travel cost estimation
+- Secure payment processing via PayPal and Flutterwave
+- User dashboard for managing requests
+- Admin portal for service and request management
+- Email notifications for invoice updates
+- Export functionality for reports
 
 ## Team 
 
