@@ -66,6 +66,8 @@
         "emergencyNamePlaceholder": "Nom du contact d'urgence (optionnel)",
         "emergencyPhonePlaceholder": "Téléphone du contact d'urgence (optionnel)",
         "skipProfile": "Ignorer pour maintenant - Créer un compte avec les informations de base",
+        "googleSigning": "Se connecter avec Google",
+        "signingIn": "Connexion en cours...",
         "status": {
             "loginSuccess": "Connexion réussie ! Redirection...",
             "signupSuccess": "Inscription réussie ! Veuillez vérifier votre email pour confirmer votre compte.",

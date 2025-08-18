@@ -66,6 +66,8 @@
         "emergencyNamePlaceholder": "የአደጋ ጊዜ እውቂያ ስም (አማራጭ)",
         "emergencyPhonePlaceholder": "የአደጋ ጊዜ እውቂያ ስልክ (አማራጭ)",
         "skipProfile": "አሁን ይተዉት - መለያ በመሰረታዊ መረጃ ፍጠር",
+        "googleSigning": "በGoogle ግባ",
+        "signingIn": "እየገባሁ ነው...",
         "status": {
             "loginSuccess": "በተሳካ ሁኔታ ገብተዋል! በቅርቡ በዳሽቦርድ ላይ ትገኛላችሁ...",
             "signupSuccess": "መመዝገቢያ በተሳካ ሁኔታ ተፈጠረ። እባኮትን ኢሜይሎን ያረጋግጡ።",

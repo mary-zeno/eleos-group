@@ -66,6 +66,8 @@
         "emergencyNamePlaceholder": "Jina la Mtu wa Dharura (hiari)",
         "emergencyPhonePlaceholder": "Simu ya Mtu wa Dharura (hiari)",
         "skipProfile": "Ruka kwa sasa - Tengeneza akaunti kwa maelezo ya msingi",
+        "googleSigning": "Ingia kwa kutumia Google",
+        "signingIn": "Ninaingia...",
         "status": {
             "loginSuccess": "Umeingia kikamilifu! Inaelekeza...",
             "signupSuccess": "Usajili umefanikiwa! Tafadhali angalia barua pepe yako kuthibitisha akaunti yako.",

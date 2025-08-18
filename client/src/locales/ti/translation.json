@@ -66,6 +66,8 @@
         "emergencyNamePlaceholder": "ስም ሰብ ህጹጽ (ኣማራጺ)",
         "emergencyPhonePlaceholder": "ተለፎን ሰብ ህጹጽ (ኣማራጺ)",
         "skipProfile": "ነዚ እዋን ሓልፍ - ሕሳብ ቀንዲ ሓበሬታ ጥራይ ፍጠር",
+        "googleSigning": "በGoogle ኣቲኹም",
+        "signingIn": "ክኣቱ ኣለኹ...",
         "status": {
             "loginSuccess": "ምእታው ዓወተ! ይዕድለካ...",
             "signupSuccess": "ምምዝጋብ ዓወተ! በጃኻ ኢመይልካ ርአ ሕሳብካ ንምርግጋጽ።",

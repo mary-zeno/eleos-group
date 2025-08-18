@@ -19,7 +19,7 @@ export default function RequestTableCard({
   expandedIdx,
   openUserModal,
   setInvoiceUrl,
-  openInvoiceModal, 
+  openInvoiceModal,
   setCurrentInvoicePaypalLink,
   navigate,
   isInactiveTable = false,
@@ -35,7 +35,7 @@ export default function RequestTableCard({
           <p>{t('dashboard.noRequests')}</p>
           {role !== 'admin' && (
             <Button onClick={() => navigate('/property-form')} className="mt-4">
-                {t('dashboard.submitFirst')}
+              {t('dashboard.submitFirst')}
             </Button>
           )}
         </div>
@@ -79,7 +79,7 @@ export default function RequestTableCard({
                       <TableCell>
                         {role === 'admin' ? (
                           <button
-                          className="p-0 m-0 bg-transparent border-0 cursor-pointer text-gray-200 font-semibold hover:text-accent hover:font-bold focus:outline-none focus:ring-2 focus:ring-accent/40 rounded transition-colors duration-150"
+                            className="p-0 m-0 bg-transparent border-0 cursor-pointer text-gray-200 font-semibold hover:text-accent hover:font-bold focus:outline-none focus:ring-2 focus:ring-accent/40 rounded transition-colors duration-150"
                             onClick={() => openUserModal(req.user_id)}
                           >
                             {req.userName}
@@ -120,22 +120,22 @@ export default function RequestTableCard({
                               onClick={() => {
                                 if (role === 'admin' && isEditing) {
                                   // edit invoice page
-                                  navigate('/admin/payment', { 
-                                    state: { 
+                                  navigate('/admin/payment', {
+                                    state: {
                                       request: req,
                                       invoice: {
-                                        id: req.invoiceId, 
+                                        id: req.invoiceId,
                                         amount_owed: req.amount_owed,
                                         paypal_link: req.paypalLink,
                                         invoice_url: req.invoiceUrl
                                       }
-                                    } 
+                                    }
                                   });
                                 } else {
                                   // View invoice in modal 
                                   openInvoiceModal(
-                                    req.invoiceUrl, 
-                                    req.paypalLink, 
+                                    req.invoiceUrl,
+                                    req.paypalLink,
                                     {
                                       invoiceId: req.invoiceId,
                                       amount_owed: req.amount_owed,
@@ -151,11 +151,11 @@ export default function RequestTableCard({
                                 }
                               }}
                             >
-                              {role === 'admin' && isEditing ? t('dashboard.editInvoice') : 
-                               req.paymentStatus === 'paid' ? 'View Paid Invoice' : t('dashboard.viewInvoice')}
+                              {role === 'admin' && isEditing ? t('dashboard.editInvoice') :
+                                req.paymentStatus === 'paid' ? 'View Paid Invoice' : t('dashboard.viewInvoice')}
                             </Button>
-                            
-                            
+
+
                             {req.paymentStatus === 'paid' && (
                               <Badge variant="outline" className="border-green-500/50 text-green-400 text-xs">
                                 Paid
@@ -174,7 +174,7 @@ export default function RequestTableCard({
                           )
                         )}
                       </TableCell>
-                      
+
                       <TableCell>
                         <Button
                           variant="ghost"
@@ -182,25 +182,25 @@ export default function RequestTableCard({
                           className="text-2xl text-gray-400 hover:text-white hover:bg-charcoal-800"
                           onClick={() => toggleDetails(req.id)}
                         >
-                          
-                          {expandedIdx === req.id ? '▴' : '▾'} 
+
+                          {expandedIdx === req.id ? '▴' : '▾'}
                         </Button>
                       </TableCell>
                     </TableRow>
-                
+
                     {expandedIdx === req.id && (
                       <TableRow className="bg-charcoal-800/50 border-charcoal-700">
                         <TableCell colSpan={role === 'admin' && isEditing ? 7 : 6}>
                           <div className="p-4 space-y-2">
                             <h4 className="font-medium mb-2 text-white">{t('dashboard.requestDetails')}</h4>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                               {Object.entries(req).map(([key, value]) =>
                                 !['id', 'user_id', 'inserted_at', 'service', 'status', 'tableName', 'userName'].includes(key) && (
-                                  <div key={key} className="flex">
-                                    <span className="font-medium mr-2 min-w-0 flex-shrink-0 text-gray-300">
+                                  <div key={key} className="flex flex-col gap-1 min-w-0">
+                                    <span className="font-medium text-gray-300 whitespace-nowrap">
                                       {key.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}:
                                     </span>
-                                    <span className="text-gray-400 break-words">
+                                    <span className="text-gray-400 break-all overflow-wrap-anywhere min-w-0">
                                       {String(value) || 'N/A'}
                                     </span>
                                   </div>
